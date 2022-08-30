@@ -11,17 +11,15 @@ import Foundation
 import Network
 import NIOTransportServices
 import Security
-
 import os.log
 
-public typealias ControlRequestStream = BidirectionalStreamingCall<Anki_Vector_ExternalInterface_BehaviorControlRequest, Anki_Vector_ExternalInterface_BehaviorControlResponse>
-
-public final class VectorConnection {
+public final class VectorConnection: Connection {
     private let guid: String = "uOXbJIpdSiGgM6SgSoYFUA=="
     private lazy var callOptions: CallOptions = .init(customMetadata: headers)
     private lazy var headers: HPACKHeaders = ["authorization": "Bearer \(guid)"]
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private let connection: ClientConnection
+    private var requestStream: ControlRequestStream?
     
     public weak var delegate: ConnectionDelegate?
     
@@ -81,49 +79,31 @@ public final class VectorConnection {
         }
     }
     
-    public func control() throws -> ControlRequestStream {
-        connection.makeBidirectionalStreamingCall(
+    public func requestControl() throws {
+        requestStream = connection.makeBidirectionalStreamingCall(
             path: "/Anki.Vector.external_interface.ExternalInterface/BehaviorControl",
             callOptions: callOptions
         ) { response in
             switch response.responseType {
             case .controlGrantedResponse:
+                self.log("CONTROL GAINED")
                 self.delegate?.didGrantedControl()
             case .keepAlive:
                 self.delegate?.keepAlive()
             case .controlLostEvent:
+                self.log("CONTROL LOST")
                 self.delegate?.didClose()
             default:
                 self.log("\(response)")
             }
         }
-    }
-    
-    public func requestControl(stream: ControlRequestStream) throws {
+        
         var controlRequest = Anki_Vector_ExternalInterface_BehaviorControlRequest()
         controlRequest.controlRequest = Anki_Vector_ExternalInterface_ControlRequest()
         controlRequest.controlRequest.priority = .default
-        let _ = stream.sendMessage(controlRequest)
+        let _ = requestStream?.sendMessage(controlRequest)
     }
     
-    public func setEyeColor(_ hue: Float) async throws {
-        var eyeColorRequest = Anki_Vector_ExternalInterface_SetEyeColorRequest()
-        eyeColorRequest.hue = hue
-        eyeColorRequest.saturation = 1.0
-        
-        let eyeColor: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest, Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/SetEyeColor",
-            request: eyeColorRequest, callOptions: callOptions
-        )
-        return await withCheckedContinuation { continuation in
-            eyeColor.response.whenSuccess { _ in
-                continuation.resume(returning: ())
-            }
-            eyeColor.response.whenFailure { _ in
-                continuation.resume()
-            }
-        }
-    }
 }
 
 extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
@@ -142,5 +122,35 @@ extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
 private extension VectorConnection {
     func log(_ message: String) {
         logger.debug("\(message)")
+    }
+}
+
+extension VectorConnection: Behavior {
+    public func setHeadAngle(_ angle: Float) async throws {
+        
+    }
+    
+    public func say(text: String) throws {
+        
+    }
+    
+    public func setEyeColor(_ hue: Float, _ sat: Float) async throws {
+        var eyeColorRequest = Anki_Vector_ExternalInterface_SetEyeColorRequest()
+        eyeColorRequest.hue = hue
+        eyeColorRequest.saturation = sat
+        
+        let eyeColor: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest, Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/SetEyeColor",
+            request: eyeColorRequest, callOptions: callOptions
+        )
+        
+        return await withCheckedContinuation { continuation in
+            eyeColor.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            eyeColor.response.whenFailure { _ in
+                continuation.resume()
+            }
+        }
     }
 }
