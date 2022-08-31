@@ -133,25 +133,140 @@ private extension VectorConnection {
 }
 
 extension VectorConnection: Behavior {
-    public func setHeadAngle(_ angle: Float) async throws {}
+    public func setHeadAngle(_ angle: Float) async throws {
+        var request: Anki_Vector_ExternalInterface_SetHeadAngleRequest = .init()
+        request.angleRad = angle * Float.pi / 180.0
+        let call: UnaryCall<Anki_Vector_ExternalInterface_SetHeadAngleRequest, Anki_Vector_ExternalInterface_SetHeadAngleResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/SetHeadAngle",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { error in
+                continuation.resume(throwing: error)
+            }
+        }
+    }
     
-    public func say(text: String) throws {}
+    public func say(text: String) async throws {
+        var request: Anki_Vector_ExternalInterface_SayTextRequest = .init()
+        request.text = text
+        request.useVectorVoice = true
+        request.durationScalar = 1.0
+        let call: UnaryCall<Anki_Vector_ExternalInterface_SayTextRequest, Anki_Vector_ExternalInterface_SayTextResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/SayText",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { error in
+                continuation.resume(throwing: error)
+            }
+        }
+    }
     
     public func setEyeColor(_ hue: Float, _ sat: Float) async throws {
         var eyeColorRequest = Anki_Vector_ExternalInterface_SetEyeColorRequest()
         eyeColorRequest.hue = hue
         eyeColorRequest.saturation = sat
         
-        let eyeColor: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest, Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
+        let call: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest, Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
             path: "/Anki.Vector.external_interface.ExternalInterface/SetEyeColor",
             request: eyeColorRequest, callOptions: callOptions
         )
         
-        return await withCheckedContinuation { continuation in
-            eyeColor.response.whenSuccess { _ in
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
                 continuation.resume(returning: ())
             }
-            eyeColor.response.whenFailure { _ in
+            call.response.whenFailure { error in
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+    
+    public func move(_ distance: Float, speed: Float, animate: Bool) async throws {
+        var request: Anki_Vector_ExternalInterface_DriveStraightRequest = .init()
+        request.distMm = distance
+        request.speedMmps = speed
+        request.shouldPlayAnimation = animate
+        let call: UnaryCall<Anki_Vector_ExternalInterface_DriveStraightRequest, Anki_Vector_ExternalInterface_DriveStraightResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/DriveStraight",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { _ in
+                continuation.resume()
+            }
+        }
+    }
+    
+    public func turn(_ angle: Float, speed: Float, accel: Float, angleTolerance: Float) async throws {
+        var request: Anki_Vector_ExternalInterface_TurnInPlaceRequest = .init()
+        request.angleRad = angle * Float.pi / 180.0
+        request.speedRadPerSec = speed
+        request.accelRadPerSec2 = accel
+        request.tolRad = angleTolerance
+        let call: UnaryCall<Anki_Vector_ExternalInterface_TurnInPlaceRequest, Anki_Vector_ExternalInterface_TurnInPlaceResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/TurnInPlace",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { _ in
+                continuation.resume()
+            }
+        }
+    }
+    
+    public func driveOnCharger() async throws {
+        let request: Anki_Vector_ExternalInterface_DriveOnChargerRequest = .init()
+        let call: UnaryCall<Anki_Vector_ExternalInterface_DriveOnChargerRequest, Anki_Vector_ExternalInterface_DriveOnChargerResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/DriveOnCharger",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { _ in
+                continuation.resume()
+            }
+        }
+    }
+    
+    public func driveOffCharger() async throws {
+        let request: Anki_Vector_ExternalInterface_DriveOffChargerRequest = .init()
+        let call: UnaryCall<Anki_Vector_ExternalInterface_DriveOffChargerRequest, Anki_Vector_ExternalInterface_DriveOffChargerResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/DriveOffCharger",
+            request: request,
+            callOptions: callOptions
+        )
+        
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { _ in
                 continuation.resume()
             }
         }
@@ -167,9 +282,31 @@ extension VectorConnection: Camera {
                 request: .init(),
                 callOptions: callOptions,
                 handler: { message in
-                    continuation.yield(.init(data: message.data))
+                    continuation.yield(.init(data: message.data, encoding: message.imageEncoding))
                 }
             )
         }
     }
+}
+
+extension VectorConnection: Audio {
+    public func requestMicFeed() throws -> AsyncStream<AudioFrame> {
+        return .init { continuation in
+            typealias CameraStream = ServerStreamingCall<Anki_Vector_ExternalInterface_AudioFeedRequest, Anki_Vector_ExternalInterface_AudioFeedResponse>
+            let _: CameraStream = connection.makeServerStreamingCall(
+                path: "/Anki.Vector.external_interface.ExternalInterface/AudioFeed",
+                request: .init(),
+                callOptions: callOptions,
+                handler: { message in
+                    continuation.yield(.init(
+                        data: message.signalPower,
+                        timestamp: message.robotTimeStamp,
+                        direction: message.sourceDirection
+                    ))
+                }
+            )
+        }
+    }
+    
+    public func playAudio() throws {}
 }

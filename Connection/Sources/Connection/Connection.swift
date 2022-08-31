@@ -7,15 +7,15 @@ public typealias ControlRequestStream = BidirectionalStreamingCall<Anki_Vector_E
 public protocol Connection {
     /// Connection delegate
     var delegate: ConnectionDelegate? { get set }
-    
+
     /// Request control
     /// - Throws error of control request failed
     func requestControl() throws
-    
+
     /// Release control
     /// - Throws if release request is failed
     func releaseControl() throws
-    
+
     /// Initialise SDK
     /// - Throws if sdk init falied
     func initSdk() async throws
