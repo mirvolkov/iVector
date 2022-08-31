@@ -10,8 +10,8 @@ import SwiftProtobuf
 import Foundation
 import Network
 import NIOTransportServices
-import Security
 import os.log
+import Security
 
 public final class VectorConnection: Connection {
     private let guid: String = "uOXbJIpdSiGgM6SgSoYFUA=="
@@ -51,7 +51,7 @@ public final class VectorConnection: Connection {
         try? connection.close().wait()
     }
     
-    public func initSdk() async throws -> Bool {
+    public func initSdk() async throws {
         var sdkInitRequest = Anki_Vector_ExternalInterface_SDKInitializationRequest()
         sdkInitRequest.sdkModuleVersion = "0.6.0"
         sdkInitRequest.osVersion = "macOS-12.4-arm64-arm-64bit"
@@ -59,22 +59,21 @@ public final class VectorConnection: Connection {
         sdkInitRequest.cpuVersion = "arm64"
         sdkInitRequest.pythonImplementation = "CPython"
         
-        let sdkInitCall: UnaryCall<Anki_Vector_ExternalInterface_SDKInitializationRequest, Anki_Vector_ExternalInterface_SDKInitializationResponse> =
-            connection.makeUnaryCall(
-                path: "/Anki.Vector.external_interface.ExternalInterface/SDKInitialization",
-                request: try .init(serializedData: try! sdkInitRequest.serializedData()),
-                callOptions: callOptions
-            )
+        let sdk: UnaryCall<Anki_Vector_ExternalInterface_SDKInitializationRequest, Anki_Vector_ExternalInterface_SDKInitializationResponse> = connection.makeUnaryCall(
+            path: "/Anki.Vector.external_interface.ExternalInterface/SDKInitialization",
+            request: sdkInitRequest,
+            callOptions: callOptions
+        )
         
-        return try await withCheckedThrowingContinuation { continuation in
-            sdkInitCall.response.whenFailure { error in
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            sdk.response.whenFailure { error in
                 self.log("SDK INIT ERROR \(error)")
                 continuation.resume(throwing: error)
             }
             
-            sdkInitCall.response.whenSuccess { response in
-                self.log("SDK INIT SUCCESS \(response.status.isInitialized)")
-                continuation.resume(returning: response.hasStatus)
+            sdk.response.whenSuccess { response in
+                self.log("SDK INIT SUCCESS \(response)")
+                continuation.resume()
             }
         }
     }
@@ -104,6 +103,14 @@ public final class VectorConnection: Connection {
         let _ = requestStream?.sendMessage(controlRequest)
     }
     
+    public func releaseControl() throws {
+        var controlRequest = Anki_Vector_ExternalInterface_BehaviorControlRequest()
+        controlRequest.controlRelease = Anki_Vector_ExternalInterface_ControlRelease()
+        let _ = requestStream?.sendMessage(controlRequest)
+        try requestStream?.eventLoop.close()
+        requestStream?.cancel(promise: nil)
+        delegate?.didClose()
+    }
 }
 
 extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
@@ -126,13 +133,9 @@ private extension VectorConnection {
 }
 
 extension VectorConnection: Behavior {
-    public func setHeadAngle(_ angle: Float) async throws {
-        
-    }
+    public func setHeadAngle(_ angle: Float) async throws {}
     
-    public func say(text: String) throws {
-        
-    }
+    public func say(text: String) throws {}
     
     public func setEyeColor(_ hue: Float, _ sat: Float) async throws {
         var eyeColorRequest = Anki_Vector_ExternalInterface_SetEyeColorRequest()
@@ -151,6 +154,22 @@ extension VectorConnection: Behavior {
             eyeColor.response.whenFailure { _ in
                 continuation.resume()
             }
+        }
+    }
+}
+
+extension VectorConnection: Camera {
+    public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
+        return .init { continuation in
+            typealias CameraStream = ServerStreamingCall<Anki_Vector_ExternalInterface_CameraFeedRequest, Anki_Vector_ExternalInterface_CameraFeedResponse>
+            let _: CameraStream = connection.makeServerStreamingCall(
+                path: "/Anki.Vector.external_interface.ExternalInterface/CameraFeed",
+                request: .init(),
+                callOptions: callOptions,
+                handler: { message in
+                    continuation.yield(.init(data: message.data))
+                }
+            )
         }
     }
 }

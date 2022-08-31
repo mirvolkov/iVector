@@ -8,12 +8,12 @@
 import Foundation
 
 public struct VectorCameraFrame {
-    
+    public let data: Data
 }
 
-protocol Camera {
+public protocol Camera {
     /// Request Vector's camera feed
     /// - Returns AsyncStream type with frame
     /// - Throws error if request failed
-    func requestFeed() throws -> AsyncStream<VectorCameraFrame>
+    func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame>
 }
