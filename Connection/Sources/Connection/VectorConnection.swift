@@ -20,6 +20,7 @@ public final class VectorConnection: Connection {
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private let connection: ClientConnection
     private var requestStream: ControlRequestStream?
+    private static let firstSDKTag: Int32 = 2000001
     
     public weak var delegate: ConnectionDelegate?
     
@@ -136,6 +137,9 @@ extension VectorConnection: Behavior {
     public func setHeadAngle(_ angle: Float) async throws {
         var request: Anki_Vector_ExternalInterface_SetHeadAngleRequest = .init()
         request.angleRad = angle * Float.pi / 180.0
+        request.accelRadPerSec2 = 10
+        request.maxSpeedRadPerSec = 10
+        request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetHeadAngleRequest, Anki_Vector_ExternalInterface_SetHeadAngleResponse> = connection.makeUnaryCall(
             path: "/Anki.Vector.external_interface.ExternalInterface/SetHeadAngle",
             request: request,
@@ -177,7 +181,6 @@ extension VectorConnection: Behavior {
         var eyeColorRequest = Anki_Vector_ExternalInterface_SetEyeColorRequest()
         eyeColorRequest.hue = hue
         eyeColorRequest.saturation = sat
-        
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest, Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
             path: "/Anki.Vector.external_interface.ExternalInterface/SetEyeColor",
             request: eyeColorRequest, callOptions: callOptions
@@ -220,6 +223,7 @@ extension VectorConnection: Behavior {
         request.speedRadPerSec = speed
         request.accelRadPerSec2 = accel
         request.tolRad = angleTolerance
+        request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_TurnInPlaceRequest, Anki_Vector_ExternalInterface_TurnInPlaceResponse> = connection.makeUnaryCall(
             path: "/Anki.Vector.external_interface.ExternalInterface/TurnInPlace",
             request: request,
