@@ -1,0 +1,124 @@
+{
+  "layer_shapes" : {
+    "slice_y_output" : {
+      "k" : 1,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "slice_h_output" : {
+      "k" : 1,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "slice_w_output" : {
+      "k" : 1,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "scale_yx_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "slice_x_output" : {
+      "k" : 1,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "slice_hw_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "permute_scores_output" : {
+      "k" : 1,
+      "w" : 91,
+      "n" : 1,
+      "h" : 3000
+    },
+    "scores" : {
+      "k" : 91,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "concat_output" : {
+      "k" : 4,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "anchors_hw" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "anchors_yx" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "decoded_yx_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "scale_hw_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "slice_yx_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "yw_times_hw_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "exp_hw_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "boxes" : {
+      "k" : 4,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    },
+    "raw_coordinates" : {
+      "k" : 1,
+      "w" : 4,
+      "n" : 1,
+      "h" : 3000
+    },
+    "raw_confidence" : {
+      "k" : 1,
+      "w" : 90,
+      "n" : 1,
+      "h" : 3000
+    },
+    "decoded_hw_output" : {
+      "k" : 2,
+      "w" : 1,
+      "n" : 1,
+      "h" : 3000
+    }
+  }
+}
