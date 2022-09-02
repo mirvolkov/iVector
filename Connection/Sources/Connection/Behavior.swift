@@ -1,5 +1,28 @@
 import Foundation
 
+public enum VectorBatteryState {
+    case charging
+    case low
+    case normal
+    case full
+    case unknown
+    
+    init(with entity: Anki_Vector_ExternalInterface_BatteryLevel) {
+        switch entity {
+        case .unknown:
+            self = .unknown
+        case .low:
+            self = .low
+        case .nominal:
+            self = .normal
+        case .full:
+            self = .full
+        case .UNRECOGNIZED:
+            self = .unknown
+        }
+    }
+}
+
 public protocol Behavior {
     /// Request vector say some text
     /// - Throws error if request failed
@@ -37,4 +60,9 @@ public protocol Behavior {
     /// Drive on charger
     /// - Throws error if request failed
     func driveOnCharger() async throws
+    
+    /// Read battery state
+    /// - Returns battery state
+    /// - Throws if reading failed
+    func getBatteryLevel() async throws -> VectorBatteryState 
 }

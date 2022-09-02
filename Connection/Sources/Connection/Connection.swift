@@ -1,7 +1,8 @@
 import GRPC
 
 // Control request stream typealias
-public typealias ControlRequestStream = BidirectionalStreamingCall<Anki_Vector_ExternalInterface_BehaviorControlRequest, Anki_Vector_ExternalInterface_BehaviorControlResponse>
+public typealias ControlRequestStream = BidirectionalStreamingCall<Anki_Vector_ExternalInterface_BehaviorControlRequest,
+    Anki_Vector_ExternalInterface_BehaviorControlResponse>
 
 /// Anki Vector's connection protocol
 public protocol Connection {
