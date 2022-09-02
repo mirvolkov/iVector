@@ -1,6 +1,6 @@
 import Foundation
 
-public enum VectorBatteryState {
+public enum VectorBatteryState: CustomStringConvertible {
     case charging
     case low
     case normal
@@ -19,6 +19,21 @@ public enum VectorBatteryState {
             self = .full
         case .UNRECOGNIZED:
             self = .unknown
+        }
+    }
+    
+    public var description: String {
+        switch self {
+        case .charging:
+            return "charing"
+        case .full:
+            return "full"
+        case .normal:
+            return "normal"
+        case .low:
+            return "low"
+        case .unknown:
+            return "unknown"
         }
     }
 }
@@ -64,5 +79,5 @@ public protocol Behavior {
     /// Read battery state
     /// - Returns battery state
     /// - Throws if reading failed
-    func getBatteryLevel() async throws -> VectorBatteryState 
+    var battery: VectorBatteryState? { get async throws }
 }

@@ -14,6 +14,7 @@ import os.log
 import Security
 
 public final class VectorConnection: Connection {
+    private let prefixURI = "/Anki.Vector.external_interface.ExternalInterface/"
     private let guid: String = "uOXbJIpdSiGgM6SgSoYFUA=="
     private lazy var callOptions: CallOptions = .init(customMetadata: headers)
     private lazy var headers: HPACKHeaders = ["authorization": "Bearer \(guid)"]
@@ -22,7 +23,7 @@ public final class VectorConnection: Connection {
     private var requestStream: ControlRequestStream?
     private static let firstSDKTag: Int32 = 2000001
     public weak var delegate: ConnectionDelegate?
-
+    
     public init(with ip: String, port: Int) {
         logger.debug("Vector connection init")
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
@@ -60,8 +61,8 @@ public final class VectorConnection: Connection {
         sdkInitRequest.pythonImplementation = "CPython"
         
         let sdk: UnaryCall<Anki_Vector_ExternalInterface_SDKInitializationRequest,
-                           Anki_Vector_ExternalInterface_SDKInitializationResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/SDKInitialization",
+            Anki_Vector_ExternalInterface_SDKInitializationResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SDKInitialization",
             request: sdkInitRequest,
             callOptions: callOptions
         )
@@ -81,7 +82,7 @@ public final class VectorConnection: Connection {
     
     public func requestControl() throws {
         requestStream = connection.makeBidirectionalStreamingCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/BehaviorControl",
+            path: "\(prefixURI)BehaviorControl",
             callOptions: callOptions
         ) { response in
             switch response.responseType {
@@ -141,8 +142,8 @@ extension VectorConnection: Behavior {
         request.maxSpeedRadPerSec = 10
         request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetHeadAngleRequest,
-                            Anki_Vector_ExternalInterface_SetHeadAngleResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/SetHeadAngle",
+            Anki_Vector_ExternalInterface_SetHeadAngleResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SetHeadAngle",
             request: request,
             callOptions: callOptions
         )
@@ -163,8 +164,8 @@ extension VectorConnection: Behavior {
         request.useVectorVoice = true
         request.durationScalar = 1.0
         let call: UnaryCall<Anki_Vector_ExternalInterface_SayTextRequest,
-                            Anki_Vector_ExternalInterface_SayTextResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/SayText",
+            Anki_Vector_ExternalInterface_SayTextResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SayText",
             request: request,
             callOptions: callOptions
         )
@@ -183,8 +184,8 @@ extension VectorConnection: Behavior {
         eyeColorRequest.hue = hue
         eyeColorRequest.saturation = sat
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest,
-                            Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/SetEyeColor",
+            Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SetEyeColor",
             request: eyeColorRequest, callOptions: callOptions
         )
 
@@ -204,8 +205,8 @@ extension VectorConnection: Behavior {
         request.speedMmps = speed
         request.shouldPlayAnimation = animate
         let call: UnaryCall<Anki_Vector_ExternalInterface_DriveStraightRequest,
-                            Anki_Vector_ExternalInterface_DriveStraightResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/DriveStraight",
+            Anki_Vector_ExternalInterface_DriveStraightResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)DriveStraight",
             request: request,
             callOptions: callOptions
         )
@@ -227,8 +228,8 @@ extension VectorConnection: Behavior {
         request.tolRad = angleTolerance
         request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_TurnInPlaceRequest,
-                            Anki_Vector_ExternalInterface_TurnInPlaceResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/TurnInPlace",
+            Anki_Vector_ExternalInterface_TurnInPlaceResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)TurnInPlace",
             request: request,
             callOptions: callOptions
         )
@@ -245,8 +246,8 @@ extension VectorConnection: Behavior {
     public func driveOnCharger() async throws {
         let request: Anki_Vector_ExternalInterface_DriveOnChargerRequest = .init()
         let call: UnaryCall<Anki_Vector_ExternalInterface_DriveOnChargerRequest,
-                            Anki_Vector_ExternalInterface_DriveOnChargerResponse> = connection.makeUnaryCall(
-            path: "/Anki.Vector.external_interface.ExternalInterface/DriveOnCharger",
+            Anki_Vector_ExternalInterface_DriveOnChargerResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)DriveOnCharger",
             request: request,
             callOptions: callOptions
         )
@@ -265,7 +266,7 @@ extension VectorConnection: Behavior {
         let call: UnaryCall<Anki_Vector_ExternalInterface_DriveOffChargerRequest,
             Anki_Vector_ExternalInterface_DriveOffChargerResponse>
             = connection.makeUnaryCall(
-                path: "/Anki.Vector.external_interface.ExternalInterface/DriveOffCharger",
+                path: "\(prefixURI)DriveOffCharger",
                 request: request,
                 callOptions: callOptions
             )
@@ -280,29 +281,30 @@ extension VectorConnection: Behavior {
         }
     }
     
-    public func getBatteryLevel() async throws -> VectorBatteryState {
-        let request: Anki_Vector_ExternalInterface_BatteryStateRequest = .init()
-        let call: UnaryCall<Anki_Vector_ExternalInterface_BatteryStateRequest,
-                            Anki_Vector_ExternalInterface_BatteryStateResponse>
-            = connection.makeUnaryCall(
-                path: "/Anki.Vector.external_interface.ExternalInterface/BatteryState",
-                request: request,
-                callOptions: callOptions
-            )
+    public var battery: VectorBatteryState? {
+        get async throws {
+            let request: Anki_Vector_ExternalInterface_BatteryStateRequest = .init()
+            let call: UnaryCall<Anki_Vector_ExternalInterface_BatteryStateRequest,
+                Anki_Vector_ExternalInterface_BatteryStateResponse>
+                = connection.makeUnaryCall(
+                    path: "\(prefixURI)BatteryState",
+                    request: request,
+                    callOptions: callOptions
+                )
 
-        return try await withCheckedThrowingContinuation { continuation in
-            call.response.whenSuccess { result in
-                if result.isCharging {
-                    continuation.resume(returning: .charging)
-                } else {
-                    continuation.resume(returning: .init(with: result.batteryLevel))
+            return try await withCheckedThrowingContinuation { continuation in
+                call.response.whenSuccess { result in
+                    if result.isCharging {
+                        continuation.resume(returning: .charging)
+                    } else {
+                        continuation.resume(returning: .init(with: result.batteryLevel))
+                    }
+                }
+                call.response.whenFailure { error in
+                    continuation.resume(throwing: error)
                 }
             }
-            call.response.whenFailure { error in
-                continuation.resume(throwing: error)
-            }
         }
-        
     }
 }
 
@@ -310,9 +312,9 @@ extension VectorConnection: Camera {
     public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
         .init { continuation in
             typealias CameraStream = ServerStreamingCall<Anki_Vector_ExternalInterface_CameraFeedRequest,
-                                                         Anki_Vector_ExternalInterface_CameraFeedResponse>
+                Anki_Vector_ExternalInterface_CameraFeedResponse>
             let _: CameraStream = connection.makeServerStreamingCall(
-                path: "/Anki.Vector.external_interface.ExternalInterface/CameraFeed",
+                path: "\(prefixURI)CameraFeed",
                 request: .init(),
                 callOptions: callOptions,
                 handler: { message in
@@ -327,9 +329,9 @@ extension VectorConnection: Audio {
     public func requestMicFeed() throws -> AsyncStream<AudioFrame> {
         .init { continuation in
             typealias CameraStream = ServerStreamingCall<Anki_Vector_ExternalInterface_AudioFeedRequest,
-                                                         Anki_Vector_ExternalInterface_AudioFeedResponse>
+                Anki_Vector_ExternalInterface_AudioFeedResponse>
             let _: CameraStream = connection.makeServerStreamingCall(
-                path: "/Anki.Vector.external_interface.ExternalInterface/AudioFeed",
+                path: "\(prefixURI)AudioFeed",
                 request: .init(),
                 callOptions: callOptions,
                 handler: { message in
@@ -342,6 +344,44 @@ extension VectorConnection: Audio {
             )
         }
     }
-
-    public func playAudio() throws {}
+    
+    public func playAudio(stream: AsyncStream<AudioFrame>) throws {
+        let audioCall: BidirectionalStreamingCall<Anki_Vector_ExternalInterface_ExternalAudioStreamRequest,
+            Anki_Vector_ExternalInterface_ExternalAudioStreamResponse> = connection.makeBidirectionalStreamingCall(
+            path: "\(prefixURI)ExternalAudioStreamPlayback",
+            callOptions: callOptions,
+            handler: { message in
+                switch message.audioResponseType {
+                case .audioStreamPlaybackComplete(let complete):
+                    print(complete)
+                case .audioStreamPlaybackFailyer(let failure):
+                    print(failure)
+                case .audioStreamBufferOverrun(let overrun):
+                    print(overrun)
+                case .none:
+                    print("none")
+                }
+            }
+        )
+        
+        Task {
+            var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+            prepareRequest.audioStreamPrepare = .init()
+            prepareRequest.audioStreamPrepare.audioVolume = 50
+            prepareRequest.audioStreamPrepare.audioFrameRate = 11025
+            let _ = audioCall.sendMessage(prepareRequest)
+            
+            for await chunk in stream {
+                var chunkRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+                chunkRequest.audioStreamChunk = .init()
+                chunkRequest.audioStreamChunk.audioChunkSamples = chunk.data
+                chunkRequest.audioStreamChunk.audioChunkSizeBytes = 1024
+                let _ = audioCall.sendMessage(chunkRequest)
+            }
+            
+            var completeRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+            completeRequest.audioStreamComplete = .init()
+            let _ = audioCall.sendMessage(completeRequest)
+        }
+    }
 }
