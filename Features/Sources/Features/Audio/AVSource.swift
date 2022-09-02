@@ -1,17 +1,21 @@
-import Foundation
-import Speech
 import AVKit
 import Combine
+import Foundation
+import Speech
 
 #if os(iOS)
 public final class AudioSession: NSObject {
-    private lazy var audioEngine: AVAudioEngine = AVAudioEngine()
-    private lazy var audioSession: AVAudioSession = AVAudioSession.sharedInstance()
+    private lazy var audioEngine: AVAudioEngine = .init()
+    private lazy var audioSession: AVAudioSession = .sharedInstance()
     @Published var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
     
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
         do {
-            try audioSession.setCategory(AVAudioSession.Category.record, mode: AVAudioSession.Mode.measurement, options: AVAudioSession.CategoryOptions.allowAirPlay)
+            try audioSession.setCategory(
+                AVAudioSession.Category.record,
+                mode: AVAudioSession.Mode.measurement,
+                options: AVAudioSession.CategoryOptions.allowAirPlay
+            )
             try audioSession.setMode(AVAudioSession.Mode.measurement)
             try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         } catch {
@@ -23,7 +27,7 @@ public final class AudioSession: NSObject {
             let recordingFormat = inputNode.inputFormat(forBus: 0)
             guard recordingFormat.channelCount > 0 else { return }
             inputNode.removeTap(onBus: 0)
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
+            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
                 self?.audioStream.send(buffer)
             }
             
