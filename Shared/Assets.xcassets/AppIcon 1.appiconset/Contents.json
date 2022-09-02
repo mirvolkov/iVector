@@ -1,0 +1,14 @@
+{
+  "images" : [
+    {
+      "filename" : "mir_neon_green_rover_robot_78ab62cf-edaf-42f8-9cee-0c13ff1fd465.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

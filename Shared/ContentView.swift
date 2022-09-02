@@ -1,78 +1,54 @@
-import SwiftUI
 import Connection
 import GRPC
-
-class ViewModel: ObservableObject {
-    let connection = VectorConnection(with: "192.168.0.105", port: 443)
-    var client: ClientConnection!
-    var control: ControlRequestStream!
-    
-//    var control: Connection.
-    func start() {
-        do {
-            control = try connection.control()
-            try connection.requestControl(stream: control)
-        } catch {
-            print(error)
-        }
-    }
-}
-
-//struct ContentView: View {
-//    @StateObject var viewModel = VectorConnection()
-//    @MainActor @State var isLoading = false
-//
-//    var body: some View {
-//        Button {
-//            Task {
-//                isLoading = true
-//                let connection = try viewModel.open()
-//                viewModel.requestControl(with: connection)
-////                defer { connection.close() }
-////                guard try await viewModel.initSdk(with: connection) else { return }
-//                Task {
-//                    /***
-//                     // We can't read more than one message on a unary stream.
-//                     */
-//
-////                        try viewModel.requestControl(with: connection)
-//                    //        Task {
-//                    while true {
-//                        var controlRequest = Anki_Vector_ExternalInterface_BehaviorControlRequest()
-////                        controlRequest.priority = .reserveControl
-//                        controlRequest.controlRequest = Anki_Vector_ExternalInterface_ControlRequest()
-//                        controlRequest.controlRequest.priority = .default
-//                        let _ = viewModel.controlRequestCall.sendMessage(controlRequest)
-////                        viewModel.controlRequestCall.response.whenSuccess { result in
-////                            print("REQUEST CONTROL STATUS \(result)")
-////                        }
-//
-//                        try await Task.sleep(nanoseconds: 1_000_000_000)
-//                    }
-//                    //        }
-//                }
-////                await viewModel.setEyeColor(with: connection)
-//                isLoading = false
-//            }
-//        } label: {
-//            if isLoading {
-//                Text("Connecting...").disabled(true)
-//            } else {
-//                Text("Connect")
-//            }
-//        }
-//    }
-//}
+import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel: ViewModel = .init()
-    
+    @StateObject var viewModel: ConnectionViewModel = .init(AppState.instance.connection)
+    @State var preferences = false
+
     var body: some View {
-        Button {
-            viewModel.start()
-        } label: {
-            Text("Connect")
+        VStack {
+            Button {
+                if viewModel.isConnected {
+                    viewModel.disconnect()
+                } else {
+                    viewModel.connect()
+                }
+            } label: {
+                if viewModel.isLoading {
+                    Text("Connecting...")
+                } else if viewModel.isConnected {
+                    Text("Disconnect")
+                    if let battery = viewModel.battery {
+                        Text("\(battery.description)")
+                    }
+                } else {
+                    Text("Connect")
+                }
+            }.disabled(viewModel.isLoading)
+
+            Spacer().frame(height: 20)
+
+            Button {
+                preferences = true
+#if os(macOS)
+                NSWorkspace.shared.open(.init(string: "ivector://SettingsView")!)
+#endif
+            } label: {
+                Image(systemName: "gear")
+                    .resizable()
+                    .foregroundColor(.green)
+                    .frame(width: 40, height: 40)
+            }.buttonStyle(.plain)
         }
+#if os(iOS)
+        .sheet(isPresented: $preferences) {
+            SettingsView()
+        }
+#endif
+#if os(macOS)
+.frame(width: 320, height: 480)
+#endif
     }
 }
 
