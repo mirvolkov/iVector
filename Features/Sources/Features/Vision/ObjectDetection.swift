@@ -33,7 +33,7 @@ public final class ObjectDetection {
 
     private lazy var visionRequest: VNCoreMLRequest = {
         let request = VNCoreMLRequest(model: movileNetV2, completionHandler: { [weak self] request, _ in
-            if let results = request.results as? [VNRecognizedObjectObservation], results.count > 0, let self = self {
+            if let results = request.results as? [VNRecognizedObjectObservation], !results.isEmpty, let self = self {
                 self.objects.send(results)
             }
         })
@@ -41,10 +41,8 @@ public final class ObjectDetection {
         return request
     }()
 
-    public init() {
-        
-    }
-    
+    public init() {}
+
     public func process(_ buffer: CVPixelBuffer) {
         do {
             let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: buffer, options: requestOptions)
@@ -63,17 +61,17 @@ public final class ObjectDetection {
         }
     }
 
-//#if os(macOS)
+    // #if os(macOS)
 //    public func process(_ image: NSImage) {
 //        // TODO: NSImage conversion
 //    }
-//#endif
+    // #endif
 //
-//#if os(iOS)
+    // #if os(iOS)
 //    public func process(_ image: UIImage) {
 //        // TODO: fix hardcoded values
 //        guard let buffer = image.pixelBuffer(width: 300, height: 300) else { return }
 //        process(buffer)
 //    }
-//#endif
+    // #endif
 }

@@ -1,8 +1,14 @@
-//
-//  File.swift
-//  
-//
-//  Created by Miroslav Volkov on 02.09.2022.
-//
+import Combine
+import AVKit
 
-import Foundation
+struct VectorSource: AudioSource {
+    var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
+
+    func start() {
+        
+    }
+    
+    func stop() {
+
+    }
+}

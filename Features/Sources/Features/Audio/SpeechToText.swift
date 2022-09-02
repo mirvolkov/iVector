@@ -3,17 +3,21 @@ import Combine
 import Foundation
 import Speech
 
-public final class STT: NSObject, SFSpeechRecognizerDelegate {
+public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
     typealias SpeechRecognizerCallback = (String?) -> ()
     
     @Published public var available: Bool = false
     @Published public var stt: String? = nil
-    public static var shared: STT = .init()
     
     private var recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     private var recognitionTask: SFSpeechRecognitionTask?
+    private let source: AudioSource
     
-    override fileprivate init() {}
+    private let audioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: true)!
+    
+    required init(with source: AudioSource) {
+        self.source = source
+    }
     
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
         if let speechRecognizer = SFSpeechRecognizer(locale: currentLocale) {
@@ -24,10 +28,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
                 switch authStatus {
                 case .authorized:
                     self.available = true
-                    self.startRecording(speechRecognizer: speechRecognizer) { [weak self] text in
-                        self?.stt = text
-                    }
-                    
+                    self.startRecording(speechRecognizer: speechRecognizer)
                 default:
                     self.available = false
                 }
@@ -37,8 +38,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
         }
     }
 
-    let playerNode = AVAudioPlayerNode()
-    private func startRecording(speechRecognizer: SFSpeechRecognizer, callback: @escaping SpeechRecognizerCallback) {
+    private func startRecording(speechRecognizer: SFSpeechRecognizer) {
         if recognitionTask != nil {
             recognitionTask?.cancel()
             recognitionTask = nil
@@ -48,40 +48,37 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: { result, error in
             guard error == nil else {
                 self.stop()
-                self.startRecording(speechRecognizer: speechRecognizer, callback: callback)
+                self.startRecording(speechRecognizer: speechRecognizer)
                 return
             }
             
-            if let result = result {
-                DispatchQueue.main.async {
-                    callback(result.bestTranscription.segments.last?.substring)
-                }
-            
-                if result.isFinal {
-                    self.stop()
-                    self.startRecording(speechRecognizer: speechRecognizer, callback: callback)
-                }
+            if let result = result, result.isFinal {
+                self.stop()
+                self.startRecording(speechRecognizer: speechRecognizer)
             }
         })
     }
     
-    let audioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: true)!
+    // TODO: resampling (11025->16000)
     public func append(_ data: Data) {
         guard let buffer = data.pcmBuffer(format: audioFormat) else {
             debugPrint("Cannot convert buffer from Data")
             return
         }
         recognitionRequest.append(buffer)
-//        playerNode.scheduleBuffer(buffer)
     }
     
+    public func append(_ buffer: AVAudioPCMBuffer) {
+        recognitionRequest.append(buffer)
+    }
+
     private func stop() {
 //        audioEngine.inputNode.removeTap(onBus: 0)
 //        audioEngine.stop()
         recognitionRequest.endAudio()
         available = false
     }
-    
+
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         self.available = available
     }

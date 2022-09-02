@@ -4,12 +4,13 @@ import Foundation
 import Speech
 
 #if os(iOS)
-public final class AudioSession: NSObject {
+public final class AudioSession: AudioSource {
     private lazy var audioEngine: AVAudioEngine = .init()
     private lazy var audioSession: AVAudioSession = .sharedInstance()
-    @Published var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
     
-    public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
+    var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
+    
+    public func start() {
         do {
             try audioSession.setCategory(
                 AVAudioSession.Category.record,
@@ -38,7 +39,7 @@ public final class AudioSession: NSObject {
         }
     }
     
-    private func stop() {
+    public func stop() {
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
     }
