@@ -73,30 +73,11 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
     }
 
     private func stop() {
-//        audioEngine.inputNode.removeTap(onBus: 0)
-//        audioEngine.stop()
         recognitionRequest.endAudio()
         available = false
     }
 
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         self.available = available
-    }
-}
-
-private extension Data {
-    func pcmBuffer(format: AVAudioFormat) -> AVAudioPCMBuffer? {
-        let streamDesc = format.streamDescription.pointee
-        let frameCapacity = UInt32(count) / streamDesc.mBytesPerFrame
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: frameCapacity) else { return nil }
-        buffer.frameLength = buffer.frameCapacity
-        let audioBuffer = buffer.audioBufferList.pointee.mBuffers
-        withUnsafeBytes { addr in
-            guard let baseAddress = addr.baseAddress else {
-                return
-            }
-            audioBuffer.mData?.copyMemory(from: baseAddress, byteCount: Int(audioBuffer.mDataByteSize))
-        }
-        return buffer
     }
 }

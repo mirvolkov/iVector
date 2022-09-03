@@ -25,7 +25,7 @@ public enum VectorBatteryState: CustomStringConvertible {
     public var description: String {
         switch self {
         case .charging:
-            return "charing"
+            return "charging"
         case .full:
             return "full"
         case .normal:

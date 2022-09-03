@@ -13,19 +13,37 @@ import NIOTransportServices
 import os.log
 import Security
 
+fileprivate actor DataAccumulator: Sendable {
+    var data: Data = .init()
+    
+    deinit {
+        print("Data accumulator deinit")
+    }
+    
+    func append(_ chunk: Data) {
+        data.append(chunk)
+    }
+    
+    func consume(_ size: Int) -> Data {
+        defer { data.removeFirst(min(data.count, size)) }
+        return data.prefix(size)
+    }
+}
+
+
 public final class VectorConnection: Connection {
     private let prefixURI = "/Anki.Vector.external_interface.ExternalInterface/"
     private let guid: String = "uOXbJIpdSiGgM6SgSoYFUA=="
     private lazy var callOptions: CallOptions = .init(customMetadata: headers)
     private lazy var headers: HPACKHeaders = ["authorization": "Bearer \(guid)"]
-    private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
+    private static let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private let connection: ClientConnection
     private var requestStream: ControlRequestStream?
     private static let firstSDKTag: Int32 = 2000001
     public weak var delegate: ConnectionDelegate?
     
     public init(with ip: String, port: Int) {
-        logger.debug("Vector connection init")
+        Self.log("Vector connection init")
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let certificatePath = Bundle.module.path(forResource: "Vector-E1B6-003099a9", ofType: "cert")!
         var tls = TLSConfiguration.makeClientConfiguration()
@@ -48,7 +66,7 @@ public final class VectorConnection: Connection {
     }
     
     deinit {
-        log("Vector connection deinit")
+        Self.log("Vector connection deinit")
         try? connection.close().wait()
     }
     
@@ -69,12 +87,12 @@ public final class VectorConnection: Connection {
         
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             sdk.response.whenFailure { error in
-                self.log("SDK INIT ERROR \(error)")
+                Self.log("SDK INIT ERROR \(error)")
                 continuation.resume(throwing: error)
             }
             
             sdk.response.whenSuccess { response in
-                self.log("SDK INIT SUCCESS \(response)")
+                Self.log("SDK INIT SUCCESS \(response)")
                 continuation.resume()
             }
         }
@@ -87,15 +105,15 @@ public final class VectorConnection: Connection {
         ) { response in
             switch response.responseType {
             case .controlGrantedResponse:
-                self.log("CONTROL GAINED")
+                Self.log("CONTROL GAINED")
                 self.delegate?.didGrantedControl()
             case .keepAlive:
                 self.delegate?.keepAlive()
             case .controlLostEvent:
-                self.log("CONTROL LOST")
+                Self.log("CONTROL LOST")
                 self.delegate?.didClose()
             default:
-                self.log("\(response)")
+                Self.log("\(response)")
             }
         }
         
@@ -117,20 +135,14 @@ public final class VectorConnection: Connection {
 
 extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
     public func connectivityStateDidChange(from oldState: ConnectivityState, to newState: ConnectivityState) {
-        print("connectivity from \(oldState) to \(newState)")
+        Self.log("connectivity from \(oldState) to \(newState)")
     }
     
     public func connectionStartedQuiescing() {}
     
     public func didCatchError(_ error: Error, logger: Logging.Logger, file: StaticString, line: Int) {
-        log("connection error \(error) at file \(file) at line \(line)")
+        Self.log("connection error \(error) at file \(file) at line \(line)")
         delegate?.didClose()
-    }
-}
-
-private extension VectorConnection {
-    func log(_ message: String) {
-        logger.debug("\(message)")
     }
 }
 
@@ -313,7 +325,7 @@ extension VectorConnection: Camera {
         .init { continuation in
             typealias CameraStream = ServerStreamingCall<Anki_Vector_ExternalInterface_CameraFeedRequest,
                 Anki_Vector_ExternalInterface_CameraFeedResponse>
-            let _: CameraStream = connection.makeServerStreamingCall(
+            let stream: CameraStream = connection.makeServerStreamingCall(
                 path: "\(prefixURI)CameraFeed",
                 request: .init(),
                 callOptions: callOptions,
@@ -321,6 +333,10 @@ extension VectorConnection: Camera {
                     continuation.yield(.init(data: message.data, encoding: message.imageEncoding))
                 }
             )
+            
+            continuation.onTermination = { _ in
+                stream.cancel(promise: nil)
+            }
         }
     }
 }
@@ -346,42 +362,45 @@ extension VectorConnection: Audio {
     }
     
     public func playAudio(stream: AsyncStream<AudioFrame>) throws {
+        let accumulator = DataAccumulator()
+        
         let audioCall: BidirectionalStreamingCall<Anki_Vector_ExternalInterface_ExternalAudioStreamRequest,
             Anki_Vector_ExternalInterface_ExternalAudioStreamResponse> = connection.makeBidirectionalStreamingCall(
             path: "\(prefixURI)ExternalAudioStreamPlayback",
             callOptions: callOptions,
-            handler: { message in
-                switch message.audioResponseType {
-                case .audioStreamPlaybackComplete(let complete):
-                    print(complete)
-                case .audioStreamPlaybackFailyer(let failure):
-                    print(failure)
-                case .audioStreamBufferOverrun(let overrun):
-                    print(overrun)
-                case .none:
-                    print("none")
-                }
+            handler: {  message in
+                Self.log("Audio stream callback \(message)")
             }
         )
         
         Task {
             var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
             prepareRequest.audioStreamPrepare = .init()
-            prepareRequest.audioStreamPrepare.audioVolume = 50
+            prepareRequest.audioStreamPrepare.audioVolume = 100
             prepareRequest.audioStreamPrepare.audioFrameRate = 11025
             let _ = audioCall.sendMessage(prepareRequest)
             
             for await chunk in stream {
-                var chunkRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
-                chunkRequest.audioStreamChunk = .init()
-                chunkRequest.audioStreamChunk.audioChunkSamples = chunk.data
-                chunkRequest.audioStreamChunk.audioChunkSizeBytes = 1024
-                let _ = audioCall.sendMessage(chunkRequest)
+                await accumulator.append(chunk.data)
+                while await accumulator.data.count > 0 {
+                    var chunkRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+                    chunkRequest.audioStreamChunk = .init()
+                    chunkRequest.audioStreamChunk.audioChunkSamples = await accumulator.consume(1024)
+                    chunkRequest.audioStreamChunk.audioChunkSizeBytes = 1024
+                    let _ = audioCall.sendMessage(chunkRequest)
+                }
             }
             
             var completeRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
             completeRequest.audioStreamComplete = .init()
             let _ = audioCall.sendMessage(completeRequest)
         }
+    }
+}
+
+/// Logging extension
+private extension VectorConnection {
+    static func log(_ message: String) {
+        logger.debug("\(message)")
     }
 }
