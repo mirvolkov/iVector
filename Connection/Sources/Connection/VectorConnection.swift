@@ -399,14 +399,14 @@ extension VectorConnection: Audio {
                 Self.log("Audio stream callback \(message)")
             }
         )
+        
+        var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+        prepareRequest.audioStreamPrepare = .init()
+        prepareRequest.audioStreamPrepare.audioVolume = 100
+        prepareRequest.audioStreamPrepare.audioFrameRate = 11_025
+        _ = audioCall.sendMessage(prepareRequest)
 
         Task {
-            var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
-            prepareRequest.audioStreamPrepare = .init()
-            prepareRequest.audioStreamPrepare.audioVolume = 100
-            prepareRequest.audioStreamPrepare.audioFrameRate = 11_025
-            _ = audioCall.sendMessage(prepareRequest)
-
             for await chunk in stream {
                 await accumulator.append(chunk.data)
                 while await !accumulator.data.isEmpty {

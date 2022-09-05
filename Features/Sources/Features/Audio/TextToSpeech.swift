@@ -2,8 +2,9 @@ import AVFoundation
 import Connection
 
 public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
-    let synth = AVSpeechSynthesizer()
-
+    private let synth = AVSpeechSynthesizer()
+    private var lastContinuation: AsyncStream<AudioFrame>.Continuation?
+    
     func resampleBuffer(inSource: AVAudioPCMBuffer, newSampleRate: Double = 11025.0) -> AVAudioPCMBuffer? {
         let outSettings = [
             AVFormatIDKey: kAudioFormatLinearPCM, // kAudioFormatAppleLossless
@@ -41,11 +42,16 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
         return outBuffer
     }
 
-    public func writeToFile(_ stringToSpeak: String, language: String = "ru-RU") -> AsyncStream<AudioFrame> {
+    public func writeToFile(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<AudioFrame> {
         let utterance = AVSpeechUtterance(string: stringToSpeak)
-        utterance.voice = AVSpeechSynthesisVoice(language: language)
+        utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
         utterance.volume = 1
+        #if os(iOS)
+        synth.usesApplicationAudioSession = false
+        #endif
+        synth.delegate = self
         return .init { continuation in
+            self.lastContinuation = continuation
             synth.write(utterance) { (buffer: AVAudioBuffer) in
                 guard let pcmBuffer = buffer as? AVAudioPCMBuffer else {
                     continuation.finish()
@@ -57,19 +63,23 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
                 }
 
                 continuation.yield(.init(data: resampled.data()))
-                continuation.finish()
             }
         }
     }
 
     #if os(iOS)
-    func say(_ string: String, language: String = "ru-RU") {
+    func say(_ string: String, locale: Locale = Locale.current) {
         let audioSession = AVAudioSession.sharedInstance()
         try? audioSession.overrideOutputAudioPort(.speaker)
         let utterance = AVSpeechUtterance(string: string)
-        utterance.voice = AVSpeechSynthesisVoice(language: language)
+        utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
         utterance.volume = 1
         self.synth.speak(utterance)
     }
     #endif
+
+    public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        lastContinuation?.finish()
+        lastContinuation = nil
+    }
 }
