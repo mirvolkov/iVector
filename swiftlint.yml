@@ -67,7 +67,7 @@ opt_in_rules:
   - empty_string
   - empty_xctest_method
   - enum_case_associated_values_count
-  - expiring_todo
+#  - expiring_todo
   - explicit_init
   - extension_access_modifier
   - fallthrough
@@ -98,7 +98,7 @@ opt_in_rules:
   - no_fallthrough_only
   - nslocalizedstring_key
   - number_separator
-  - operator_usage_whitespace
+#  - operator_usage_whitespace
   - optional_enum_case_matching
   - orphaned_doc_comment
   - overridden_super_call

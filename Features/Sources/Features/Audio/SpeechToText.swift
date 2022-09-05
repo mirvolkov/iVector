@@ -4,21 +4,26 @@ import Foundation
 import Speech
 
 public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
-    typealias SpeechRecognizerCallback = (String?) -> ()
-    
-    @Published public var available: Bool = false
-    @Published public var stt: String? = nil
-    
+    typealias SpeechRecognizerCallback = (String?) -> Void
+
+    @Published public var available = false
+    @Published public var stt: String?
+
     private var recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
     private var recognitionTask: SFSpeechRecognitionTask?
     private let source: AudioSource
-    
-    private let audioFormat = AVAudioFormat(commonFormat: .pcmFormatInt16, sampleRate: 16000, channels: 1, interleaved: true)!
-    
+
+    private let audioFormat = AVAudioFormat(
+        commonFormat: .pcmFormatInt16,
+        sampleRate: 16_000,
+        channels: 1,
+        interleaved: true
+    )!
+
     required init(with source: AudioSource) {
         self.source = source
     }
-    
+
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
         if let speechRecognizer = SFSpeechRecognizer(locale: currentLocale) {
             speechRecognizer.delegate = self
@@ -29,6 +34,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
                 case .authorized:
                     self.available = true
                     self.startRecording(speechRecognizer: speechRecognizer)
+
                 default:
                     self.available = false
                 }
@@ -43,7 +49,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
             recognitionTask?.cancel()
             recognitionTask = nil
         }
-  
+
         recognitionRequest.shouldReportPartialResults = true
         recognitionTask = speechRecognizer.recognitionTask(with: recognitionRequest, resultHandler: { result, error in
             guard error == nil else {
@@ -51,15 +57,14 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
                 self.startRecording(speechRecognizer: speechRecognizer)
                 return
             }
-            
+
             if let result = result, result.isFinal {
                 self.stop()
                 self.startRecording(speechRecognizer: speechRecognizer)
             }
         })
     }
-    
-    // TODO: resampling (11025->16000)
+
     public func append(_ data: Data) {
         guard let buffer = data.pcmBuffer(format: audioFormat) else {
             debugPrint("Cannot convert buffer from Data")
@@ -67,7 +72,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
         }
         recognitionRequest.append(buffer)
     }
-    
+
     public func append(_ buffer: AVAudioPCMBuffer) {
         recognitionRequest.append(buffer)
     }

@@ -10,13 +10,6 @@ import CoreML
 import os.log
 import Vision
 
-#if os(iOS)
-import UIKit
-#endif
-#if os(macOS)
-import AppKit
-#endif
-
 public final class ObjectDetection {
     @Published public var objects: PassthroughSubject<[VNRecognizedObjectObservation], Never> = .init()
     private lazy var requestOptions: [VNImageOption: Any] = [:]
@@ -60,18 +53,4 @@ public final class ObjectDetection {
             print(error)
         }
     }
-
-    // #if os(macOS)
-//    public func process(_ image: NSImage) {
-//        // TODO: NSImage conversion
-//    }
-    // #endif
-//
-    // #if os(iOS)
-//    public func process(_ image: UIImage) {
-//        // TODO: fix hardcoded values
-//        guard let buffer = image.pixelBuffer(width: 300, height: 300) else { return }
-//        process(buffer)
-//    }
-    // #endif
 }

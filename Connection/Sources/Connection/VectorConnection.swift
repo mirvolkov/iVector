@@ -15,15 +15,11 @@ import Security
 
 private actor DataAccumulator: Sendable {
     var data: Data = .init()
-    
-    deinit {
-        print("Data accumulator deinit")
-    }
-    
+
     func append(_ chunk: Data) {
         data.append(chunk)
     }
-    
+
     func consume(_ size: Int) -> Data {
         defer { data.removeFirst(min(data.count, size)) }
         return data.prefix(size)
@@ -38,37 +34,37 @@ public final class VectorConnection: Connection {
     private static let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private let connection: ClientConnection
     private var requestStream: ControlRequestStream?
-    private static let firstSDKTag: Int32 = 2000001
+    private static let firstSDKTag: Int32 = 2_000_001
     public weak var delegate: ConnectionDelegate?
-    
-    public init(with ip: String, port: Int) {
+
+    public init(with ipAddress: String, port: Int) {
         Self.log("Vector connection init")
         let group = MultiThreadedEventLoopGroup(numberOfThreads: 1)
         let certificatePath = Bundle.module.path(forResource: "Vector-E1B6-003099a9", ofType: "cert")!
-        var tls = TLSConfiguration.makeClientConfiguration()
-        tls.trustRoots = .file(certificatePath)
-        tls.certificateVerification = .noHostnameVerification
-        tls.applicationProtocols = ["h2"]
+        var tlsConfig = TLSConfiguration.makeClientConfiguration()
+        tlsConfig.trustRoots = .file(certificatePath)
+        tlsConfig.certificateVerification = .noHostnameVerification
+        tlsConfig.applicationProtocols = ["h2"]
 
-        let tls1 = ClientConnection.Configuration.TLS(configuration: tls)
+        let tls1 = ClientConnection.Configuration.TLS(configuration: tlsConfig)
         var configuration = ClientConnection.Configuration(
-            target: .hostAndPort(ip, port),
+            target: .hostAndPort(ipAddress, port),
             eventLoopGroup: group,
             errorDelegate: nil,
             connectivityStateDelegate: nil,
             tls: tls1
         )
-        
+
         connection = ClientConnection(configuration: configuration)
         configuration.errorDelegate = self
         configuration.connectivityStateDelegate = self
     }
-    
+
     deinit {
         Self.log("Vector connection deinit")
         try? connection.close().wait()
     }
-    
+
     public func initSdk() async throws {
         var sdkInitRequest = Anki_Vector_ExternalInterface_SDKInitializationRequest()
         sdkInitRequest.sdkModuleVersion = "0.6.0"
@@ -76,27 +72,27 @@ public final class VectorConnection: Connection {
         sdkInitRequest.pythonVersion = "3.8.9"
         sdkInitRequest.cpuVersion = "arm64"
         sdkInitRequest.pythonImplementation = "CPython"
-        
+
         let sdk: UnaryCall<Anki_Vector_ExternalInterface_SDKInitializationRequest,
             Anki_Vector_ExternalInterface_SDKInitializationResponse> = connection.makeUnaryCall(
             path: "\(prefixURI)SDKInitialization",
             request: sdkInitRequest,
             callOptions: callOptions
         )
-        
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             sdk.response.whenFailure { error in
                 Self.log("SDK INIT ERROR \(error)")
                 continuation.resume(throwing: error)
             }
-            
+
             sdk.response.whenSuccess { response in
                 Self.log("SDK INIT SUCCESS \(response)")
                 continuation.resume()
             }
         }
     }
-    
+
     public func requestControl() throws {
         requestStream = connection.makeBidirectionalStreamingCall(
             path: "\(prefixURI)BehaviorControl",
@@ -106,26 +102,29 @@ public final class VectorConnection: Connection {
             case .controlGrantedResponse:
                 Self.log("CONTROL GAINED")
                 self.delegate?.didGrantedControl()
+
             case .keepAlive:
                 self.delegate?.keepAlive()
+
             case .controlLostEvent:
                 Self.log("CONTROL LOST")
                 self.delegate?.didClose()
+
             default:
                 Self.log("\(response)")
             }
         }
-        
+
         var controlRequest = Anki_Vector_ExternalInterface_BehaviorControlRequest()
         controlRequest.controlRequest = Anki_Vector_ExternalInterface_ControlRequest()
         controlRequest.controlRequest.priority = .default
-        let _ = requestStream?.sendMessage(controlRequest)
+        _ = requestStream?.sendMessage(controlRequest)
     }
-    
+
     public func releaseControl() throws {
         var controlRequest = Anki_Vector_ExternalInterface_BehaviorControlRequest()
         controlRequest.controlRelease = Anki_Vector_ExternalInterface_ControlRelease()
-        let _ = requestStream?.sendMessage(controlRequest)
+        _ = requestStream?.sendMessage(controlRequest)
         try requestStream?.eventLoop.close()
         requestStream?.cancel(promise: nil)
         delegate?.didClose()
@@ -136,9 +135,9 @@ extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
     public func connectivityStateDidChange(from oldState: ConnectivityState, to newState: ConnectivityState) {
         Self.log("connectivity from \(oldState) to \(newState)")
     }
-    
+
     public func connectionStartedQuiescing() {}
-    
+
     public func didCatchError(_ error: Error, logger: Logging.Logger, file: StaticString, line: Int) {
         Self.log("connection error \(error) at file \(file) at line \(line)")
         delegate?.didClose()
@@ -158,7 +157,7 @@ extension VectorConnection: Behavior {
             request: request,
             callOptions: callOptions
         )
-        
+
         return try await withCheckedThrowingContinuation { continuation in
             call.response.whenSuccess { _ in
                 continuation.resume(returning: ())
@@ -168,7 +167,7 @@ extension VectorConnection: Behavior {
             }
         }
     }
-    
+
     public func say(text: String) async throws {
         var request: Anki_Vector_ExternalInterface_SayTextRequest = .init()
         request.text = text
@@ -197,7 +196,8 @@ extension VectorConnection: Behavior {
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetEyeColorRequest,
             Anki_Vector_ExternalInterface_SetEyeColorResponse> = connection.makeUnaryCall(
             path: "\(prefixURI)SetEyeColor",
-            request: eyeColorRequest, callOptions: callOptions
+            request: eyeColorRequest,
+            callOptions: callOptions
         )
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -253,7 +253,7 @@ extension VectorConnection: Behavior {
             }
         }
     }
-    
+
     public func driveOnCharger() async throws {
         let request: Anki_Vector_ExternalInterface_DriveOnChargerRequest = .init()
         let call: UnaryCall<Anki_Vector_ExternalInterface_DriveOnChargerRequest,
@@ -291,7 +291,7 @@ extension VectorConnection: Behavior {
             }
         }
     }
-    
+
     public var battery: VectorBatteryState? {
         get async throws {
             let request: Anki_Vector_ExternalInterface_BatteryStateRequest = .init()
@@ -317,29 +317,33 @@ extension VectorConnection: Behavior {
             }
         }
     }
-    
+
     public func eventStream() throws -> AsyncStream<Anki_Vector_ExternalInterface_RobotState>? {
-        .init() { continuation in
+        .init { continuation in
             var request: Anki_Vector_ExternalInterface_EventRequest = .init()
             request.connectionID = UUID()
                 .uuidString
                 .replacingOccurrences(of: "-", with: "")
                 .lowercased()
-            
+
             let call: BidirectionalStreamingCall<Anki_Vector_ExternalInterface_EventRequest,
                 Anki_Vector_ExternalInterface_EventResponse> =
-                connection.makeBidirectionalStreamingCall(path: "\(prefixURI)EventStream", callOptions: callOptions) { message in
+                connection.makeBidirectionalStreamingCall(
+                    path: "\(prefixURI)EventStream",
+                    callOptions: callOptions
+                ) { message in
                     if message.hasEvent {
                         switch message.event.eventType {
                         case .robotState(let state):
                             continuation.yield(state)
+
                         default:
                             break
                         }
                     }
                 }
-            
-            let _ = call.sendMessage(request)
+
+            _ = call.sendMessage(request)
         }
     }
 }
@@ -357,7 +361,7 @@ extension VectorConnection: Camera {
                     continuation.yield(.init(data: message.data, encoding: message.imageEncoding))
                 }
             )
-            
+
             continuation.onTermination = { _ in
                 stream.cancel(promise: nil)
             }
@@ -384,10 +388,9 @@ extension VectorConnection: Audio {
             )
         }
     }
-    
+
     public func playAudio(stream: AsyncStream<AudioFrame>) throws {
         let accumulator = DataAccumulator()
-        
         let audioCall: BidirectionalStreamingCall<Anki_Vector_ExternalInterface_ExternalAudioStreamRequest,
             Anki_Vector_ExternalInterface_ExternalAudioStreamResponse> = connection.makeBidirectionalStreamingCall(
             path: "\(prefixURI)ExternalAudioStreamPlayback",
@@ -396,28 +399,28 @@ extension VectorConnection: Audio {
                 Self.log("Audio stream callback \(message)")
             }
         )
-        
+
         Task {
             var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
             prepareRequest.audioStreamPrepare = .init()
             prepareRequest.audioStreamPrepare.audioVolume = 100
-            prepareRequest.audioStreamPrepare.audioFrameRate = 11025
-            let _ = audioCall.sendMessage(prepareRequest)
-            
+            prepareRequest.audioStreamPrepare.audioFrameRate = 11_025
+            _ = audioCall.sendMessage(prepareRequest)
+
             for await chunk in stream {
                 await accumulator.append(chunk.data)
-                while await accumulator.data.count > 0 {
+                while await !accumulator.data.isEmpty {
                     var chunkRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
                     chunkRequest.audioStreamChunk = .init()
-                    chunkRequest.audioStreamChunk.audioChunkSamples = await accumulator.consume(1024)
-                    chunkRequest.audioStreamChunk.audioChunkSizeBytes = 1024
-                    let _ = audioCall.sendMessage(chunkRequest)
+                    chunkRequest.audioStreamChunk.audioChunkSamples = await accumulator.consume(1_024)
+                    chunkRequest.audioStreamChunk.audioChunkSizeBytes = 1_024
+                    _ = audioCall.sendMessage(chunkRequest)
                 }
             }
-            
+
             var completeRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
             completeRequest.audioStreamComplete = .init()
-            let _ = audioCall.sendMessage(completeRequest)
+            _ = audioCall.sendMessage(completeRequest)
         }
     }
 }

@@ -7,7 +7,7 @@ public struct AudioFrame {
     public let timestamp: UInt32
     /// 0-11: The index of the direction that the voice or key sound is coming. 12: There is no identifiable sound or the direction cannot be determined.
     public let direction: UInt32
-    
+
     /// initializer
     public init(data: Data, timestamp: UInt32 = .zero, direction: UInt32 = .zero) {
         self.data = data

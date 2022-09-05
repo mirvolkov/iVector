@@ -7,7 +7,7 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
     func resampleBuffer(inSource: AVAudioPCMBuffer, newSampleRate: Double = 11025.0) -> AVAudioPCMBuffer? {
         let outSettings = [
             AVFormatIDKey: kAudioFormatLinearPCM, // kAudioFormatAppleLossless
-            AVSampleRateKey: 11025.0,
+            AVSampleRateKey: 11_025.0,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.min.rawValue,
             AVLinearPCMIsBigEndianKey: false,

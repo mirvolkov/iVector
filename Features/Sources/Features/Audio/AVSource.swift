@@ -7,9 +7,9 @@ import Speech
 public final class AudioSession: AudioSource {
     private lazy var audioEngine: AVAudioEngine = .init()
     private lazy var audioSession: AVAudioSession = .sharedInstance()
-    
+
     var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
-    
+
     public func start() {
         do {
             try audioSession.setCategory(
@@ -22,7 +22,7 @@ public final class AudioSession: AudioSource {
         } catch {
             print(error)
         }
-        
+
         do {
             let inputNode = audioEngine.inputNode
             let recordingFormat = inputNode.inputFormat(forBus: 0)
@@ -31,14 +31,14 @@ public final class AudioSession: AudioSource {
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] buffer, _ in
                 self?.audioStream.send(buffer)
             }
-            
+
             audioEngine.prepare()
             try audioEngine.start()
         } catch {
             print(error)
         }
     }
-    
+
     public func stop() {
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()

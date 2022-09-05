@@ -20,11 +20,10 @@ public protocol Connection {
     /// Initialise SDK
     /// - Throws if sdk init falied
     func initSdk() async throws
-    
-    
+
     /// Request event stream
     /// - Throws if request failed
-    func eventStream() throws -> AsyncStream<Anki_Vector_ExternalInterface_RobotState>? 
+    func eventStream() throws -> AsyncStream<Anki_Vector_ExternalInterface_RobotState>?
 }
 
 /// Connection delegate to handle stream events
