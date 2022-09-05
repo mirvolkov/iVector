@@ -3,7 +3,7 @@ import Connection
 
 public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
     private let synth = AVSpeechSynthesizer()
-    private var lastContinuation: AsyncStream<AudioFrame>.Continuation?
+    private var lastContinuation: AsyncStream<VectorAudioFrame>.Continuation?
     
     func resampleBuffer(inSource: AVAudioPCMBuffer, newSampleRate: Double = 11025.0) -> AVAudioPCMBuffer? {
         let outSettings = [
@@ -42,7 +42,7 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
         return outBuffer
     }
 
-    public func writeToFile(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<AudioFrame> {
+    public func writeToFile(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<VectorAudioFrame> {
         let utterance = AVSpeechUtterance(string: stringToSpeak)
         utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
         utterance.volume = 1

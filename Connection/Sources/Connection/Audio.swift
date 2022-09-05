@@ -1,6 +1,7 @@
 import Foundation
 
-public struct AudioFrame {
+/// Vector audio frame structure
+public struct VectorAudioFrame {
     /// The stream of sound that Vector hears, as a “mono audio amplitude samples”. This is 1600 “16-bit little-endian PCM audio” samples, at 11025 samples/sec.
     public let data: Data
     /// The “robot time at the transmission of this audio sample group”
@@ -20,8 +21,8 @@ public protocol Audio {
     /// Request Vector's mic feed
     /// - Returns AsyncStream type with frame
     /// - Throws error if request failed
-    func requestMicFeed() throws -> AsyncStream<AudioFrame>
+    func requestMicFeed() throws -> AsyncStream<VectorAudioFrame>
 
     /// Play audio
-    func playAudio(stream: AsyncStream<AudioFrame>) throws
+    func playAudio(stream: AsyncStream<VectorAudioFrame>) throws
 }

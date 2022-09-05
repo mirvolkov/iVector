@@ -83,5 +83,5 @@ public protocol Behavior {
     /// Read battery state
     /// - Returns battery state
     /// - Throws if reading failed
-    var battery: VectorBatteryState? { get async throws }
+    var battery: VectorBatteryState { get async throws }
 }

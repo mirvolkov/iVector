@@ -4,6 +4,11 @@ import GRPC
 public typealias ControlRequestStream = BidirectionalStreamingCall<Anki_Vector_ExternalInterface_BehaviorControlRequest,
     Anki_Vector_ExternalInterface_BehaviorControlResponse>
 
+// Event stream typealias
+public typealias EventStream =
+    BidirectionalStreamingCall<Anki_Vector_ExternalInterface_EventRequest,
+        Anki_Vector_ExternalInterface_EventResponse>
+
 /// Anki Vector's connection protocol
 public protocol Connection {
     /// Connection delegate
@@ -15,7 +20,7 @@ public protocol Connection {
 
     /// Release control
     /// - Throws if release request is failed
-    func releaseControl() throws
+    func release() throws
 
     /// Initialise SDK
     /// - Throws if sdk init falied
@@ -23,7 +28,7 @@ public protocol Connection {
 
     /// Request event stream
     /// - Throws if request failed
-    func eventStream() throws -> AsyncStream<Anki_Vector_ExternalInterface_RobotState>?
+    func requestEventStream() throws
 }
 
 /// Connection delegate to handle stream events
@@ -32,6 +37,7 @@ public protocol ConnectionDelegate: AnyObject {
     func didFailedRequest()
     func keepAlive()
     func didClose()
+    func onRobot(state: Anki_Vector_ExternalInterface_RobotState)
 }
 
 public enum ConnectionError: Error {
