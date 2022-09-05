@@ -1,9 +1,7 @@
-import Foundation
+import Features
+import SwiftUI
 
-class Settings: ObservableObject {
-    @Published var ip: String = .init()
-
-    func setIP(_ ip: String) {
-        self.ip = ip
-    }
+class SettingsModel {
+    @AppStorage("ip") var ip: String = .init()
+    @AppStorage("eyeColor") var eyeColor: Color = .white
 }

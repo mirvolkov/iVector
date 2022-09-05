@@ -3,20 +3,25 @@ import SwiftUI
 
 class SettingsViewModel: ObservableObject {
     @Published var ip: String = ""
+    @Published var eyeColor: Color = .white
+    @Published var isValid: Bool = false
     
-    private let model: Settings
+    private let model: SettingsModel
     private var bag = Set<AnyCancellable>()
+    private let regex = "^((25[0-5]|(2[0-4]|1\\d|[1-9]|)\\d)\\.?\\b){4}$"
     
-    init(_ model: Settings) {
+    init(_ model: SettingsModel) {
         self.model = model
-        model
-            .$ip
-            .receive(on: RunLoop.main)
-            .assign(to: \.ip, on: self)
-            .store(in: &self.bag)
+        self.ip = model.ip
+        self.eyeColor = model.eyeColor
     }
     
     @MainActor func save() {
-        self.model.setIP(self.ip)
+        model.ip = ip
+        model.eyeColor = eyeColor
+    }
+    
+    func validate() {
+        isValid = ip.range(of: regex, options: .regularExpression) != nil
     }
 }

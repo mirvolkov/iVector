@@ -3,6 +3,10 @@
     {
       "filename" : "hex_pattern_r40.png",
       "idiom" : "universal"
+    },
+    {
+      "filename" : "hexagon.png",
+      "idiom" : "ipad"
     }
   ],
   "info" : {
