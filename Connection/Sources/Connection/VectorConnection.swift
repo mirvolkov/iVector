@@ -13,7 +13,7 @@ import NIOTransportServices
 import os.log
 import Security
 
-fileprivate actor DataAccumulator: Sendable {
+private actor DataAccumulator: Sendable {
     var data: Data = .init()
     
     deinit {
@@ -29,7 +29,6 @@ fileprivate actor DataAccumulator: Sendable {
         return data.prefix(size)
     }
 }
-
 
 public final class VectorConnection: Connection {
     private let prefixURI = "/Anki.Vector.external_interface.ExternalInterface/"
@@ -318,6 +317,31 @@ extension VectorConnection: Behavior {
             }
         }
     }
+    
+    public func eventStream() throws -> AsyncStream<Anki_Vector_ExternalInterface_RobotState>? {
+        .init() { continuation in
+            var request: Anki_Vector_ExternalInterface_EventRequest = .init()
+            request.connectionID = UUID()
+                .uuidString
+                .replacingOccurrences(of: "-", with: "")
+                .lowercased()
+            
+            let call: BidirectionalStreamingCall<Anki_Vector_ExternalInterface_EventRequest,
+                Anki_Vector_ExternalInterface_EventResponse> =
+                connection.makeBidirectionalStreamingCall(path: "\(prefixURI)EventStream", callOptions: callOptions) { message in
+                    if message.hasEvent {
+                        switch message.event.eventType {
+                        case .robotState(let state):
+                            continuation.yield(state)
+                        default:
+                            break
+                        }
+                    }
+                }
+            
+            let _ = call.sendMessage(request)
+        }
+    }
 }
 
 extension VectorConnection: Camera {
@@ -368,7 +392,7 @@ extension VectorConnection: Audio {
             Anki_Vector_ExternalInterface_ExternalAudioStreamResponse> = connection.makeBidirectionalStreamingCall(
             path: "\(prefixURI)ExternalAudioStreamPlayback",
             callOptions: callOptions,
-            handler: {  message in
+            handler: { message in
                 Self.log("Audio stream callback \(message)")
             }
         )
