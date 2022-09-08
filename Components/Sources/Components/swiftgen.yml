@@ -1,0 +1,30 @@
+ strings:
+   inputs:
+     - Localization/en.lproj
+   outputs:
+     - templateName: structured-swift5
+       output: Strings+Generated.swift
+       params:
+         publicAccess: true
+
+ xcassets:
+   inputs:
+     - Assets/Media.xcassets
+   outputs:
+     - templateName: swift5
+       params:
+         forceProvidesNamespaces: true
+         publicAccess: true
+       output: XCAssets+Generated.swift
+       
+ fonts:
+   inputs: Fonts
+   outputs:
+     - templateName: swift5
+       output: Fonts+Generated.swift
+       params:
+         forceProvidesNamespaces: true
+         publicAccess: true
+        
+## For more info, use `swiftgen config doc` to open the full documentation on GitHub.
+## https://github.com/SwiftGen/SwiftGen/tree/6.5.1/Documentation/

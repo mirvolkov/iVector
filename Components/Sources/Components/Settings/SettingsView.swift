@@ -1,14 +1,18 @@
 import SwiftUI
 
-struct SettingsView: View {
+public struct SettingsView: View {
     private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
-    @StateObject var viewModel: SettingsViewModel = .init(AppState.instance.settings)
+    @StateObject var viewModel: SettingsViewModel = .init(.init())
     @State var ip: String = ""
     @State var certPath: String = ""
     @State var guid: String = ""
     @Binding var isPresented: Bool
     
-    var body: some View {
+    public init(isPresented: Binding<Bool>) {
+        self._isPresented = isPresented
+    }
+    
+    public var body: some View {
         NavigationView {
             Form {
                 Section("Connection") {
@@ -68,7 +72,6 @@ struct SettingsView: View {
                 }
 #endif
             }
-            .padding(10)
 #if os(iOS)
                 .navigationBarTitle("Settings")
                 .toolbar {
@@ -77,13 +80,13 @@ struct SettingsView: View {
                         isPresented = false
                     } label: {
                         Image(systemName: "checkmark")
-                            .resizable()
-                            .frame(width: 32, height: 32)
                             .foregroundColor(.green)
                     }
                     .buttonStyle(.plain)
                     .disabled(!viewModel.isValid)
                 }
+#elseif os(macOS)            
+            .padding(10)
 #endif
         }
     }

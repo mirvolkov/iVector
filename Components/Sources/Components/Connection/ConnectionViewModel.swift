@@ -3,17 +3,33 @@ import Connection
 import Foundation
 import SwiftUI
 
-public final class ConnectionViewModel: ObservableObject {
-    @MainActor @Published public var isLoading: Bool = false
-    @MainActor @Published public var isConnected: Bool = false
-    @MainActor @Published public var battery: VectorBatteryState?
+@MainActor public final class ConnectionViewModel: ObservableObject {
+    @Published public var isLoading: Bool = false
+    @Published public var isConnected: Bool = false {
+        didSet {
+            if isConnected {
+                Task {
+                    try await model.behavior?.setEyeColor(
+                        settings.eyeColor.hsv.hueComponent,
+                        settings.eyeColor.hsv.satComponent
+                    )
+                    
+//                    try await model.say(text: "Hello we are from Ukraine")
+                }
+            }
+        }
+    }
+
+    @Published public var battery: VectorBatteryState?
     
     private var bag = Set<AnyCancellable>()
     private let model: ConnectionModel
+    private let settings: SettingsModel
     
-    public init(_ model: ConnectionModel) {
+    public init(_ model: ConnectionModel, settings: SettingsModel) {
         self.model = model
-        self.bind()
+        self.settings = settings
+        bind()
     }
     
     public func bind() {
@@ -26,7 +42,7 @@ public final class ConnectionViewModel: ObservableObject {
             }
         }
         
-        Task.detached { [self] in
+        Task.detached { @MainActor [self] in
             await model.bind()
             await self.model.state
                 .map { newState in if case .connecting = newState { return true } else { return false } }
@@ -42,10 +58,23 @@ public final class ConnectionViewModel: ObservableObject {
     }
     
     public func connect() {
-        Task.detached { await self.model.connect(with: "192.168.0.105", port: 443) }
+        Task.detached {
+            await self.model.connect(
+                with: self.settings.ip,
+                port: self.settings.port
+            )
+        }
     }
     
     public func disconnect() {
         Task.detached { await self.model.disconnect() }
+    }
+    
+    public func dock() {
+        Task.detached { try? await self.model.dock() }
+    }
+    
+    public func undock() {
+        Task.detached { try? await self.model.undock() }
     }
 }
