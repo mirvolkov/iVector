@@ -42,7 +42,7 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
         return outBuffer
     }
 
-    public func writeToFile(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<VectorAudioFrame> {
+    public func run(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<VectorAudioFrame> {
         let utterance = AVSpeechUtterance(string: stringToSpeak)
         utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
         utterance.volume = 1
