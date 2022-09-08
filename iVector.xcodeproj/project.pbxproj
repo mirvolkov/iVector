@@ -7,18 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E639339228C1EFA3007C1F79 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339128C1EFA3007C1F79 /* SettingsView.swift */; };
-		E639339428C1F215007C1F79 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339328C1F215007C1F79 /* SettingsModel.swift */; };
-		E639339628C1F245007C1F79 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339528C1F245007C1F79 /* SettingsViewModel.swift */; };
-		E639339728C1F245007C1F79 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339528C1F245007C1F79 /* SettingsViewModel.swift */; };
-		E639339828C1F24B007C1F79 /* SettingsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339328C1F215007C1F79 /* SettingsModel.swift */; };
-		E639339928C1F24E007C1F79 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339128C1EFA3007C1F79 /* SettingsView.swift */; };
+		E60EBA1C28C89DB300B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1B28C89DB300B865E2 /* Components */; };
+		E60EBA1E28C89DB700B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1D28C89DB700B865E2 /* Components */; };
 		E639339C28C1F45C007C1F79 /* VisionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339B28C1F45C007C1F79 /* VisionViewModel.swift */; };
 		E639339D28C1F45C007C1F79 /* VisionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339B28C1F45C007C1F79 /* VisionViewModel.swift */; };
 		E639339F28C1F461007C1F79 /* VisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339E28C1F461007C1F79 /* VisionView.swift */; };
 		E63933A028C1F461007C1F79 /* VisionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E639339E28C1F461007C1F79 /* VisionView.swift */; };
-		E63933A228C1F46A007C1F79 /* VisionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A128C1F46A007C1F79 /* VisionModel.swift */; };
-		E63933A328C1F46A007C1F79 /* VisionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A128C1F46A007C1F79 /* VisionModel.swift */; };
 		E63933A528C1F729007C1F79 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppState.swift */; };
 		E63933A628C1F729007C1F79 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppState.swift */; };
 		E6624C6728C0984800DE292F /* Features in Frameworks */ = {isa = PBXBuildFile; productRef = E6624C6628C0984800DE292F /* Features */; };
@@ -30,22 +24,13 @@
 		E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
-		E6C35C2328BD5C380098F78A /* ConnectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C35C2228BD5C380098F78A /* ConnectionViewModel.swift */; };
-		E6C35C2428BD5C380098F78A /* ConnectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C35C2228BD5C380098F78A /* ConnectionViewModel.swift */; };
-		E6C35C2628BD5C3D0098F78A /* ConnectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C35C2528BD5C3D0098F78A /* ConnectionModel.swift */; };
-		E6C35C2728BD5C3D0098F78A /* ConnectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C35C2528BD5C3D0098F78A /* ConnectionModel.swift */; };
 		E6C35C7428BF5E140098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C7328BF5E140098F78A /* Connection */; };
-		E6E2CB0528C298AF00F51AE4 /* IPInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2CB0428C298AF00F51AE4 /* IPInputView.swift */; };
-		E6E2CB0628C298AF00F51AE4 /* IPInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E2CB0428C298AF00F51AE4 /* IPInputView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E639339128C1EFA3007C1F79 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
-		E639339328C1F215007C1F79 /* SettingsModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsModel.swift; sourceTree = "<group>"; };
-		E639339528C1F245007C1F79 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		E6092F0228C7168800AEFF55 /* Components */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Components; sourceTree = "<group>"; };
 		E639339B28C1F45C007C1F79 /* VisionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionViewModel.swift; sourceTree = "<group>"; };
 		E639339E28C1F461007C1F79 /* VisionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionView.swift; sourceTree = "<group>"; };
-		E63933A128C1F46A007C1F79 /* VisionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionModel.swift; sourceTree = "<group>"; };
 		E63933A428C1F729007C1F79 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iVectorApp.swift; sourceTree = "<group>"; };
 		E67160CC28BCFE8000F79DA2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -54,11 +39,8 @@
 		E67160D828BCFE8200F79DA2 /* iVector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iVector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E67160DA28BCFE8200F79DA2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		E67160E928BCFF0B00F79DA2 /* Connection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Connection; sourceTree = "<group>"; };
-		E6C35C2228BD5C380098F78A /* ConnectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionViewModel.swift; sourceTree = "<group>"; };
-		E6C35C2528BD5C3D0098F78A /* ConnectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionModel.swift; sourceTree = "<group>"; };
 		E6C35C7A28BFDE220098F78A /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 		E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "iVector--macOS--Info.plist"; sourceTree = "<group>"; };
-		E6E2CB0428C298AF00F51AE4 /* IPInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPInputView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +50,7 @@
 			files = (
 				E6C35C1E28BD0D090098F78A /* Connection in Frameworks */,
 				E6624C6928C0985200DE292F /* Features in Frameworks */,
+				E60EBA1C28C89DB300B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,29 +60,18 @@
 			files = (
 				E6C35C7428BF5E140098F78A /* Connection in Frameworks */,
 				E6624C6728C0984800DE292F /* Features in Frameworks */,
+				E60EBA1E28C89DB700B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E639339028C1EF8B007C1F79 /* Settings */ = {
-			isa = PBXGroup;
-			children = (
-				E639339128C1EFA3007C1F79 /* SettingsView.swift */,
-				E6E2CB0428C298AF00F51AE4 /* IPInputView.swift */,
-				E639339328C1F215007C1F79 /* SettingsModel.swift */,
-				E639339528C1F245007C1F79 /* SettingsViewModel.swift */,
-			);
-			path = Settings;
-			sourceTree = "<group>";
-		};
 		E639339A28C1F42C007C1F79 /* Vision */ = {
 			isa = PBXGroup;
 			children = (
 				E639339B28C1F45C007C1F79 /* VisionViewModel.swift */,
 				E639339E28C1F461007C1F79 /* VisionView.swift */,
-				E63933A128C1F46A007C1F79 /* VisionModel.swift */,
 			);
 			path = Vision;
 			sourceTree = "<group>";
@@ -108,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */,
+				E6092F0228C7168800AEFF55 /* Components */,
 				E6C35C7A28BFDE220098F78A /* Features */,
 				E67160E928BCFF0B00F79DA2 /* Connection */,
 				E67160CA28BCFE8000F79DA2 /* Shared */,
@@ -121,12 +94,9 @@
 			isa = PBXGroup;
 			children = (
 				E639339A28C1F42C007C1F79 /* Vision */,
-				E639339028C1EF8B007C1F79 /* Settings */,
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
 				E67160CC28BCFE8000F79DA2 /* ContentView.swift */,
 				E67160CD28BCFE8200F79DA2 /* Assets.xcassets */,
-				E6C35C2228BD5C380098F78A /* ConnectionViewModel.swift */,
-				E6C35C2528BD5C3D0098F78A /* ConnectionModel.swift */,
 				E63933A428C1F729007C1F79 /* AppState.swift */,
 			);
 			path = Shared;
@@ -176,6 +146,7 @@
 			packageProductDependencies = (
 				E6C35C1D28BD0D090098F78A /* Connection */,
 				E6624C6828C0985200DE292F /* Features */,
+				E60EBA1B28C89DB300B865E2 /* Components */,
 			);
 			productName = "iVector (iOS)";
 			productReference = E67160D228BCFE8200F79DA2 /* iVector.app */;
@@ -198,6 +169,7 @@
 			packageProductDependencies = (
 				E6C35C7328BF5E140098F78A /* Connection */,
 				E6624C6628C0984800DE292F /* Features */,
+				E60EBA1D28C89DB700B865E2 /* Components */,
 			);
 			productName = "iVector (macOS)";
 			productReference = E67160D828BCFE8200F79DA2 /* iVector.app */;
@@ -285,8 +257,7 @@
 		};
 		E6624C6E28C0A72400DE292F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -297,7 +268,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint  --config swiftlint.yml .\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\n";
 		};
@@ -308,18 +279,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E639339428C1F215007C1F79 /* SettingsModel.swift in Sources */,
 				E67160DD28BCFE8200F79DA2 /* ContentView.swift in Sources */,
 				E63933A528C1F729007C1F79 /* AppState.swift in Sources */,
-				E6C35C2628BD5C3D0098F78A /* ConnectionModel.swift in Sources */,
-				E63933A228C1F46A007C1F79 /* VisionModel.swift in Sources */,
-				E6C35C2328BD5C380098F78A /* ConnectionViewModel.swift in Sources */,
 				E639339C28C1F45C007C1F79 /* VisionViewModel.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
-				E6E2CB0528C298AF00F51AE4 /* IPInputView.swift in Sources */,
 				E639339F28C1F461007C1F79 /* VisionView.swift in Sources */,
-				E639339228C1EFA3007C1F79 /* SettingsView.swift in Sources */,
-				E639339628C1F245007C1F79 /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,17 +291,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E639339928C1F24E007C1F79 /* SettingsView.swift in Sources */,
-				E639339828C1F24B007C1F79 /* SettingsModel.swift in Sources */,
 				E63933A628C1F729007C1F79 /* AppState.swift in Sources */,
-				E639339728C1F245007C1F79 /* SettingsViewModel.swift in Sources */,
-				E63933A328C1F46A007C1F79 /* VisionModel.swift in Sources */,
 				E67160DE28BCFE8200F79DA2 /* ContentView.swift in Sources */,
 				E639339D28C1F45C007C1F79 /* VisionViewModel.swift in Sources */,
-				E6C35C2728BD5C3D0098F78A /* ConnectionModel.swift in Sources */,
-				E6E2CB0628C298AF00F51AE4 /* IPInputView.swift in Sources */,
 				E63933A028C1F461007C1F79 /* VisionView.swift in Sources */,
-				E6C35C2428BD5C380098F78A /* ConnectionViewModel.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -460,9 +417,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 1";
 				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PY2RV6KPV9;
+				DEVELOPMENT_TEAM = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
@@ -470,8 +428,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown\n";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -479,6 +437,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
+				PROVISIONING_PROFILE_SPECIFIER = iVector;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -491,9 +450,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon 1";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PY2RV6KPV9;
+				DEVELOPMENT_TEAM = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
@@ -501,8 +461,8 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.4;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown\n";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -510,6 +470,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
+				PROVISIONING_PROFILE_SPECIFIER = iVector;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -524,10 +485,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PY2RV6KPV9;
+				DEVELOPMENT_TEAM = K8GMF5PASC;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -540,8 +502,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.macos.ivector;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -554,10 +517,11 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = macOS/macOS.entitlements;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = PY2RV6KPV9;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -570,8 +534,9 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 12.3;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.macos.ivector;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.oligarch.ivector;
 				PRODUCT_NAME = iVector;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -611,6 +576,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E60EBA1B28C89DB300B865E2 /* Components */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Components;
+		};
+		E60EBA1D28C89DB700B865E2 /* Components */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Components;
+		};
 		E6624C6628C0984800DE292F /* Features */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Features;

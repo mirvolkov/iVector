@@ -1,4 +1,5 @@
 import SwiftUI
+import Components
 
 enum VectorAppFeatureState {
     case vision
@@ -14,6 +15,5 @@ struct AppState {
     public var state: VectorAppConnState = .offline
     
     var connection: ConnectionModel = .init()
-    var vision: VisionModel = .init()
-    var settings: Settings = .init()
+    var settings: SettingsModel = .init()
 }

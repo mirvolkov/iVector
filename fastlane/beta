@@ -1,0 +1,5 @@
+lane :beta do
+  #build_app
+  build_app(scheme: "iVector (iOS)")
+end
+

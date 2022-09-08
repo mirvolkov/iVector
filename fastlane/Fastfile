@@ -1,0 +1,22 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "iVector TestFlight beta build"
+  lane :beta do
+    #build_app
+    build_app(scheme: "iVector (iOS)",
+            configuration: "Release", 
+            export_method: "ad-hoc", 
+            export_options: {
+              compileBitcode: true,
+              method: "ad-hoc",
+              provisioningProfiles: { 
+                "com.mirfirstsnow.ivector" => "iVector"
+              }
+            }
+    )
+    increment_build_number
+  end
+
+end
+

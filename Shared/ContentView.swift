@@ -1,9 +1,10 @@
 import Connection
 import GRPC
 import SwiftUI
+import Components
 
 struct ContentView: View {
-    @StateObject var viewModel: ConnectionViewModel = .init(AppState.instance.connection)
+    @StateObject var viewModel: ConnectionViewModel = .init(AppState.instance.connection, settings: AppState.instance.settings)
     @State var preferences = false
 
     var body: some View {
@@ -31,21 +32,34 @@ struct ContentView: View {
 
             Button {
                 preferences = true
-#if os(macOS)
-                NSWorkspace.shared.open(.init(string: "ivector://SettingsView")!)
-#endif
             } label: {
                 Image(systemName: "gear")
                     .resizable()
                     .foregroundColor(.green)
                     .frame(width: 40, height: 40)
             }.buttonStyle(.plain)
+            
+            Spacer().frame(height: 20)
+            
+            VisionView()
+            
+            HStack {
+                Button {
+                    viewModel.dock()
+                } label: {
+                    Text("go dock")
+                }.disabled(!viewModel.isConnected)
+                
+                Button {
+                    viewModel.undock()
+                } label: {
+                    Text("go undock")
+                }.disabled(!viewModel.isConnected)
+            }
         }
-#if os(iOS)
         .sheet(isPresented: $preferences) {
-            SettingsView()
+            SettingsView(isPresented: $preferences)
         }
-#endif
 #if os(macOS)
 .frame(width: 320, height: 480)
 #endif
