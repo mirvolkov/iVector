@@ -3,8 +3,7 @@ import XCTest
 
 final class ConnectionTests: XCTestCase {
     func testExample() throws {
-        let connection = VectorConnection()
-        try connection.open(with: "", port: 123)
-        XCTAssertEqual(connection.cert, "Hello, World!")
+        let connection: Connection? = VectorConnection(with: "192.168.0.105", port: 443)
+        XCTAssertNotNil(connection, "Connection init failed")
     }
 }

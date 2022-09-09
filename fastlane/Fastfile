@@ -17,6 +17,27 @@ platform :ios do
     )
     increment_build_number
   end
+  
+  desc "Run tests and create a unit-test report"
+  lane :tests do
+	spm(
+ 	 command: "test",
+  	 package_path: "Features",
+  	 configuration: "release"
+	)
+
+	spm(
+ 	 command: "test",
+  	 package_path: "Connection",
+  	 configuration: "release"
+	)
+
+	spm(
+ 	 command: "test",
+  	 package_path: "Components",
+  	 configuration: "release"
+	)
+  end
 
 end
 
