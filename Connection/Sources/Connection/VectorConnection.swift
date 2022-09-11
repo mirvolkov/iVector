@@ -377,7 +377,7 @@ extension VectorConnection: Audio {
         .init { continuation in
             typealias AudioFeed = ServerStreamingCall<Anki_Vector_ExternalInterface_AudioFeedRequest,
                 Anki_Vector_ExternalInterface_AudioFeedResponse>
-            let _: AudioFeed = connection.makeServerStreamingCall(
+            let stream: AudioFeed = connection.makeServerStreamingCall(
                 path: "\(prefixURI)AudioFeed",
                 request: .init(),
                 callOptions: callOptions,
@@ -389,6 +389,10 @@ extension VectorConnection: Audio {
                     ))
                 }
             )
+            
+            continuation.onTermination = { _ in
+                stream.cancel(promise: nil)
+            }
         }
     }
 
