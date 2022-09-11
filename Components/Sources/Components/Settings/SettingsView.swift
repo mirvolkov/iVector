@@ -1,15 +1,17 @@
 import SwiftUI
 
 public struct SettingsView: View {
-    private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
-    @StateObject var viewModel: SettingsViewModel = .init(.init())
-    @State var ip: String = ""
-    @State var certPath: String = ""
-    @State var guid: String = ""
-    @Binding var isPresented: Bool
+    @StateObject public var viewModel: SettingsViewModel
     
-    public init(isPresented: Binding<Bool>) {
+    private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
+    @State private var ip: String = ""
+    @State private var certPath: String = ""
+    @State private var guid: String = ""
+    @Binding private var isPresented: Bool
+    
+    public init(model: SettingsModel, isPresented: Binding<Bool>) {
         self._isPresented = isPresented
+        self._viewModel = StateObject(wrappedValue: .init(model))
     }
     
     public var body: some View {
@@ -39,6 +41,13 @@ public struct SettingsView: View {
                 
                 Section("Vector") {
                     ColorPicker("Eye color", selection: $viewModel.eyeColor)
+                    
+                    Picker("Locale", selection: $viewModel.locale) {
+                        ForEach(Locale.preferredLanguages, id: \.self) {
+                            let locale = Locale(identifier: $0)
+                            Text(locale.identifier)
+                        }
+                    }
                 }
                 
 #if os(macOS)
@@ -100,6 +109,6 @@ public struct SettingsView: View {
 
 struct SettingsPreviewProvider_Previews: PreviewProvider {
     static var previews: some View {
-        SettingsView(isPresented: .constant(true))
+        SettingsView(model: .init(), isPresented: .constant(true))
     }
 }

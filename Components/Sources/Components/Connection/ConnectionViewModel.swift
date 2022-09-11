@@ -13,8 +13,6 @@ import SwiftUI
                         settings.eyeColor.hsv.hueComponent,
                         settings.eyeColor.hsv.satComponent
                     )
-                    
-//                    try await model.say(text: "Hello we are from Ukraine")
                 }
             }
         }
