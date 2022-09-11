@@ -1,10 +1,10 @@
+import Components
 import Connection
 import GRPC
 import SwiftUI
-import Components
 
 struct ContentView: View {
-    @StateObject var viewModel: ConnectionViewModel = .init(AppState.instance.connection, settings: AppState.instance.settings)
+    @StateObject var viewModel = ConnectionViewModel(AppState.instance.connection, settings: AppState.instance.settings)
     @State var preferences = false
 
     var body: some View {
@@ -38,18 +38,18 @@ struct ContentView: View {
                     .foregroundColor(.green)
                     .frame(width: 40, height: 40)
             }.buttonStyle(.plain)
-            
+
             Spacer().frame(height: 20)
-            
-            VisionView()
-            
+
+            VisionView(AppState.instance.connection)
+
             HStack {
                 Button {
                     viewModel.dock()
                 } label: {
                     Text("go dock")
                 }.disabled(!viewModel.isConnected)
-                
+
                 Button {
                     viewModel.undock()
                 } label: {
@@ -58,10 +58,16 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $preferences) {
-            SettingsView(isPresented: $preferences)
+            SettingsView(model: AppState.instance.settings, isPresented: $preferences)
         }
 #if os(macOS)
-.frame(width: 320, height: 480)
+        .frame(
+            minWidth: 240,
+            maxWidth: .infinity,
+            minHeight: 320,
+            maxHeight: .infinity,
+            alignment: .center
+        )
 #endif
     }
 }
