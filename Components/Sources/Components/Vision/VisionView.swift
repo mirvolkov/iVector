@@ -17,7 +17,12 @@ public struct VisionView: View {
                     Image(nsImage: image)
                         .resizable()
                         .padding(10)
+                    menu
+                        .padding(.top, 10)
+                        .padding(.leading, 10)
                     headControl
+                        .frame(width: 80)
+                        .padding(.trailing, 10)
                 }.overlay {
                     facet
                 }.aspectRatio(contentMode: .fit)
@@ -28,7 +33,13 @@ public struct VisionView: View {
                     Image(uiImage: image)
                         .resizable()
                         .padding(10)
+                    menu
+                        .padding(.top, 10)
+                        .padding(.horizontal, 10)
+                        .frame(height: 44, alignment: .leading)
                     headControl
+                        .frame(width: 80)
+                        .padding(.trailing, 10)
                 }.overlay {
                     facet
                 }.aspectRatio(contentMode: .fit)
@@ -47,6 +58,10 @@ public struct VisionView: View {
         }.ignoresSafeArea()
     }
     
+    var menu: some View {
+        EmptyView()
+    }
+    
     var headControl: some View {
         VStack(alignment: .center) {
             VSliderView(value: $viewModel.headAngle, gradientColors: [.clear, .clear], sliderColor: .white.opacity(0.3))
@@ -60,8 +75,6 @@ public struct VisionView: View {
                 .padding(.trailing, 20)
                 .frame(alignment: .center)
         }
-        .frame(width: 80)
-        .padding(.trailing, 10)
     }
     
     var facet: some View {
@@ -76,20 +89,47 @@ struct FacetPreviewProvilder: PreviewProvider {
     @State static var value: UInt = 0
     
     static var previews: some View {
-        ZStack {
-            Image("sample")
-                .resizable()
-                .frame(width: 960, height: 640)
-                .padding(10)
-            VSliderView(value: Self.$value, gradientColors: [.clear, .clear], sliderColor: .white)
-                .frame(width: 60)
-                .padding(.vertical, 40)
-                .padding(.trailing, 40)
-        }.overlay {
-            Image("facet")
-                .resizable(capInsets: .init(), resizingMode: .tile)
-                .allowsHitTesting(false)
-                .padding(10)
+        Group {
+            ZStack {
+                VisionMenuPanel()
+                    .padding(.top, 10)
+                    .padding(.leading, 10)
+                Image("sample")
+                    .resizable()
+                    .frame(width: 960, height: 640)
+                    .padding(10)
+                VSliderView(value: Self.$value, gradientColors: [.clear, .clear], sliderColor: .white)
+                    .frame(width: 60)
+                    .padding(.vertical, 40)
+                    .padding(.trailing, 40)
+            }
+            .previewDevice("iPad Pro (9.7-inch)")
+            .overlay {
+                Image("facet")
+                    .resizable(capInsets: .init(), resizingMode: .tile)
+                    .allowsHitTesting(false)
+                    .padding(10)
+            }.previewInterfaceOrientation(.portraitUpsideDown)
+            ZStack {
+                VisionMenuPanel()
+                    .padding(.top, 10)
+                    .padding(.leading, 10)
+                Image("sample")
+                    .resizable()
+                    .frame(width: 960, height: 640)
+                    .padding(10)
+                VSliderView(value: Self.$value, gradientColors: [.clear, .clear], sliderColor: .white)
+                    .frame(width: 60)
+                    .padding(.vertical, 40)
+                    .padding(.trailing, 40)
+            }
+            .previewDevice("iPad Pro (9.7-inch)")
+            .overlay {
+                Image("facet")
+                    .resizable(capInsets: .init(), resizingMode: .tile)
+                    .allowsHitTesting(false)
+                    .padding(10)
+            }.previewInterfaceOrientation(.portraitUpsideDown)
         }
     }
 }

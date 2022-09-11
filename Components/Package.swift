@@ -5,6 +5,9 @@ import PackageDescription
 
 let resources: [Resource] = [
     .process("Fonts/RobotoMono-Bold.ttf"),
+    .copy("Animation/loading.json"),
+    .copy("Animation/mic.json"),
+    .copy("Animation/cam.json"),
 ]
 
 
@@ -19,13 +22,15 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Features"),
-        .package(path: "../Connection")
+        .package(path: "../Connection"),
+        .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3")
     ],
     targets: [
         .target(
             name: "Components",
             dependencies: [.product(name: "Connection", package: "Connection"),
-                           .product(name: "Features", package: "Features")],
+                           .product(name: "Features", package: "Features"),
+                           .product(name: "Lottie", package: "lottie-ios")],
             resources: resources),
         .testTarget(
             name: "ComponentsTests",
