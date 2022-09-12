@@ -1,12 +1,10 @@
 import SwiftUI
 
-public actor MyModel: ObservableObject {}
-
 public struct VisionView: View {
-    @StateObject var viewModel: VisionViewModel
+    @StateObject var viewModel: ViewModel
     
     public init(_ model: ConnectionModel) {
-        self._viewModel = StateObject(wrappedValue: VisionViewModel(with: model))
+        self._viewModel = StateObject(wrappedValue: ViewModel(with: model))
     }
     
     public var body: some View {
@@ -25,7 +23,10 @@ public struct VisionView: View {
                         .padding(.trailing, 10)
                 }.overlay {
                     facet
-                }.aspectRatio(contentMode: .fit)
+                }
+                .aspectRatio(contentMode: .fit)
+            } else {
+                offline
             }
             #elseif os(iOS)
             if let data = viewModel.frame?.data, let image = UIImage(data: data), viewModel.isStreaming {
@@ -42,7 +43,10 @@ public struct VisionView: View {
                         .padding(.trailing, 10)
                 }.overlay {
                     facet
-                }.aspectRatio(contentMode: .fit)
+                }
+                .aspectRatio(contentMode: .fit)
+            } else {
+                offline
             }
             #endif
 
@@ -55,7 +59,9 @@ public struct VisionView: View {
             } label: {
                 Text("CAM")
             }.disabled(!viewModel.isVectorOnline)
-        }.ignoresSafeArea()
+        }
+        
+        .ignoresSafeArea()
     }
     
     var menu: some View {
@@ -81,7 +87,18 @@ public struct VisionView: View {
         Image("facet")
             .resizable(capInsets: .init(), resizingMode: .tile)
             .allowsHitTesting(false)
-            .padding(10)
+            .scaledToFit()
+    }
+    
+    var offline: some View {
+        ZStack(alignment: .center) {
+            LottieView(name: "offline")
+                .scaleEffect(x: 1, y: 0.5, anchor: .center)
+            
+            Text("offline")
+                .font(bold(64))
+                .foregroundColor(.white)
+        }
     }
 }
 

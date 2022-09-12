@@ -1,7 +1,7 @@
 import SwiftUI
 
 public struct SettingsView: View {
-    @StateObject public var viewModel: SettingsViewModel
+    @StateObject private var viewModel: ViewModel
     
     private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
     @State private var ip: String = ""
