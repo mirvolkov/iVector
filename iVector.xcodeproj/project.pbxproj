@@ -23,8 +23,6 @@
 		E6624C6928C0985200DE292F /* Features in Frameworks */ = {isa = PBXBuildFile; productRef = E6624C6828C0985200DE292F /* Features */; };
 		E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */; };
 		E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */; };
-		E67160DD28BCFE8200F79DA2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67160CC28BCFE8000F79DA2 /* ContentView.swift */; };
-		E67160DE28BCFE8200F79DA2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E67160CC28BCFE8000F79DA2 /* ContentView.swift */; };
 		E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
@@ -39,7 +37,6 @@
 		E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailPanel.swift; sourceTree = "<group>"; };
 		E65921A028D0E216007518C8 /* HomeDesktop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDesktop.swift; sourceTree = "<group>"; };
 		E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iVectorApp.swift; sourceTree = "<group>"; };
-		E67160CC28BCFE8000F79DA2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		E67160CD28BCFE8200F79DA2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E67160D228BCFE8200F79DA2 /* iVector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iVector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E67160D828BCFE8200F79DA2 /* iVector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iVector.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,7 +88,6 @@
 			isa = PBXGroup;
 			children = (
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
-				E67160CC28BCFE8000F79DA2 /* ContentView.swift */,
 				E64D7D0028D0A5B300D99FA5 /* ControlPanel.swift */,
 				E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */,
 				E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */,
@@ -282,7 +278,6 @@
 				E64D7CFE28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E64D7D0128D0A5B300D99FA5 /* ControlPanel.swift in Sources */,
-				E67160DD28BCFE8200F79DA2 /* ContentView.swift in Sources */,
 				E63933A528C1F729007C1F79 /* AppState.swift in Sources */,
 				E65921A128D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
@@ -297,7 +292,6 @@
 				E64D7D0528D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E64D7D0228D0A5B300D99FA5 /* ControlPanel.swift in Sources */,
 				E63933A628C1F729007C1F79 /* AppState.swift in Sources */,
-				E67160DE28BCFE8200F79DA2 /* ContentView.swift in Sources */,
 				E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 			);

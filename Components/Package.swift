@@ -5,6 +5,7 @@ import PackageDescription
 
 let resources: [Resource] = [
     .process("Fonts/RobotoMono-Bold.ttf"),
+    .process("Fonts/RobotoMono-Regular.ttf"),
     .copy("Animation/loading.json"),
     .copy("Animation/mic.json"),
     .copy("Animation/cam.json"),

@@ -74,7 +74,7 @@ public struct VisionView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .clipped()
             
-            Text("offline")
+            Text(L10n.offline)
                 .font(bold(64))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)

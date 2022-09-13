@@ -17,8 +17,8 @@ public struct SettingsView: View {
     public var body: some View {
         NavigationView {
             Form {
-                Section("Connection") {
-                    TextField("IP", text: $ip)
+                Section(L10n.connection) {
+                    TextField(L10n.ipAddress, text: $ip)
                         .onChange(of: ip) { newValue in
                             ip = trimInvalidCharacters(newValue)
                             viewModel.ip = ip
@@ -32,17 +32,17 @@ public struct SettingsView: View {
                         }
                         .disableAutocorrection(true)
                     
-                    TextField("Certificate", text: $certPath)
+                    TextField(L10n.certificate, text: $certPath)
                         .disabled(true)
                     
-                    TextField("GUID", text: $guid)
+                    TextField(L10n.guid, text: $guid)
                         .disabled(true)
                 }
                 
-                Section("Vector") {
-                    ColorPicker("Eye color", selection: $viewModel.eyeColor)
+                Section(L10n.vector) {
+                    ColorPicker(L10n.eyeColor, selection: $viewModel.eyeColor)
                     
-                    Picker("Locale", selection: $viewModel.locale) {
+                    Picker(L10n.locale, selection: $viewModel.locale) {
                         ForEach(Locale.preferredLanguages, id: \.self) {
                             let locale = Locale(identifier: $0)
                             Text(locale.identifier)
@@ -82,19 +82,19 @@ public struct SettingsView: View {
 #endif
             }
 #if os(iOS)
-                .navigationBarTitle("Settings")
-                .toolbar {
-                    Button {
-                        viewModel.save()
-                        isPresented = false
-                    } label: {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(.green)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!viewModel.isValid)
+            .navigationBarTitle(L10n.settings)
+            .toolbar {
+                Button {
+                    viewModel.save()
+                    isPresented = false
+                } label: {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
                 }
-#elseif os(macOS)            
+                .buttonStyle(.plain)
+                .disabled(!viewModel.isValid)
+            }
+#elseif os(macOS)
             .padding(10)
 #endif
         }
