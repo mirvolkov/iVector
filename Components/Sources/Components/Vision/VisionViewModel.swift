@@ -35,6 +35,18 @@ extension VisionView {
                     }
                     .store(in: &self.bag)
                 
+                self.$isVectorOnline
+                    .removeDuplicates()
+                    .receive(on: RunLoop.main)
+                    .sink { online in
+                        if online {
+                            self.start()
+                        } else {
+                            self.stop()
+                        }
+                    }
+                    .store(in: &self.bag)
+                
                 await self.connection
                     .robotState
                     .first()

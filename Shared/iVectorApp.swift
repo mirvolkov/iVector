@@ -4,7 +4,13 @@ import SwiftUI
 struct iVectorApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            #if os(macOS)
+            HomeDesktop()
+            #endif
+            
+            #if os(iOS)
+            HomeTablet()
+            #endif
         }
     }
 }

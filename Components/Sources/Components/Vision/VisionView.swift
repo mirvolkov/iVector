@@ -14,17 +14,10 @@ public struct VisionView: View {
                 ZStack(alignment: .trailing) {
                     Image(nsImage: image)
                         .resizable()
-                        .padding(10)
-                    menu
-                        .padding(.top, 10)
-                        .padding(.leading, 10)
                     headControl
                         .frame(width: 80)
                         .padding(.trailing, 10)
-                }.overlay {
-                    facet
                 }
-                .aspectRatio(contentMode: .fit)
             } else {
                 offline
             }
@@ -33,35 +26,18 @@ public struct VisionView: View {
                 ZStack(alignment: .trailing) {
                     Image(uiImage: image)
                         .resizable()
-                        .padding(10)
-                    menu
-                        .padding(.top, 10)
-                        .padding(.horizontal, 10)
-                        .frame(height: 44, alignment: .leading)
                     headControl
                         .frame(width: 80)
                         .padding(.trailing, 10)
-                }.overlay {
-                    facet
                 }
-                .aspectRatio(contentMode: .fit)
             } else {
                 offline
             }
             #endif
-
-            Button {
-                if !viewModel.isStreaming {
-                    viewModel.start()
-                } else {
-                    viewModel.stop()
-                }
-            } label: {
-                Text("CAM")
-            }.disabled(!viewModel.isVectorOnline)
         }
-        
-        .ignoresSafeArea()
+        .overlay {
+            facet
+        }
     }
     
     var menu: some View {
@@ -87,66 +63,21 @@ public struct VisionView: View {
         Image("facet")
             .resizable(capInsets: .init(), resizingMode: .tile)
             .allowsHitTesting(false)
-            .scaledToFit()
+            .scaledToFill()
     }
     
     var offline: some View {
         ZStack(alignment: .center) {
             LottieView(name: "offline")
-                .scaleEffect(x: 1, y: 0.5, anchor: .center)
+//                .scaleEffect(x: 1, y: 0.4620, anchor: .center)
+                .aspectRatio(contentMode: .fill)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
             
             Text("offline")
                 .font(bold(64))
                 .foregroundColor(.white)
-        }
-    }
-}
-
-struct FacetPreviewProvilder: PreviewProvider {
-    @State static var value: UInt = 0
-    
-    static var previews: some View {
-        Group {
-            ZStack {
-                VisionMenuPanel()
-                    .padding(.top, 10)
-                    .padding(.leading, 10)
-                Image("sample")
-                    .resizable()
-                    .frame(width: 960, height: 640)
-                    .padding(10)
-                VSliderView(value: Self.$value, gradientColors: [.clear, .clear], sliderColor: .white)
-                    .frame(width: 60)
-                    .padding(.vertical, 40)
-                    .padding(.trailing, 40)
-            }
-            .previewDevice("iPad Pro (9.7-inch)")
-            .overlay {
-                Image("facet")
-                    .resizable(capInsets: .init(), resizingMode: .tile)
-                    .allowsHitTesting(false)
-                    .padding(10)
-            }.previewInterfaceOrientation(.portraitUpsideDown)
-            ZStack {
-                VisionMenuPanel()
-                    .padding(.top, 10)
-                    .padding(.leading, 10)
-                Image("sample")
-                    .resizable()
-                    .frame(width: 960, height: 640)
-                    .padding(10)
-                VSliderView(value: Self.$value, gradientColors: [.clear, .clear], sliderColor: .white)
-                    .frame(width: 60)
-                    .padding(.vertical, 40)
-                    .padding(.trailing, 40)
-            }
-            .previewDevice("iPad Pro (9.7-inch)")
-            .overlay {
-                Image("facet")
-                    .resizable(capInsets: .init(), resizingMode: .tile)
-                    .allowsHitTesting(false)
-                    .padding(10)
-            }.previewInterfaceOrientation(.portraitUpsideDown)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

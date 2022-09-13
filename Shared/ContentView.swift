@@ -41,10 +41,10 @@ struct ContentView: View {
 
             Spacer().frame(height: 20)
 
-            VisionView(AppState.instance.connection)
-                .frame(width: 320, height: 240)
-            
-            Spacer().frame(height: 20)
+//            VisionView(AppState.instance.connection)
+//                .frame(width: 320, height: 240)
+//            
+//            Spacer().frame(height: 20)
             
             HStack {
                 Button {
