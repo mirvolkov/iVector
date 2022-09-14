@@ -101,9 +101,9 @@ public final actor ConnectionModel {
     }
 
     /// Plays wav file 
-    public func play(wav: SoundPlayer.SoundName) throws {
+    public func play(name: SoundPlayer.SoundName) throws {
         let player = SoundPlayer()
-        let stream = player.play(name: .alarm)
+        let stream = player.play(name: name)
         try connection?.playAudio(stream: stream)
     }
     

@@ -2,28 +2,26 @@ import AVFoundation
 import Connection
 import Foundation
 
-final class SoundPlayer {
-    enum SoundType: String {
+public final class SoundPlayer {
+    public enum SoundType: String {
         case wav
         case mp3
     }
 
-    func play(name: String, type: SoundType = .wav) -> AsyncStream<VectorAudioFrame> {
+    public enum SoundName: String {
+        case alarm
+        case cputer2
+    }
+
+    public init() {}
+
+    public func play(name: SoundName, type: SoundType = .wav) -> AsyncStream<VectorAudioFrame> {
         .init { continuation in
-            guard let url = Bundle.main.url(forResource: name, withExtension: type.rawValue),
-                  let file = try? AVAudioFile(forReading: url),
-                  let format = AVAudioFormat(
-                      commonFormat: .pcmFormatInt16,
-                      sampleRate: file.fileFormat.sampleRate,
-                      channels: 1,
-                      interleaved: false
-                  )
-            else {
+            guard let url = Bundle.module.url(forResource: name.rawValue, withExtension: type.rawValue) else {
                 return
             }
 
-            if let buf = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 1_024) {
-                try? file.read(into: buf)
+            if let buf = readPCMBuffer(url: url) {
                 guard let int16ChannelData = buf.int16ChannelData else {
                     return
                 }
@@ -36,5 +34,25 @@ final class SoundPlayer {
                 continuation.yield(.init(data: data))
             }
         }
+    }
+
+    func readPCMBuffer(url: URL) -> AVAudioPCMBuffer? {
+        guard let input = try? AVAudioFile(forReading: url, commonFormat: .pcmFormatInt16, interleaved: false) else {
+            return nil
+        }
+        guard let buffer = AVAudioPCMBuffer(
+            pcmFormat: input.processingFormat,
+            frameCapacity: AVAudioFrameCount(input.length)
+        ) else {
+            return nil
+        }
+
+        do {
+            try input.read(into: buffer)
+        } catch {
+            return nil
+        }
+
+        return buffer
     }
 }
