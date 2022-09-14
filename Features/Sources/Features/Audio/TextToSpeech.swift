@@ -4,11 +4,11 @@ import Connection
 public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
     private let synth = AVSpeechSynthesizer()
     private var lastContinuation: AsyncStream<VectorAudioFrame>.Continuation?
-    
-    func resampleBuffer(inSource: AVAudioPCMBuffer, newSampleRate: Double = 11025.0) -> AVAudioPCMBuffer? {
+
+    func resampleBuffer(inSource: AVAudioPCMBuffer, newSampleRate: Double = 11_025) -> AVAudioPCMBuffer? {
         let outSettings = [
             AVFormatIDKey: kAudioFormatLinearPCM, // kAudioFormatAppleLossless
-            AVSampleRateKey: 11_025.0,
+            AVSampleRateKey: newSampleRate,
             AVNumberOfChannelsKey: 1,
             AVEncoderAudioQualityKey: AVAudioQuality.min.rawValue,
             AVLinearPCMIsBigEndianKey: false,

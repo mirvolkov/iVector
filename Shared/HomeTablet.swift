@@ -1,5 +1,7 @@
 import Components
 import SwiftUI
+#if os(iOS)
+import UIKit
 
 struct HomeTablet: View {
     @State var preferences = false
@@ -39,3 +41,4 @@ struct HomeTablet: View {
         .ignoresSafeArea()
     }
 }
+#endif

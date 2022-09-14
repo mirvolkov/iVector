@@ -10,6 +10,7 @@ let resources: [Resource] = [
     .copy("Animation/mic.json"),
     .copy("Animation/cam.json"),
     .copy("Animation/offline.json"),
+    .copy("Sounds/alarm.wav")
 ]
 
 

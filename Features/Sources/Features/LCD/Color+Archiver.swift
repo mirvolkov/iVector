@@ -1,5 +1,7 @@
 import SwiftUI
 
+/// Color extension to let color be archived and used with AppStorage wrapper
+/// - Description implementation works with iOS/macOS envs
 extension Color: RawRepresentable {
     public init?(rawValue: String) {
         guard let data = Data(base64Encoded: rawValue) else {

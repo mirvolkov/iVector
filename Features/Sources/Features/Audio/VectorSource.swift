@@ -1,10 +1,16 @@
 import AVKit
 import Combine
+import Connection
+import Foundation
 
-struct VectorSource: AudioSource {
-    var audioStream: PassthroughSubject<AVAudioPCMBuffer, Never> = .init()
+public struct VectorSource: AudioSource {
+    private let connection: Audio
 
-    func start() {}
+    public init(with connection: Audio) {
+        self.connection = connection
+    }
 
-    func stop() {}
+    func feed() throws -> AsyncStream<VectorAudioFrame> {
+        try connection.requestMicFeed()
+    }
 }

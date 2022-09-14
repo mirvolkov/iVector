@@ -1,20 +1,16 @@
-//
-//  File.swift
-//
-//
-//  Created by Miroslav Volkov on 31.08.2022.
-//
-
 import Combine
 import CoreML
 import os.log
 import Vision
 
+/// Object detector with MobileNetV2 background
 public final class ObjectDetection {
+    /// Reactive subject with detected objects stream
     @Published public var objects: PassthroughSubject<[VNRecognizedObjectObservation], Never> = .init()
+
+    private lazy var logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var requestOptions: [VNImageOption: Any] = [:]
     private lazy var requests: [VNRequest] = [visionRequest]
-    private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var movileNetV2: VNCoreMLModel = {
         do {
             let model = try MobileNetV2(configuration: .init()).model
@@ -41,7 +37,7 @@ public final class ObjectDetection {
             let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: buffer, options: requestOptions)
             try imageRequestHandler.perform(requests)
         } catch {
-            print(error)
+            logger.error("OD \(error.localizedDescription)")
         }
     }
 
@@ -50,7 +46,7 @@ public final class ObjectDetection {
             let imageRequestHandler = VNImageRequestHandler(data: data, options: requestOptions)
             try imageRequestHandler.perform(requests)
         } catch {
-            print(error)
+            logger.error("OD \(error.localizedDescription)")
         }
     }
 }

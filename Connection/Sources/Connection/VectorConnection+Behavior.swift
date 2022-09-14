@@ -29,6 +29,29 @@ extension VectorConnection: Behavior {
         }
     }
 
+    public func lift(_ height: Float) async throws {
+        var request: Anki_Vector_ExternalInterface_SetLiftHeightRequest = .init()
+        request.heightMm = height
+        request.accelRadPerSec2 = 10
+        request.maxSpeedRadPerSec = 10
+        request.idTag = VectorConnection.firstSDKTag
+        let call: UnaryCall<Anki_Vector_ExternalInterface_SetLiftHeightRequest,
+                            Anki_Vector_ExternalInterface_SetLiftHeightResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SetLiftHeightRequest",
+            request: request,
+            callOptions: callOptions
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { _ in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { error in
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
     public func say(text: String) async throws {
         var request: Anki_Vector_ExternalInterface_SayTextRequest = .init()
         request.text = text

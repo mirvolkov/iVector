@@ -5,13 +5,17 @@ import SwiftUI
 
 extension VisionView {
     @MainActor class ViewModel: ObservableObject {
+        /// is vector streaming video feed
+        @Published var isStreaming = false
+        /// is vector connected and online
+        @Published var isVectorOnline = false
+        /// last taken video frame
+        @Published var frame: VectorCameraFrame?
+        /// vector's head angle. Degrees (-22...45)
+        @Published var headAngle: UInt = 0
+        
         private let connection: ConnectionModel
         private var bag = Set<AnyCancellable>()
-        
-        @Published var isStreaming = false
-        @Published var isVectorOnline = false
-        @Published var frame: VectorCameraFrame?
-        @Published var headAngle: UInt = 0
         
         public init(with connection: ConnectionModel) {
             self.connection = connection
@@ -63,6 +67,7 @@ extension VisionView {
             print("VisionViewModel deinit")
         }
         
+        /// Start video feed
         @MainActor public func start() {
             Task.detached {
                 await MainActor.run { self.isStreaming = true }
@@ -83,6 +88,7 @@ extension VisionView {
             }
         }
         
+        /// Stop video feed
         @MainActor public func stop() {
             isStreaming = false
         }

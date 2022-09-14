@@ -24,7 +24,7 @@ actor DataAccumulator: Sendable {
         defer { data.removeFirst(min(data.count, size)) }
         return data.prefix(size)
     }
-    
+
     func get() -> Data {
         data
     }
@@ -41,7 +41,7 @@ public final class VectorConnection: Connection {
     let connection: ClientConnection
     var requestStream: ControlRequestStream?
     var eventStream: EventStream?
-    
+
     public init?(with ipAddress: String, port: Int) {
         guard let certificatePath = Bundle.module.path(forResource: "Vector-E1B6-003099a9", ofType: "cert") else {
             return nil
@@ -153,8 +153,6 @@ extension VectorConnection: ClientErrorDelegate, ConnectivityStateDelegate {
         delegate?.didClose()
     }
 }
-
-
 
 /// Logging extension
 extension VectorConnection {

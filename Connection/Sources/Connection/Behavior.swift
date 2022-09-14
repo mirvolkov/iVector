@@ -56,6 +56,11 @@ public protocol Behavior {
     /// - Parameter angle 22.000000..45.000000 range
     /// - Throws set angle error failed
     func setHeadAngle(_ angle: Float) async throws
+    
+    /// Lift
+    /// - Parameter height 0...1 range
+    /// - Throws lift error failed
+    func lift(_ height: Float) async throws
 
     /// Move
     /// - Parameter distance - distance in mm

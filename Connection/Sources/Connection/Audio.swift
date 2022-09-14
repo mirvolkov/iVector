@@ -23,6 +23,6 @@ public protocol Audio {
     /// - Throws error if request failed
     func requestMicFeed() throws -> AsyncStream<VectorAudioFrame>
 
-    /// Play audio
+    /// Play audio stream
     func playAudio(stream: AsyncStream<VectorAudioFrame>) throws
 }
