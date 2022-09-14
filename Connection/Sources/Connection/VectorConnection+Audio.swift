@@ -38,8 +38,8 @@ extension VectorConnection: Audio {
             for await chunk in stream {
                 await accumulator.push(chunk.data)
                 while await !accumulator.get().isEmpty {
-                    let chunk = await accumulator.pop(1_024)
-                    pushAudioChunk(for: audioCall, chunk)
+                    let data = await accumulator.pop(1_024)
+                    pushAudioChunk(for: audioCall, data)
                 }
             }
             complete(for: audioCall)
@@ -54,6 +54,13 @@ extension VectorConnection: Audio {
                 Self.log("Audio stream callback \(message)")
             }
         )
+
+        var prepareRequest: Anki_Vector_ExternalInterface_ExternalAudioStreamRequest = .init()
+        prepareRequest.audioStreamPrepare = .init()
+        prepareRequest.audioStreamPrepare.audioVolume = 100
+        prepareRequest.audioStreamPrepare.audioFrameRate = 11_025
+        _ = audioCall.sendMessage(prepareRequest)
+
         return audioCall
     }
 

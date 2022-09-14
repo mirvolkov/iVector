@@ -13,6 +13,9 @@ public final actor ConnectionModel {
         case online
     }
 
+    /// Vector's battery condition property
+    /// - Description battery conditions are FULL/NORMAL/LOW/CHARGING
+    /// - Returns battery state asyhc value
     public var battery: VectorBatteryState {
         get async throws {
             guard let battery = try? await connection?.battery else {
@@ -23,23 +26,35 @@ public final actor ConnectionModel {
         }
     }
 
+    /// Vector behavior API access
+    /// - Description nil means vector is not connected
+    /// - Returns Behavior optional type entity
     public var behavior: Behavior? {
         connection
     }
 
+    /// Vector camera feed access
+    /// - Description grants camera feed
+    /// - Returns optinal AsyncStream with camera feed
     public var camera: AsyncStream<VectorCameraFrame>? {
         get throws {
             try connection?.requestCameraFeed()
         }
     }
 
+    /// Vector microphone feed access
+    /// - Description grants microphone feed
+    /// - Returns optinal AsyncStream with microphone feed
     public var mic: AsyncStream<VectorAudioFrame>? {
         get throws {
             try connection?.requestMicFeed()
         }
     }
     
+    /// Vector's connection state reactive property
     public var state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
+    
+    /// Vector's robot state reactive property
     public var robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
     private var connection: VectorDevice?
@@ -79,11 +94,19 @@ public final actor ConnectionModel {
         }
     }
 
+    /// Says text with vector speaker hardware
     public func say(text: String, locale: Locale = .current) throws {
         let stream = tts.run(text, locale: locale)
         try connection?.playAudio(stream: stream)
     }
 
+    /// Plays wav file 
+    public func play(wav: SoundPlayer.SoundName) throws {
+        let player = SoundPlayer()
+        let stream = player.play(name: .alarm)
+        try connection?.playAudio(stream: stream)
+    }
+    
     private func process(state: ConnectionModelState) {
         switch state {
         case .online:

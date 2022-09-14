@@ -6,7 +6,7 @@ public enum VectorBatteryState: CustomStringConvertible {
     case normal
     case full
     case unknown
-    
+
     init(with entity: Anki_Vector_ExternalInterface_BatteryLevel) {
         switch entity {
         case .unknown:
@@ -42,6 +42,7 @@ public enum VectorBatteryState: CustomStringConvertible {
     }
 }
 
+/// Vector's behaviour API
 public protocol Behavior {
     /// Request vector say some text
     /// - Throws error if request failed
@@ -56,7 +57,7 @@ public protocol Behavior {
     /// - Parameter angle 22.000000..45.000000 range
     /// - Throws set angle error failed
     func setHeadAngle(_ angle: Float) async throws
-    
+
     /// Lift
     /// - Parameter height 0...1 range
     /// - Throws lift error failed
