@@ -8,7 +8,7 @@ struct HomeTablet: View {
 
     var body: some View {
         NavigationView {
-            ControlPanel()
+            ControlPanelsView()
                 .frame(width: 320)
                 .navigationTitle(L10n.controlPanel)
                 .navigationBarTitleDisplayMode(.inline)

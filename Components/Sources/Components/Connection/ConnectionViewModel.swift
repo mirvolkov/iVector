@@ -75,4 +75,12 @@ import SwiftUI
     public func undock() {
         Task.detached { try? await self.model.undock() }
     }
+    
+    public func wavTest() {
+        Task { try await model.play(name: .cputer2) }
+    }
+    
+    public func sayTest() {
+        Task { try await model.say(text: "Test") }
+    }
 }
