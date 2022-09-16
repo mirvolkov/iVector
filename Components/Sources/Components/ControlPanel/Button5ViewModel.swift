@@ -1,7 +1,7 @@
 import SwiftUI
 
-extension ControlButtonView {
-    class Button5ViewModel: ControlButtonViewModel {
+extension ControlPanelButtonView {
+    class Button5ViewModel: ViewModel {
         override init() {
             super.init()
             self.primaryIcon = .init(systemName: "arrow.up.backward.square")

@@ -1,66 +1,76 @@
+import Features
 import SwiftUI
 
+// TODO: refactor it using factor builder patter
 public struct ControlPanelsView: View {
     @State var size: CGFloat = 60
     
-    public init() {}
+    private let connection: ConnectionModel
+    private let settings: SettingsModel
+    
+    public init(connection: ConnectionModel, settings: SettingsModel) {
+        self.connection = connection
+        self.settings = settings
+    }
 
     public var body: some View {
         VStack {
             VStack(spacing: 10) {
                 HStack(alignment: .center) {
-                    ControlButtonView(viewModel: ControlButtonView.ConnectViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.ButtonPowerViewModel(
+                        connection: connection,
+                        settings: settings
+                    ))
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.MicViewModel())
-                        .frame(width: size, height: size)                    
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.MicViewModel())
+                        .frame(width: size, height: size)
                     Spacer()
                 }.frame(height: size)
-                
                 
                 Spacer()
                     .frame(height: 20)
                 
                 HStack(alignment: .center) {
-                    ControlButtonView(viewModel: ControlButtonView.Button1ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button1ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button2ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button2ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button3ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button3ViewModel())
                         .frame(width: size, height: size)
                     
                     Spacer()
                         .frame(width: 30)
                     
-                    ControlButtonView(viewModel: .init())
+                    ControlPanelButtonView(viewModel: .init())
                         .frame(width: size, height: size)
                     
                     Spacer()
                 }.frame(height: size)
                 
                 HStack(alignment: .center) {
-                    ControlButtonView(viewModel: ControlButtonView.Button4ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button4ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button5ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button5ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button6ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button6ViewModel())
                         .frame(width: size, height: size)
                     
                     Spacer()
                 }.frame(height: size)
                 
                 HStack(alignment: .center) {
-                    ControlButtonView(viewModel: ControlButtonView.Button7ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button7ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button8ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button8ViewModel())
                         .frame(width: size, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button9ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button9ViewModel())
                         .frame(width: size, height: size)
                     
                     Spacer()
@@ -70,7 +80,7 @@ public struct ControlPanelsView: View {
                     Spacer()
                         .frame(width: size + 8, height: size)
                     
-                    ControlButtonView(viewModel: ControlButtonView.Button0ViewModel())
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.Button0ViewModel())
                         .frame(width: size, height: size)
                     
                     Spacer()
@@ -78,14 +88,20 @@ public struct ControlPanelsView: View {
                 }.frame(height: size)
                 
                 Spacer()
+                    .frame(height: 20)
+                
+                HStack(alignment: .center) {
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.ButtonDockViewModel(connection: connection))
+                        .frame(width: size, height: size)
+                    
+                    ControlPanelButtonView(viewModel: ControlPanelButtonView.ButtonLiftViewModel(connection: connection))
+                        .frame(width: size, height: size)
+                    
+                    Spacer()
+                    
+                }.frame(height: size)
             }
         }
         .padding(10)
-    }
-}
-
-struct ControlPanel_Preview: PreviewProvider {
-    static var previews: some View {
-        ControlPanelsView()
     }
 }

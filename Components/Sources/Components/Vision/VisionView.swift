@@ -1,3 +1,4 @@
+import Features
 import SwiftUI
 
 public struct VisionView: View {

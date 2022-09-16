@@ -1,6 +1,5 @@
 import Combine
 import Connection
-import Features
 import Foundation
 import os.log
 
@@ -50,10 +49,10 @@ public final actor ConnectionModel {
             try connection?.requestMicFeed()
         }
     }
-    
+
     /// Vector's connection state reactive property
     public var state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
-    
+
     /// Vector's robot state reactive property
     public var robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
@@ -71,15 +70,18 @@ public final actor ConnectionModel {
             .store(in: &bag)
     }
 
-    public func connect(with ip: String, port: Int = 443) {
-        guard case .disconnected = state.value else { return }
-        connection = VectorConnection(with: ip, port: port)
+    public func connect(with ipAddress: String, port: Int = 443) {
+        guard case .disconnected = state.value else {
+            return
+        }
+
+        connection = VectorConnection(with: ipAddress, port: port)
         connection?.delegate = self
         do {
             state.send(.connecting)
             try connection?.requestControl()
         } catch {
-            print(error)
+            self.logger.error("\(error.localizedDescription)")
             state.send(.disconnected)
         }
     }
@@ -89,7 +91,7 @@ public final actor ConnectionModel {
             try connection?.release()
             connection = nil
         } catch {
-            print(error)
+            self.logger.error("\(error.localizedDescription)")
             state.send(.disconnected)
         }
     }
@@ -106,13 +108,15 @@ public final actor ConnectionModel {
         let stream = player.play(name: name)
         try connection?.playAudio(stream: stream)
     }
-    
+
     private func process(state: ConnectionModelState) {
         switch state {
         case .online:
             Task.detached { try await self.onConnected() }
+            
         case .connecting:
             logger.debug("connecting...")
+            
         case .disconnected:
             break
         }

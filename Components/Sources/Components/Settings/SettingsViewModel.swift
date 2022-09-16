@@ -1,5 +1,6 @@
 import Combine
 import SwiftUI
+import Features
 
 extension SettingsView {
     class ViewModel: ObservableObject {

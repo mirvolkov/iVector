@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct ControlButtonView: View {
-    @StateObject var viewModel: ControlButtonViewModel
+struct ControlPanelButtonView: View {
+    @StateObject var viewModel: ViewModel
     @State var isHighligted: Bool = false
 
     var body: some View {
@@ -33,6 +33,15 @@ struct ControlButtonView: View {
         .background(.background)
         .cornerRadius(3)
         .shadow(color: .gray, radius: isHighligted ? 0 : 2, x: 1, y: 1)
+        .onAppear {
+            viewModel.bind()
+        }
+        .onDisappear {
+            viewModel.unbind()
+        }
+        .onTapGesture {
+            viewModel.onClick()
+        }
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in
@@ -44,15 +53,5 @@ struct ControlButtonView: View {
                     isHighligted = false
                 }
         )
-    }
-}
-
-extension ControlButtonView {
-    class ControlButtonViewModel: ObservableObject {
-        @Published var enabled: Bool = true
-        @Published var primaryIcon: Image?
-        @Published var primaryTitle: String?
-        @Published var secondaryTitle: String?
-        @Published var tintColor: Color = .green
     }
 }

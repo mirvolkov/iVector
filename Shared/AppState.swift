@@ -1,5 +1,6 @@
 import SwiftUI
 import Components
+import Features
 
 enum VectorAppFeatureState {
     case vision
