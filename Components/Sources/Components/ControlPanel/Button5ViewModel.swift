@@ -1,11 +1,15 @@
 import SwiftUI
 
-extension ControlPanelButtonView {
-    class Button5ViewModel: ViewModel {
-        override init() {
-            super.init()
-            self.primaryIcon = .init(systemName: "arrow.up.backward.square")
-            self.primaryTitle = "5"
-        }
+class Button5ViewModel: ControlPanelButtonViewModel {
+    @Published var enabled: Bool = true
+    @Published var primaryIcon: Image?
+    @Published var primaryTitle: String?
+    @Published var secondaryTitle: String?
+    @Published var tintColor: Color = .green
+    
+    init() {
+        self.primaryIcon = .init(systemName: "arrow.clockwise")
+        self.secondaryTitle = "="
+        self.primaryTitle = "5"
     }
 }

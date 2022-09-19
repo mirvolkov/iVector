@@ -1,6 +1,10 @@
 import SwiftUI
 
-struct ControlPanelButtonView: View {
+typealias ControlPanelButtonViewModel = CPButtonViewModel
+    & CPViewModelBindable
+    & CPViewModelClickable
+
+struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
     @StateObject var viewModel: ViewModel
     @State var isHighligted: Bool = false
 
@@ -39,9 +43,12 @@ struct ControlPanelButtonView: View {
         .onDisappear {
             viewModel.unbind()
         }
-        .onTapGesture {
+        .onTapGesture(perform: {
             viewModel.onClick()
-        }
+        })
+        .onChange(of: viewModel.enabled, perform: { newValue in
+            print("enabled: \(newValue)")
+        })
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)
                 .onChanged { _ in
