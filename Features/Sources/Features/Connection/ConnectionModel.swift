@@ -113,10 +113,10 @@ public final actor ConnectionModel {
         switch state {
         case .online:
             Task.detached { try await self.onConnected() }
-            
+
         case .connecting:
             logger.debug("connecting...")
-            
+
         case .disconnected:
             break
         }

@@ -17,6 +17,7 @@ extension VisionView {
         
         private let connection: ConnectionModel
         private var bag = Set<AnyCancellable>()
+        private var cameraTask: Task<Void, Never>?
         
         public init(with connection: ConnectionModel) {
             self.connection = connection
@@ -52,6 +53,19 @@ extension VisionView {
                     }
                     .store(in: &self.bag)
                 
+                // getting frame here means stream failed. Restart in this case
+                self.$frame
+                    .debounce(for: 10, scheduler: RunLoop.main)
+                    .filter({ _ in
+                        self.isStreaming
+                    })
+                    .sink { _ in
+                        print("Cam feed failed")
+                        self.stop()
+                        self.start()
+                    }
+                    .store(in: &self.bag)
+                
                 await self.connection
                     .robotState
                     .first()
@@ -70,7 +84,7 @@ extension VisionView {
         
         /// Start video feed
         @MainActor public func start() {
-            Task.detached {
+            cameraTask = Task.detached {
                 await MainActor.run { self.isStreaming = true }
                 
                 if let camera = try? await self.connection.camera {
@@ -91,6 +105,7 @@ extension VisionView {
         
         /// Stop video feed
         @MainActor public func stop() {
+            cameraTask?.cancel()
             isStreaming = false
         }
         
