@@ -1,16 +1,18 @@
-import SwiftUI
 import Components
+import SwiftUI
 
 #if os(macOS)
 struct HomeDesktop: View {
     var body: some View {
         HSplitView {
             ControlPanelsView(connection: AppState.instance.connection, settings: AppState.instance.settings)
-                .frame(width: 320)
+                .frame(width: 280)
+                .padding(10)
             DetailPanel()
-                .frame(width: 640, height: 560)
+                .padding(0)
+                .frame(width: 640)
         }
-        .ignoresSafeArea()
+        .frame(height: 520)
     }
 }
 #endif

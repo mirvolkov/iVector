@@ -1,10 +1,10 @@
 import SwiftUI
 
-public func regular(_ size: CGFloat) -> SwiftUI.Font {
+public func vectorRegular(_ size: CGFloat) -> SwiftUI.Font {
     SwiftUI.Font.init(FontFamily.RobotoMono.regular.font(size: size) as CTFont)
 }
 
-public func bold(_ size: CGFloat) -> SwiftUI.Font {
+public func vectorBold(_ size: CGFloat) -> SwiftUI.Font {
     SwiftUI.Font.init(FontFamily.RobotoMono.bold.font(size: size) as CTFont)
 }
 

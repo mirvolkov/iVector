@@ -39,6 +39,7 @@ public struct VisionView: View {
         .overlay {
             facet
         }
+        .clipped()
     }
     
     var menu: some View {
@@ -52,7 +53,7 @@ public struct VisionView: View {
                 .padding(.trailing, 20)
             
             Text("\(Int(viewModel.denorm(viewModel.headAngle)))")
-                .font(bold(28))
+                .font(vectorBold(28))
                 .foregroundColor(.white.opacity(0.75))
                 .padding(.bottom, 40)
                 .padding(.trailing, 20)
@@ -76,7 +77,7 @@ public struct VisionView: View {
                 .clipped()
             
             Text(L10n.offline)
-                .font(bold(64))
+                .font(vectorBold(64))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
