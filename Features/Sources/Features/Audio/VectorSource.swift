@@ -4,13 +4,13 @@ import Connection
 import Foundation
 
 public struct VectorSource: AudioSource {
-    private let connection: Audio
+    private let mic: AsyncStream<VectorAudioFrame>
 
-    public init(with connection: Audio) {
-        self.connection = connection
+    public init(with mic: AsyncStream<VectorAudioFrame>) {
+        self.mic = mic
     }
 
-    func feed() throws -> AsyncStream<VectorAudioFrame> {
-        try connection.requestMicFeed()
+    public func feed() throws -> AsyncStream<VectorAudioFrame> {
+        mic
     }
 }

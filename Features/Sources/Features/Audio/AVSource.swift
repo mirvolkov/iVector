@@ -9,7 +9,9 @@ public final class AudioSession: AudioSource {
     private lazy var audioEngine: AVAudioEngine = .init()
     private lazy var audioSession: AVAudioSession = .sharedInstance()
 
-    func feed() throws -> AsyncStream<VectorAudioFrame> {
+    public init() {}
+
+    public func feed() throws -> AsyncStream<VectorAudioFrame> {
         .init { continuation in
             do {
                 try audioSession.setCategory(

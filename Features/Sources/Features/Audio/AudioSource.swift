@@ -2,7 +2,7 @@ import AVKit
 import Combine
 import Connection
 
-protocol AudioSource {
+public protocol AudioSource {
     /// Request audio feed
     /// - Description existential type for audio feed
     /// - Throws if audio feed request failed

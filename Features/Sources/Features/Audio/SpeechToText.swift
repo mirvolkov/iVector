@@ -20,7 +20,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate {
         interleaved: true
     )!
 
-    required init(with source: AudioSource) {
+    public required init(with source: AudioSource) {
         self.source = source
     }
 
