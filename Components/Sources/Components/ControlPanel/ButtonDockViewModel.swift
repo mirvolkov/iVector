@@ -12,13 +12,27 @@ class ButtonDockViewModel: ControlPanelButtonViewModel {
 
     init(connection: ConnectionModel) {
         self.connection = connection
-        self.primaryIcon = .init(systemName: "square.and.arrow.down") // square.and.arrow.up
-//        self.enabled = false
+        self.primaryIcon = .init(systemName: "square.and.arrow.down")
+    }
+    
+    func bind() {
+        Task {
+            if try await connection.battery == .charging {
+                self.primaryIcon = .init(systemName: "square.and.arrow.up")
+            } else {
+                self.primaryIcon = .init(systemName: "square.and.arrow.down")
+            }
+        }
     }
     
     func onClick() {
         Task {
-            try await connection.dock()
+            print(await try connection.battery)
+            if try await connection.battery == .charging {
+                try await connection.undock()
+            } else {
+                try await connection.dock()
+            }
         }
     }
 }

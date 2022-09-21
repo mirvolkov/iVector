@@ -8,7 +8,7 @@ extension Color: RawRepresentable {
             self = .black
             return
         }
-        
+
 #if os(iOS)
         do {
             let color = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(data) as? UIColor ?? .black

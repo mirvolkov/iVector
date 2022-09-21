@@ -4,13 +4,14 @@ import SwiftUI
 public struct ControlPanelsView: View {
     @State var size: CGFloat = 60
     @State var space: CGFloat = 8
-    
+    @StateObject var viewModel: ControlPanelViewModel
     private let connection: ConnectionModel
     private let settings: SettingsModel
     
     public init(connection: ConnectionModel, settings: SettingsModel) {
         self.connection = connection
         self.settings = settings
+        self._viewModel = StateObject(wrappedValue: .init(connection, settings))
     }
 
     public var body: some View {
@@ -33,13 +34,10 @@ public struct ControlPanelsView: View {
     
     private var header: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView<ButtonPowerViewModel>(viewModel: .init(
-                connection: connection,
-                settings: settings
-            ))
-            .frame(width: size, height: size)
+            ControlPanelButtonView(viewModel: viewModel.powerBtn)
+                .frame(width: size, height: size)
             
-            ControlPanelButtonView<ButtonDockViewModel>(viewModel: .init(connection: connection))
+            ControlPanelButtonView(viewModel: viewModel.dockBtn)
                 .frame(width: size, height: size)
             Spacer()
         }.frame(height: size)
@@ -47,51 +45,29 @@ public struct ControlPanelsView: View {
     
     private var digitalPanel1: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView<Button1ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button2ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button3ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
+            build(viewModel.btn1)
+            build(viewModel.btn2)
+            build(viewModel.btn3)
             Spacer()
                 .frame(width: 30)
-            
-//                    ControlPanelButtonView(viewModel: .init())
-//                        .frame(width: size, height: size)
-            
             Spacer()
         }.frame(height: size)
     }
     
     private var digitalPanel2: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView<Button4ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button5ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button6ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
+            build(viewModel.btn4)
+            build(viewModel.btn5)
+            build(viewModel.btn6)
             Spacer()
         }.frame(height: size)
     }
     
     private var digitalPanel3: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView<Button7ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button8ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button9ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
+            build(viewModel.btn7)
+            build(viewModel.btn8)
+            build(viewModel.btn9)
             Spacer()
         }.frame(height: size)
     }
@@ -100,10 +76,7 @@ public struct ControlPanelsView: View {
         HStack(alignment: .center, spacing: space) {
             Spacer()
                 .frame(width: size, height: size)
-            
-            ControlPanelButtonView<Button0ViewModel>(viewModel: .init())
-                .frame(width: size, height: size)
-            
+            build(viewModel.btn0)
             Spacer()
             
         }.frame(height: size)
@@ -111,14 +84,16 @@ public struct ControlPanelsView: View {
     
     private var behaviorPanel: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView<ButtonDockViewModel>(viewModel: .init(connection: connection))
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView<ButtonLiftViewModel>(viewModel: .init(connection: connection))
-                .frame(width: size, height: size)
-            
+            build(viewModel.dockBtn)
+            build(viewModel.dockBtn)
+            build(viewModel.dockBtn)
             Spacer()
             
         }.frame(height: size)
+    }
+    
+    private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View {
+        ControlPanelButtonView(viewModel: viewModel)
+            .frame(width: size, height: size)
     }
 }

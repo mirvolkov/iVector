@@ -12,7 +12,7 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
         VStack(spacing: 2) {
             if let secondaryTitle = viewModel.secondaryTitle {
                 Text(secondaryTitle)
-                    .font(regular(12))
+                    .font(vectorRegular(12))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
             } else {
                 Spacer()
@@ -28,7 +28,7 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
 
             if let primaryTitle = viewModel.primaryTitle {
                 Text(primaryTitle)
-                    .font(regular(18))
+                    .font(vectorRegular(18))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
             } else {
                 Spacer()
@@ -45,9 +45,6 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
         }
         .onTapGesture(perform: {
             viewModel.onClick()
-        })
-        .onChange(of: viewModel.enabled, perform: { newValue in
-            print("enabled: \(newValue)")
         })
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)

@@ -9,6 +9,6 @@ public final class SettingsModel {
     @AppStorage("eyeColor") public var eyeColor: Color = .white
     /// Locale used for text to speech generator
     @AppStorage("locale") public var locale: String = "en"
-    
+
     public init() {}
 }

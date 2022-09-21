@@ -9,19 +9,6 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var isLoading: Bool = false
-    
-    @Published var isConnected: Bool = false {
-        didSet {
-            if isConnected {
-                Task {
-                    try await connection.behavior?.setEyeColor(
-                        settings.eyeColor.hsv.hueComponent,
-                        settings.eyeColor.hsv.satComponent
-                    )
-                }
-            }
-        }
-    }
 
     private let connection: ConnectionModel
     private let settings: SettingsModel
@@ -49,12 +36,6 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     func bind() {
         Task { @MainActor [self] in
             await self.connection.state
-                .receive(on: RunLoop.main)
-                .map { newState in if case .online = newState { return true } else { return false } }
-                .assign(to: \.isConnected, on: self)
-                .store(in: &self.bag)
-
-            await self.connection.state
                 .map {
                     switch $0 {
                     case .connecting:
@@ -67,34 +48,6 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
                 }
                 .receive(on: RunLoop.main)
                 .assign(to: \.tintColor, on: self)
-                .store(in: &self.bag)
-
-            await self.connection.state
-                .map {
-                    switch $0 {
-                    case .connecting:
-                        return .yellow
-                    case .disconnected:
-                        return .red
-                    case .online:
-                        return .green
-                    }
-                }
-                .receive(on: RunLoop.main)
-                .assign(to: \.tintColor, on: self)
-                .store(in: &self.bag)
-
-            await self.connection.state
-                .map {
-                    switch $0 {
-                    case .connecting:
-                        return false
-                    default:
-                        return true
-                    }
-                }
-                .receive(on: RunLoop.main)
-                .assign(to: \.enabled, on: self)
                 .store(in: &self.bag)
         }
     }
