@@ -1,7 +1,7 @@
 import Combine
-import SwiftUI
-import Features
 import Connection
+import Features
+import SwiftUI
 
 class ControlPanelViewModel: ObservableObject {
     lazy var buttons: [String: any ControlPanelButtonViewModel] = [
@@ -17,9 +17,20 @@ class ControlPanelViewModel: ObservableObject {
         "BTN8": btn8,
         "BTN9": btn9,
         "BTN0": btn0,
+        "STT": stt,
+        "TTS": tts,
+        "LIFT": lift
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
+        connection: connection,
+        settings: settings
+    )
+    lazy var stt = ButtonSTTViewModel(
+        connection: connection,
+        settings: settings
+    )
+    lazy var tts = ButtonTTSViewModel(
         connection: connection,
         settings: settings
     )
@@ -34,7 +45,9 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn8 = Button8ViewModel()
     lazy var btn9 = Button9ViewModel()
     lazy var btn0 = Button0ViewModel()
-    
+    lazy var lift = ButtonLiftViewModel(connection: connection)
+
+    @Published var ttsAlert: Bool = false
     @Published var isConnected: Bool = false {
         didSet {
             if isConnected {
@@ -46,11 +59,11 @@ class ControlPanelViewModel: ObservableObject {
                 }
                 
                 buttons
-                    .filter { $0.key != "PWR"}
+                    .filter { !["PWR", "TTS", "STT"].contains($0.key) }
                     .forEach { $0.value.enabled = true }
             } else {
                 buttons
-                    .filter { $0.key != "PWR"}
+                    .filter { !["PWR", "TTS", "STT"].contains($0.key) }
                     .forEach { $0.value.enabled = false }
             }
         }
@@ -63,7 +76,7 @@ class ControlPanelViewModel: ObservableObject {
     init(_ connection: ConnectionModel, _ settings: SettingsModel) {
         self.settings = settings
         self.connection = connection
-        self.bind()
+        bind()
     }
     
     private func bind() {
@@ -73,6 +86,10 @@ class ControlPanelViewModel: ObservableObject {
                 .map { newState in if case .online = newState { return true } else { return false } }
                 .assign(to: \.isConnected, on: self)
                 .store(in: &self.bag)
+            
+            tts.$ttsAlert
+                .assign(to: \.ttsAlert, on: self)
+                .store(in: &bag)
         }
     }
     

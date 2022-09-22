@@ -4,13 +4,10 @@ import SwiftUI
 public struct ControlPanelsView: View {
     @State var size: CGFloat = 60
     @State var space: CGFloat = 8
+    @State var tts: String = ""
     @StateObject var viewModel: ControlPanelViewModel
-    private let connection: ConnectionModel
-    private let settings: SettingsModel
     
     public init(connection: ConnectionModel, settings: SettingsModel) {
-        self.connection = connection
-        self.settings = settings
         self._viewModel = StateObject(wrappedValue: .init(connection, settings))
     }
 
@@ -29,6 +26,16 @@ public struct ControlPanelsView: View {
                 behaviorPanel
             }
         }
+        .alert(L10n.say, isPresented: $viewModel.ttsAlert, actions: {
+            TextField(L10n.say, text: $tts)
+            Button(L10n.cancel, role: .cancel, action: {})
+            Button(L10n.say, role: .destructive, action: {
+                viewModel.tts.say(tts)
+                tts = String()
+            })
+        }, message: {
+            Text(L10n.typeInMessageToSay)
+        })
         .padding(10)
     }
     
@@ -37,7 +44,10 @@ public struct ControlPanelsView: View {
             ControlPanelButtonView(viewModel: viewModel.powerBtn)
                 .frame(width: size, height: size)
             
-            ControlPanelButtonView(viewModel: viewModel.dockBtn)
+            ControlPanelButtonView(viewModel: viewModel.tts)
+                .frame(width: size, height: size)
+            
+            ControlPanelButtonView(viewModel: viewModel.stt)
                 .frame(width: size, height: size)
             Spacer()
         }.frame(height: size)
@@ -85,8 +95,7 @@ public struct ControlPanelsView: View {
     private var behaviorPanel: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.dockBtn)
-            build(viewModel.dockBtn)
-            build(viewModel.dockBtn)
+            build(viewModel.lift)
             Spacer()
             
         }.frame(height: size)

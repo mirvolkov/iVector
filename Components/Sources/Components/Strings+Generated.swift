@@ -12,6 +12,8 @@ import Foundation
 public enum L10n {
   /// Camera
   public static let camera = L10n.tr("Localizable", "Camera")
+  /// Cancel
+  public static let cancel = L10n.tr("Localizable", "Cancel")
   /// Certificate
   public static let certificate = L10n.tr("Localizable", "Certificate")
   /// Connect
@@ -30,8 +32,12 @@ public enum L10n {
   public static let locale = L10n.tr("Localizable", "Locale")
   /// offline
   public static let offline = L10n.tr("Localizable", "offline")
+  /// Say
+  public static let say = L10n.tr("Localizable", "Say")
   /// Settings
   public static let settings = L10n.tr("Localizable", "Settings")
+  /// Type in message to say
+  public static let typeInMessageToSay = L10n.tr("Localizable", "Type in message to say")
   /// Vector
   public static let vector = L10n.tr("Localizable", "Vector")
 }
