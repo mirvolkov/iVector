@@ -9,29 +9,32 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
     @State var isHighligted: Bool = false
 
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 0) {
             if let secondaryTitle = viewModel.secondaryTitle {
                 Text(secondaryTitle)
                     .font(vectorRegular(12))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
             } else {
                 Spacer()
+                    .frame(height: 14)
             }
 
             if let image = viewModel.primaryIcon {
                 image
                     .resizable()
-                    .fixedSize()
+                    .scaledToFit()
                     .frame(maxWidth: .infinity)
+                    .frame(maxHeight: .infinity)
                     .foregroundColor(viewModel.enabled ? viewModel.tintColor : .gray)
             }
 
             if let primaryTitle = viewModel.primaryTitle {
                 Text(primaryTitle)
-                    .font(vectorRegular(18))
+                    .font(vectorRegular(20))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
             } else {
                 Spacer()
+                    .frame(height: 14)
             }
         }
         .background(.background)

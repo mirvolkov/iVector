@@ -9,7 +9,7 @@ class Button5ViewModel: ControlPanelButtonViewModel {
     
     init() {
         self.primaryIcon = .init(systemName: "arrow.clockwise")
-        self.secondaryTitle = "="
+        self.secondaryTitle = "eq"
         self.primaryTitle = "5"
     }
 }

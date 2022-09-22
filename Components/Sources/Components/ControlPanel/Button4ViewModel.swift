@@ -10,5 +10,6 @@ class Button4ViewModel: ControlPanelButtonViewModel {
     init() {
         self.primaryIcon = .init(systemName: "arrow.backward.square")
         self.primaryTitle = "4"
+        self.secondaryTitle = "less"
     }
 }
