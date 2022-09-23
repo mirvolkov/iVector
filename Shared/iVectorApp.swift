@@ -4,13 +4,17 @@ import SwiftUI
 struct iVectorApp: App {
     var body: some Scene {
         WindowGroup {
-            #if os(macOS)
+#if os(macOS)
             HomeDesktop()
-            #endif
+#endif
             
-            #if os(iOS)
-            HomeTablet()
-            #endif
+#if os(iOS)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                HomeTablet()
+            } else {
+                HomePhone()
+            }
+#endif
         }
     }
 }

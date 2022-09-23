@@ -20,6 +20,8 @@ public enum L10n {
   public static let connect = L10n.tr("Localizable", "Connect")
   /// connection
   public static let connection = L10n.tr("Localizable", "connection")
+  /// Control
+  public static let control = L10n.tr("Localizable", "Control")
   /// Control Panel
   public static let controlPanel = L10n.tr("Localizable", "Control Panel")
   /// Eye color
