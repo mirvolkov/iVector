@@ -7,7 +7,7 @@ struct HomeTablet: View {
     @State var preferences = false
 
     var body: some View {
-        NavigationView {
+        NavigationSplitView {
             ControlPanelsView(connection: AppState.instance.connection, settings: AppState.instance.settings)
                 .frame(width: 320)
                 .navigationTitle(L10n.controlPanel)
@@ -20,7 +20,7 @@ struct HomeTablet: View {
                             .foregroundColor(.init(UIColor.link))
                     }.buttonStyle(.plain)
                 }
-
+        } detail: {
             DetailPanel()
                 .navigationTitle(L10n.camera)
                 .navigationBarTitleDisplayMode(.inline)
