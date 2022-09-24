@@ -26,7 +26,7 @@ class ButtonLiftViewModel: ControlPanelButtonViewModel {
     init(connection: ConnectionModel) {
         self.connection = connection
         self.primaryIcon = .init(systemName: "arrowtriangle.up")
-        self.tintColor = .red
+        self.tintColor = .white
     }
 
     func bind() {
