@@ -1,3 +1,4 @@
+import Combine
 import Components
 import ComposableArchitecture
 import Features
@@ -14,9 +15,9 @@ enum VectorAppState: Equatable {
 
 enum VectorAppAction {
     case connect(SettingsModel)
-    case connecting
+    case connected
     case disconnect
-    case disconnecting
+    case disconnected
 }
 
 class VectorAppEnvironment {
@@ -26,30 +27,51 @@ class VectorAppEnvironment {
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in
     switch action {
     case .connect(let settings):
-        return Effect.task {
+        return Effect.run { _ in
             await env.connection.connect(with: settings.ip, port: settings.port)
-            return .connecting
         }
 
-    case .connecting:
+    case .connected:
         state = .online(VisionModel(with: env.connection))
-        return .none
-
-    case .disconnecting:
-        state = .offline
         return .none
 
     case .disconnect:
         return Effect.task {
             await env.connection.disconnect()
-            return .disconnecting
+            return .disconnected
         }
+
+    case .disconnected:
+        state = .offline
+        return .none
+
     }
 }
 
-struct AppState {
+final class AppState {
     static let env = VectorAppEnvironment()
     static let store = Store(initialState: .initial, reducer: reducer, environment: env)
+    private var bag = Set<AnyCancellable>()
 
-    public static var instance = AppState()
+    func bind() {
+        Task { @MainActor [self] in
+            let viewStore = ViewStore(Self.store)
+            await Self.env.connection
+                .state
+                .receive(on: RunLoop.main)
+                .sink { state in
+                    switch state {
+                    case .connecting:
+                        break
+
+                    case .disconnected:
+                        viewStore.send(.disconnected)
+
+                    case .online:
+                        viewStore.send(.connected)
+                    }
+                }
+                .store(in: &self.bag)
+        }
+    }
 }

@@ -6,29 +6,30 @@ import UIKit
 
 struct HomeTablet: View {
     @State private var preferences = false
-    private let viewStore: ViewStore<VectorAppState, VectorAppAction> = ViewStore(AppState.store)
-
+  
     var body: some View {
         NavigationSplitView {
-            ControlPanelsView(
-                connection: AppState.env.connection,
-                settings: .init(),
-                onConnect: {
-                    viewStore.send(.connect(.init()))
-                }, onDisconnect: {
-                    viewStore.send(.disconnect)
-                })
-                .frame(width: 320)
-                .navigationTitle(L10n.controlPanel)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    Button {
-                        preferences = true
-                    } label: {
-                        Image(systemName: "gear")
-                            .foregroundColor(.init(UIColor.link))
-                    }.buttonStyle(.plain)
-                }
+            WithViewStore(AppState.store) { viewStore in
+                ControlPanelsView(
+                    connection: AppState.env.connection,
+                    settings: .init(),
+                    onConnect: {
+                        viewStore.send(.connect(.init()))
+                    }, onDisconnect: {
+                        viewStore.send(.disconnect)
+                    })
+                    .frame(width: 320)
+                    .navigationTitle(L10n.controlPanel)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        Button {
+                            preferences = true
+                        } label: {
+                            Image(systemName: "gear")
+                                .foregroundColor(.init(UIColor.link))
+                        }.buttonStyle(.plain)
+                    }
+            }
         } detail: {
             DetailPanel()
                 .navigationTitle(L10n.camera)

@@ -5,8 +5,6 @@ import Features
 import SwiftUI
 
 struct DetailPanel: View {
-    @StateObject var viewStore: ViewStore<VectorAppState, VectorAppAction> = ViewStore(AppState.store)
-
     var body: some View {
         WithViewStore(AppState.store) { viewStore in
             switch viewStore.state {

@@ -11,25 +11,27 @@ struct HomePhone: View {
     var body: some View {
         TabView {
             NavigationStack {
-                ControlPanelsView(
-                    connection: AppState.env.connection,
-                    settings: .init(),
-                    onConnect: {
-                        viewStore.send(.connect(.init()))
-                    }, onDisconnect: {
-                        viewStore.send(.disconnect)
-                    })
-                    .frame(width: 320)
-                    .navigationTitle(L10n.controlPanel)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        Button {
-                            preferences = true
-                        } label: {
-                            Image(systemName: "gear")
-                                .foregroundColor(.init(UIColor.link))
-                        }.buttonStyle(.plain)
-                    }
+                WithViewStore(AppState.store) { viewStore in
+                    ControlPanelsView(
+                        connection: AppState.env.connection,
+                        settings: .init(),
+                        onConnect: {
+                            viewStore.send(.connect(.init()))
+                        }, onDisconnect: {
+                            viewStore.send(.disconnect)
+                        })
+                        .frame(width: 320)
+                        .navigationTitle(L10n.controlPanel)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            Button {
+                                preferences = true
+                            } label: {
+                                Image(systemName: "gear")
+                                    .foregroundColor(.init(UIColor.link))
+                            }.buttonStyle(.plain)
+                        }
+                }
             }.tabItem {
                 Label(L10n.control, systemImage: "keyboard.fill")
             }
