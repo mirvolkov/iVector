@@ -1,14 +1,23 @@
 import Components
+import ComposableArchitecture
 import SwiftUI
 
 #if os(macOS)
 struct HomeDesktop: View {
-    @State var preferences = false
+    @State private var preferences = false
+    private let viewStore: ViewStore<VectorAppState, VectorAppAction> = ViewStore(AppState.store)
 
     var body: some View {
         NavigationView(content: {
             HSplitView {
-                ControlPanelsView(connection: AppState.instance.connection, settings: AppState.instance.settings)
+                ControlPanelsView(
+                    connection: AppState.env.connection,
+                    settings: .init(),
+                    onConnect: {
+                        viewStore.send(.connect(.init()))
+                    }, onDisconnect: {
+                        viewStore.send(.disconnect)
+                    })
                     .frame(width: 280)
                     .padding(10)
                 DetailPanel()
@@ -22,7 +31,7 @@ struct HomeDesktop: View {
                 }.buttonStyle(.plain)
             }
             .sheet(isPresented: $preferences) {
-                SettingsView(model: AppState.instance.settings, isPresented: $preferences)
+                SettingsView(model: .init(), isPresented: $preferences)
             }
         })
         .frame(width: 940, height: 520)

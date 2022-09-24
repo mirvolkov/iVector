@@ -7,8 +7,17 @@ public struct ControlPanelsView: View {
     @State var tts: String = ""
     @StateObject var viewModel: ControlPanelViewModel
     
-    public init(connection: ConnectionModel, settings: SettingsModel) {
+    public var onConnect: () -> Void
+    public var onDisconnect: () -> Void
+    public init(
+        connection: ConnectionModel,
+        settings: SettingsModel,
+        onConnect: @escaping () -> Void,
+        onDisconnect: @escaping () -> Void
+    ) {
         self._viewModel = StateObject(wrappedValue: .init(connection, settings))
+        self.onConnect = onConnect
+        self.onDisconnect = onDisconnect
     }
 
     public var body: some View {
@@ -36,6 +45,10 @@ public struct ControlPanelsView: View {
         }, message: {
             Text(L10n.typeInMessageToSay)
         })
+        .onAppear {
+            viewModel.powerBtn.onConnect = onConnect
+            viewModel.powerBtn.onDisconnect = onDisconnect
+        }
         .padding(10)
     }
     

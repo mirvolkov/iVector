@@ -15,7 +15,6 @@
 		E64D7CFF28D0A56B00D99FA5 /* HomeTablet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */; };
 		E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */; };
 		E64D7D0528D0A5BD00D99FA5 /* DetailPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */; };
-		E65921A128D0E216007518C8 /* HomeDesktop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65921A028D0E216007518C8 /* HomeDesktop.swift */; };
 		E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E65921A028D0E216007518C8 /* HomeDesktop.swift */; };
 		E6624C6728C0984800DE292F /* Features in Frameworks */ = {isa = PBXBuildFile; productRef = E6624C6628C0984800DE292F /* Features */; };
 		E6624C6928C0985200DE292F /* Features in Frameworks */ = {isa = PBXBuildFile; productRef = E6624C6828C0985200DE292F /* Features */; };
@@ -24,7 +23,8 @@
 		E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68461A328DE25A700A83CB0 /* HomePhone.swift */; };
-		E68461A528DE25A700A83CB0 /* HomePhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68461A328DE25A700A83CB0 /* HomePhone.swift */; };
+		E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461A828DF094700A83CB0 /* ComposableArchitecture */; };
+		E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461D528DF460500A83CB0 /* ComposableArchitecture */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
 		E6C35C7428BF5E140098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C7328BF5E140098F78A /* Connection */; };
 /* End PBXBuildFile section */
@@ -42,6 +42,7 @@
 		E67160DA28BCFE8200F79DA2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		E67160E928BCFF0B00F79DA2 /* Connection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Connection; sourceTree = "<group>"; };
 		E68461A328DE25A700A83CB0 /* HomePhone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhone.swift; sourceTree = "<group>"; };
+		E68461A628DED9A000A83CB0 /* Programmator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Programmator; path = ../../Desktop/Programmator; sourceTree = "<group>"; };
 		E6C35C7A28BFDE220098F78A /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 		E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "iVector--macOS--Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -53,6 +54,7 @@
 			files = (
 				E6C35C1E28BD0D090098F78A /* Connection in Frameworks */,
 				E6624C6928C0985200DE292F /* Features in Frameworks */,
+				E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */,
 				E60EBA1C28C89DB300B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -63,6 +65,7 @@
 			files = (
 				E6C35C7428BF5E140098F78A /* Connection in Frameworks */,
 				E6624C6728C0984800DE292F /* Features in Frameworks */,
+				E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */,
 				E60EBA1E28C89DB700B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -74,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */,
+				E68461A628DED9A000A83CB0 /* Programmator */,
 				E6092F0228C7168800AEFF55 /* Components */,
 				E6C35C7A28BFDE220098F78A /* Features */,
 				E67160E928BCFF0B00F79DA2 /* Connection */,
@@ -137,12 +141,14 @@
 			buildRules = (
 			);
 			dependencies = (
+				E68461AD28DF129A00A83CB0 /* PBXTargetDependency */,
 			);
 			name = "iVector (iOS)";
 			packageProductDependencies = (
 				E6C35C1D28BD0D090098F78A /* Connection */,
 				E6624C6828C0985200DE292F /* Features */,
 				E60EBA1B28C89DB300B865E2 /* Components */,
+				E68461A828DF094700A83CB0 /* ComposableArchitecture */,
 			);
 			productName = "iVector (iOS)";
 			productReference = E67160D228BCFE8200F79DA2 /* iVector.app */;
@@ -160,12 +166,14 @@
 			buildRules = (
 			);
 			dependencies = (
+				E68461AB28DF129600A83CB0 /* PBXTargetDependency */,
 			);
 			name = "iVector (macOS)";
 			packageProductDependencies = (
 				E6C35C7328BF5E140098F78A /* Connection */,
 				E6624C6628C0984800DE292F /* Features */,
 				E60EBA1D28C89DB700B865E2 /* Components */,
+				E68461D528DF460500A83CB0 /* ComposableArchitecture */,
 			);
 			productName = "iVector (macOS)";
 			productReference = E67160D828BCFE8200F79DA2 /* iVector.app */;
@@ -202,6 +210,7 @@
 			);
 			mainGroup = E67160C528BCFE8000F79DA2;
 			packageReferences = (
+				E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			productRefGroup = E67160D328BCFE8200F79DA2 /* Products */;
 			projectDirPath = "";
@@ -279,7 +288,6 @@
 				E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E63933A528C1F729007C1F79 /* AppState.swift in Sources */,
 				E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */,
-				E65921A128D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -291,13 +299,23 @@
 				E64D7CFF28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0528D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E63933A628C1F729007C1F79 /* AppState.swift in Sources */,
-				E68461A528DE25A700A83CB0 /* HomePhone.swift in Sources */,
 				E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E68461AB28DF129600A83CB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = E68461AA28DF129600A83CB0 /* ComposableArchitecture */;
+		};
+		E68461AD28DF129A00A83CB0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = E68461AC28DF129A00A83CB0 /* ComposableArchitecture */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E67160E128BCFE8200F79DA2 /* Debug */ = {
@@ -573,6 +591,17 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		E60EBA1B28C89DB300B865E2 /* Components */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -589,6 +618,26 @@
 		E6624C6828C0985200DE292F /* Features */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Features;
+		};
+		E68461A828DF094700A83CB0 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+		E68461AA28DF129600A83CB0 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+		E68461AC28DF129A00A83CB0 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
+		};
+		E68461D528DF460500A83CB0 /* ComposableArchitecture */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
+			productName = ComposableArchitecture;
 		};
 		E6C35C1D28BD0D090098F78A /* Connection */ = {
 			isa = XCSwiftPackageProductDependency;

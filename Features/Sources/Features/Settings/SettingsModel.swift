@@ -12,3 +12,9 @@ public final class SettingsModel {
 
     public init() {}
 }
+
+extension SettingsModel: Equatable {
+    public static func == (lhs: SettingsModel, rhs: SettingsModel) -> Bool {
+        lhs.ip == rhs.ip
+    }
+}

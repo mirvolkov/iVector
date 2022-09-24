@@ -9,14 +9,15 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var isLoading: Bool = false
+    
+    public var onConnect: () -> Void = { }
+    public var onDisconnect: () -> Void = { }
 
     private let connection: ConnectionModel
-    private let settings: SettingsModel
     private var bag = Set<AnyCancellable>()
 
-    init(connection: ConnectionModel, settings: SettingsModel) {
+    init(connection: ConnectionModel) {
         self.connection = connection
-        self.settings = settings
         self.primaryIcon = .init(systemName: "power")
     }
 
@@ -24,9 +25,9 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
         Task { @MainActor [self] in
             switch await self.connection.state.value {
             case .disconnected:
-                await connection.connect(with: settings.ip, port: settings.port)
+                onConnect()
             case .online:
-                await connection.disconnect()
+                onDisconnect()
             case .connecting:
                 break
             }

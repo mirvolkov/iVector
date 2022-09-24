@@ -23,8 +23,7 @@ class ControlPanelViewModel: ObservableObject {
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
-        connection: connection,
-        settings: settings
+        connection: connection
     )
     lazy var stt = ButtonSTTViewModel(
         connection: connection,

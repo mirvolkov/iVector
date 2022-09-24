@@ -83,3 +83,9 @@ public class VisionModel {
         isStreaming = false
     }
 }
+
+extension VisionModel: Equatable {
+    public static func == (lhs: VisionModel, rhs: VisionModel) -> Bool {
+        true
+    }
+}

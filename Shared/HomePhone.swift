@@ -1,15 +1,24 @@
 import Components
+import ComposableArchitecture
 import SwiftUI
 #if os(iOS)
 import UIKit
 
 struct HomePhone: View {
-    @State var preferences = false
+    @State private var preferences = false
+    private let viewStore: ViewStore<VectorAppState, VectorAppAction> = ViewStore(AppState.store)
 
     var body: some View {
         TabView {
             NavigationStack {
-                ControlPanelsView(connection: AppState.instance.connection, settings: AppState.instance.settings)
+                ControlPanelsView(
+                    connection: AppState.env.connection,
+                    settings: .init(),
+                    onConnect: {
+                        viewStore.send(.connect(.init()))
+                    }, onDisconnect: {
+                        viewStore.send(.disconnect)
+                    })
                     .frame(width: 320)
                     .navigationTitle(L10n.controlPanel)
                     .navigationBarTitleDisplayMode(.inline)
@@ -38,7 +47,7 @@ struct HomePhone: View {
         }
         .tableStyle(.inset)
         .sheet(isPresented: $preferences) {
-            SettingsView(model: AppState.instance.settings, isPresented: $preferences)
+            SettingsView(model: .init(), isPresented: $preferences)
         }
         .onAppear {
             if #available(iOS 15.0, *) {

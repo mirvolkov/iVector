@@ -25,8 +25,6 @@ public struct VisionView: View {
                         .frame(height: 80)
                         .padding(.top, 10)
                 }
-            } else {
-                offline
             }
             #elseif os(iOS)
             if let data = camViewModel.frame?.data, let image = UIImage(data: data), camViewModel.isStreaming {
@@ -41,8 +39,6 @@ public struct VisionView: View {
                         .frame(height: 80)
                         .padding(.top, 10)
                 }
-            } else {
-                offline
             }
             #endif
         }
@@ -77,8 +73,12 @@ public struct VisionView: View {
             .allowsHitTesting(false)
             .scaledToFill()
     }
-    
-    var offline: some View {
+}
+
+public struct VisionOfflineView: View {
+    public init() {}
+
+    public var body: some View {
         ZStack(alignment: .center) {
             LottieView(name: "offline")
                 .aspectRatio(contentMode: .fill)
@@ -89,6 +89,6 @@ public struct VisionView: View {
                 .font(vectorBold(64))
                 .foregroundColor(.white)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
+        }.clipped()
     }
 }
