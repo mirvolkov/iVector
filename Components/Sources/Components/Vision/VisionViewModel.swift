@@ -8,25 +8,28 @@ extension VisionView {
     @MainActor class ViewModel: ObservableObject {
         /// is vector streaming video feed
         @Published var isStreaming = false
-        /// is vector connected and online
-        @Published var isVectorOnline = false
         /// last taken video frame
         @Published var frame: VectorCameraFrame?
         /// vector's head angle. Degrees (-22...45)
         @Published var headAngle: UInt = 0
         
+        private let vision: VisionModel
         private let connection: ConnectionModel
         private var bag = Set<AnyCancellable>()
         private var cameraTask: Task<Void, Never>?
         
-        public init(with connection: ConnectionModel) {
+        public init(with connection: ConnectionModel, vision: VisionModel) {
             self.connection = connection
+            self.vision = vision
             Task.detached { @MainActor in
-                await self.connection
-                    .state
-                    .map { newState in if case .online = newState { return true } else { return false } }
+                self.vision.$frame
                     .receive(on: RunLoop.main)
-                    .assign(to: \.isVectorOnline, on: self)
+                    .assign(to: \.frame, on: self)
+                    .store(in: &self.bag)
+                
+                self.vision.$isStreaming
+                    .receive(on: RunLoop.main)
+                    .assign(to: \.isStreaming, on: self)
                     .store(in: &self.bag)
                 
                 self.$headAngle
@@ -40,32 +43,7 @@ extension VisionView {
                         }
                     }
                     .store(in: &self.bag)
-                
-                self.$isVectorOnline
-                    .removeDuplicates()
-                    .receive(on: RunLoop.main)
-                    .sink { online in
-                        if online {
-                            self.start()
-                        } else {
-                            self.stop()
-                        }
-                    }
-                    .store(in: &self.bag)
-                
-                // getting frame here means stream failed. Restart in this case
-                self.$frame
-                    .debounce(for: 10, scheduler: RunLoop.main)
-                    .filter({ _ in
-                        self.isStreaming
-                    })
-                    .sink { _ in
-                        print("Cam feed failed")
-                        self.stop()
-                        self.start()
-                    }
-                    .store(in: &self.bag)
-                
+            
                 await self.connection
                     .robotState
                     .first()
@@ -84,28 +62,12 @@ extension VisionView {
         
         /// Start video feed
         @MainActor public func start() {
-            cameraTask = Task.detached {
-                await MainActor.run { self.isStreaming = true }
-                
-                if let camera = try? await self.connection.camera {
-                    for await frame in camera {
-                        if await !self.isStreaming {
-                            break
-                        }
-                        
-                        await MainActor.run {
-                            self.frame = frame
-                        }
-                    }
-                }
-        
-                await MainActor.run { self.isStreaming = false }
-            }
+            vision.start()
         }
         
         /// Stop video feed
         @MainActor public func stop() {
-            cameraTask?.cancel()
+            vision.stop()
             isStreaming = false
         }
         

@@ -17,4 +17,5 @@ struct AppState {
     
     var connection: ConnectionModel = .init()
     var settings: SettingsModel = .init()
+    lazy var vision: VisionModel = .init(with: connection)
 }

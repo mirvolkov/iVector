@@ -3,6 +3,6 @@ import Components
 
 struct DetailPanel: View {
     var body: some View {
-        VisionView(AppState.instance.connection)
+        VisionView(connection: AppState.instance.connection, vision: AppState.instance.vision)
     }
 }
