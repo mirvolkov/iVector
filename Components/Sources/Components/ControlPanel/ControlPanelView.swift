@@ -4,9 +4,9 @@ import SwiftUI
 public struct ControlPanelsView: View {
     @State var size: CGFloat = 60
     @State var space: CGFloat = 8
-    @State var tts: String = ""
+
     @StateObject var viewModel: ControlPanelViewModel
-    
+
     public var onConnect: () -> Void
     public var onDisconnect: () -> Void
     public init(
@@ -35,15 +35,11 @@ public struct ControlPanelsView: View {
                 behaviorPanel
             }
         }
-        .alert(L10n.say, isPresented: $viewModel.ttsAlert, actions: {
-            TextField(L10n.say, text: $tts)
-            Button(L10n.cancel, role: .cancel, action: {})
-            Button(L10n.say, role: .destructive, action: {
-                viewModel.tts.say(tts)
-                tts = String()
-            })
-        }, message: {
-            Text(L10n.typeInMessageToSay)
+        .popover(isPresented: $viewModel.playPopover, content: {
+            PlaySoundPopover(viewModel: viewModel.play)
+        })
+        .popover(isPresented: $viewModel.ttsAlert, content: {
+            PlaySpeechPopover(viewModel: viewModel.tts)
         })
         .onAppear {
             viewModel.powerBtn.onConnect = onConnect
@@ -54,14 +50,9 @@ public struct ControlPanelsView: View {
     
     private var header: some View {
         HStack(alignment: .center, spacing: space) {
-            ControlPanelButtonView(viewModel: viewModel.powerBtn)
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView(viewModel: viewModel.tts)
-                .frame(width: size, height: size)
-            
-            ControlPanelButtonView(viewModel: viewModel.stt)
-                .frame(width: size, height: size)
+            build(viewModel.powerBtn)
+            build(viewModel.tts)
+            build(viewModel.play)
             Spacer()
         }.frame(height: size)
     }

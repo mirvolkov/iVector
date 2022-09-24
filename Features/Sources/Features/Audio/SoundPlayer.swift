@@ -8,7 +8,7 @@ public final class SoundPlayer {
         case mp3
     }
 
-    public enum SoundName: String {
+    public enum SoundName: String, CaseIterable {
         case alarm
         case cputer2
     }

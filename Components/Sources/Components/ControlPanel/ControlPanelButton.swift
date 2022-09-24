@@ -47,7 +47,9 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
             viewModel.unbind()
         }
         .onTapGesture(perform: {
-            viewModel.onClick()
+            if viewModel.enabled {
+                viewModel.onClick()
+            }
         })
         .simultaneousGesture(
             DragGesture(minimumDistance: 0)

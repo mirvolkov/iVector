@@ -19,7 +19,8 @@ class ControlPanelViewModel: ObservableObject {
         "BTN0": btn0,
         "STT": stt,
         "TTS": tts,
-        "LIFT": lift
+        "LIFT": lift,
+        "PLAY": play
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
@@ -45,7 +46,9 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn9 = Button9ViewModel()
     lazy var btn0 = Button0ViewModel()
     lazy var lift = ButtonLiftViewModel(connection: connection)
+    lazy var play = ButtonPlayViewModel(connection: connection)
 
+    @Published var playPopover: Bool = false
     @Published var ttsAlert: Bool = false
     @Published var isConnected: Bool = false {
         didSet {
@@ -58,11 +61,11 @@ class ControlPanelViewModel: ObservableObject {
                 }
                 
                 buttons
-                    .filter { !["PWR", "TTS", "STT"].contains($0.key) }
+                    .filter { !["PWR", "STT"].contains($0.key) }
                     .forEach { $0.value.enabled = true }
             } else {
                 buttons
-                    .filter { !["PWR", "TTS", "STT"].contains($0.key) }
+                    .filter { !["PWR", "STT"].contains($0.key) }
                     .forEach { $0.value.enabled = false }
             }
         }
@@ -88,6 +91,10 @@ class ControlPanelViewModel: ObservableObject {
             
             tts.$ttsAlert
                 .assign(to: \.ttsAlert, on: self)
+                .store(in: &bag)
+            
+            play.$showAudioListPopover
+                .assign(to: \.playPopover, on: self)
                 .store(in: &bag)
         }
     }

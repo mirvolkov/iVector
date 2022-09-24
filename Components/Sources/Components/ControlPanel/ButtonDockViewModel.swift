@@ -26,6 +26,7 @@ class ButtonDockViewModel: ControlPanelButtonViewModel {
     init(connection: ConnectionModel) {
         self.connection = connection
         self.primaryIcon = .init(systemName: "square.and.arrow.down")
+        self.tintColor = .red
     }
 
     func bind() {

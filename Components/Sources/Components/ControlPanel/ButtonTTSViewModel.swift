@@ -28,7 +28,7 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel {
     
     func say(_ text: String) {
         Task.detached {
-            try await self.connection.say(text: text)//, locale: Locale(identifier: self.settings.locale))
+            try await self.connection.say(text: text, locale: Locale(identifier: self.settings.locale))
         }
     }
 }

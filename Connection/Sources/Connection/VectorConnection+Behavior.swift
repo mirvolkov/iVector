@@ -1,7 +1,7 @@
+import Foundation
 import GRPC
 import NIO
 import SwiftProtobuf
-import Foundation
 
 extension VectorConnection: Behavior {
     private static let firstSDKTag: Int32 = 2_000_001
@@ -30,14 +30,16 @@ extension VectorConnection: Behavior {
     }
 
     public func lift(_ height: Float) async throws {
+        let minHeight: Float = 32.0
+        let maxHeight: Float = 92.0
         var request: Anki_Vector_ExternalInterface_SetLiftHeightRequest = .init()
-        request.heightMm = height
+        request.heightMm = Float(minHeight + (height * (maxHeight - minHeight)))
         request.accelRadPerSec2 = 10
         request.maxSpeedRadPerSec = 10
         request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_SetLiftHeightRequest,
-                            Anki_Vector_ExternalInterface_SetLiftHeightResponse> = connection.makeUnaryCall(
-            path: "\(prefixURI)SetLiftHeightRequest",
+            Anki_Vector_ExternalInterface_SetLiftHeightResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)SetLiftHeight",
             request: request,
             callOptions: callOptions
         )
