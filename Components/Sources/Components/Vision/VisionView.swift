@@ -58,7 +58,7 @@ public struct VisionView: View {
                 .padding(.vertical, 40)
                 .padding(.trailing, 20)
             
-            Text("\(Int(camViewModel.denorm(camViewModel.headAngle)))")
+            Text("\(Int(camViewModel.normToDegree(camViewModel.headAngle)))")
                 .font(vectorBold(28))
                 .foregroundColor(.white.opacity(0.75))
                 .padding(.bottom, 40)
@@ -81,14 +81,9 @@ public struct VisionOfflineView: View {
     public var body: some View {
         ZStack(alignment: .center) {
             LottieView(name: "offline")
-                .aspectRatio(contentMode: .fill)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-            
             Text(L10n.offline)
                 .font(vectorBold(64))
                 .foregroundColor(.white)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }.clipped()
+        }
     }
 }
