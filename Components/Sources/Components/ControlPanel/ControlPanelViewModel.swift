@@ -20,7 +20,9 @@ class ControlPanelViewModel: ObservableObject {
         "STT": stt,
         "TTS": tts,
         "LIFT": lift,
-        "PLAY": play
+        "PLAY": play,
+        "ENTER": enter,
+        "ESC": esc
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
@@ -47,7 +49,9 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn0 = Button0ViewModel()
     lazy var lift = ButtonLiftViewModel(connection: connection)
     lazy var play = ButtonPlayViewModel(connection: connection)
-
+    lazy var enter = ButtonEnterViewModel()
+    lazy var esc = ButtonEscViewModel()
+    
     @Published var playPopover: Bool = false
     @Published var ttsAlert: Bool = false
     @Published var isConnected: Bool = false {

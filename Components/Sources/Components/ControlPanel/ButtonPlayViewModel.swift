@@ -23,7 +23,7 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel {
     }
     
     func onSelect(_ sound: SoundPlayer.SoundName) {
-        
+        showAudioListPopover = false
     }
 }
 

@@ -2,8 +2,14 @@ import Features
 import SwiftUI
 
 public struct ControlPanelsView: View {
-    @State var size: CGFloat = 60
+    #if os(macOS)
+    @State var size: CGFloat = 50
+    #else
+    @State var size: CGFloat = 70
+    #endif
+    
     @State var space: CGFloat = 8
+    @State var divider: CGFloat = 10
 
     @StateObject var viewModel: ControlPanelViewModel
 
@@ -22,18 +28,19 @@ public struct ControlPanelsView: View {
 
     public var body: some View {
         VStack {
-            VStack(spacing: 10) {
+            VStack(spacing: divider) {
                 header
                 Spacer()
-                    .frame(height: 20)
+                    .frame(height: divider)
                 digitalPanel1
                 digitalPanel2
                 digitalPanel3
                 digitalPanel4
                 Spacer()
-                    .frame(height: 20)
+                    .frame(height: divider)
                 behaviorPanel
             }
+            Spacer()
         }
         .popover(isPresented: $viewModel.playPopover, content: {
             PlaySoundPopover(viewModel: viewModel.play)
@@ -54,6 +61,9 @@ public struct ControlPanelsView: View {
             build(viewModel.tts)
             build(viewModel.play)
             Spacer()
+                .frame(width: divider)
+            placeholder
+            Spacer()
         }.frame(height: size)
     }
     
@@ -63,7 +73,8 @@ public struct ControlPanelsView: View {
             build(viewModel.btn2)
             build(viewModel.btn3)
             Spacer()
-                .frame(width: 30)
+                .frame(width: divider)
+            build(viewModel.esc)
             Spacer()
         }.frame(height: size)
     }
@@ -74,6 +85,9 @@ public struct ControlPanelsView: View {
             build(viewModel.btn5)
             build(viewModel.btn6)
             Spacer()
+                .frame(width: divider)
+            build(viewModel.enter)
+            Spacer()
         }.frame(height: size)
     }
     
@@ -83,14 +97,20 @@ public struct ControlPanelsView: View {
             build(viewModel.btn8)
             build(viewModel.btn9)
             Spacer()
+                .frame(width: divider)
+            placeholder
+            Spacer()
         }.frame(height: size)
     }
     
     private var digitalPanel4: some View {
         HStack(alignment: .center, spacing: space) {
-            Spacer()
-                .frame(width: size, height: size)
+            placeholder
             build(viewModel.btn0)
+            placeholder
+            Spacer()
+                .frame(width: divider)
+            placeholder
             Spacer()
             
         }.frame(height: size)
@@ -100,9 +120,18 @@ public struct ControlPanelsView: View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.dockBtn)
             build(viewModel.lift)
+            placeholder
+            Spacer()
+                .frame(width: divider)
+            placeholder
             Spacer()
             
         }.frame(height: size)
+    }
+    
+    private var placeholder: some View {
+        Spacer()
+            .frame(width: size, height: size)
     }
     
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View {

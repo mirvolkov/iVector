@@ -10,6 +10,6 @@ struct PlaySoundPopover: View {
                 .onTapGesture {
                     viewModel.onSelect(sound)
                 }
-        }
+        }.frame(width: 320, height: 240)
     }
 }
