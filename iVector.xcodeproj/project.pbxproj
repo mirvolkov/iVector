@@ -42,7 +42,7 @@
 		E67160DA28BCFE8200F79DA2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		E67160E928BCFF0B00F79DA2 /* Connection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Connection; sourceTree = "<group>"; };
 		E68461A328DE25A700A83CB0 /* HomePhone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhone.swift; sourceTree = "<group>"; };
-		E68461A628DED9A000A83CB0 /* Programmator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = Programmator; path = ../../Desktop/Programmator; sourceTree = "<group>"; };
+		E697104A28E5A90900A0B2D0 /* Programmator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Programmator; sourceTree = "<group>"; };
 		E6C35C7A28BFDE220098F78A /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 		E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "iVector--macOS--Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -76,11 +76,8 @@
 		E67160C528BCFE8000F79DA2 = {
 			isa = PBXGroup;
 			children = (
+				E697104928E5A90900A0B2D0 /* Packages */,
 				E6E2CB0328C292E300F51AE4 /* iVector--macOS--Info.plist */,
-				E68461A628DED9A000A83CB0 /* Programmator */,
-				E6092F0228C7168800AEFF55 /* Components */,
-				E6C35C7A28BFDE220098F78A /* Features */,
-				E67160E928BCFF0B00F79DA2 /* Connection */,
 				E67160CA28BCFE8000F79DA2 /* Shared */,
 				E67160D928BCFE8200F79DA2 /* macOS */,
 				E67160D328BCFE8200F79DA2 /* Products */,
@@ -117,6 +114,17 @@
 				E67160DA28BCFE8200F79DA2 /* macOS.entitlements */,
 			);
 			path = macOS;
+			sourceTree = "<group>";
+		};
+		E697104928E5A90900A0B2D0 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				E6092F0228C7168800AEFF55 /* Components */,
+				E6C35C7A28BFDE220098F78A /* Features */,
+				E67160E928BCFF0B00F79DA2 /* Connection */,
+				E697104A28E5A90900A0B2D0 /* Programmator */,
+			);
+			name = Packages;
 			sourceTree = "<group>";
 		};
 		E6C35C1C28BD0D090098F78A /* Frameworks */ = {
