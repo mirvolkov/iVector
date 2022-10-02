@@ -81,6 +81,22 @@ public final actor ConnectionModel {
         }
     }
 
+    public func mock() {
+        guard case .disconnected = state.value else {
+            return
+        }
+
+        connection = MockedConnection()
+        connection?.delegate = self
+        do {
+            state.send(.connecting)
+            try connection?.requestControl()
+        } catch {
+            self.logger.error("\(error.localizedDescription)")
+            state.send(.disconnected)
+        }
+    }
+
     public func disconnect() {
         do {
             try connection?.release()

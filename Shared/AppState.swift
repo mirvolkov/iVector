@@ -22,13 +22,18 @@ enum VectorAppAction {
 
 class VectorAppEnvironment {
     let connection: ConnectionModel = .init()
+    let config: Config = .init()
 }
 
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in
     switch action {
     case .connect(let settings):
         return Effect.run { _ in
-            await env.connection.connect(with: settings.ip, port: settings.port)
+            if env.config.useMocked {
+                await env.connection.mock()
+            } else {
+                await env.connection.connect(with: settings.ip, port: settings.port)
+            }
         }
 
     case .connected:
@@ -44,7 +49,6 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
     case .disconnected:
         state = .offline
         return .none
-
     }
 }
 

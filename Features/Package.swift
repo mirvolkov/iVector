@@ -4,7 +4,6 @@
 import PackageDescription
 
 let resources: [Resource] = [
-//    .process("MobileNetV2.mlmodel"),
     .copy("Resources/MobileNetV2.mlmodelc"),
     .copy("Resources/test_sample.jpeg"),
     .copy("Sounds/alarm.wav"),
