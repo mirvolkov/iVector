@@ -16,4 +16,12 @@ final class MenuViewModel: ObservableObject {
     func bind() {
         
     }
+    
+    func onProgTap() {
+        
+    }
+
+    func onCancelTap() {
+        
+    }
 }

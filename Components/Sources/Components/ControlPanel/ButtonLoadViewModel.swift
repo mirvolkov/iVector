@@ -1,6 +1,8 @@
+import Combine
+import Features
 import SwiftUI
 
-class Button5ViewModel: ControlPanelButtonViewModel {
+class ButtonLoadViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -9,10 +11,15 @@ class Button5ViewModel: ControlPanelButtonViewModel {
     @Published var primaryTitle: String?
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
-    
+
     init() {
-        self.primaryIcon = .init(systemName: "arrow.clockwise")
-        self.secondaryTitle = "eq"
-        self.primaryTitle = "5"
+        self.primaryIcon = .init(systemName: "icloud.and.arrow.down")
+        self.tintColor = .purple
+    }
+
+    func bind() {
+    }
+
+    func onClick() {
     }
 }

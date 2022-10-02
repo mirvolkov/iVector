@@ -1,13 +1,18 @@
 import SwiftUI
 
-protocol CPViewModelBindable {
+protocol CPViewModelBindable: AnyObject {
     func bind()
     func unbind()
 }
 
+protocol CPViewModelAvailability: AnyObject {
+    var enabled: Bool { get set }
+    var disableSecondary: Bool { get set }
+    var disableTitle: Bool { get set }
+    var disableIcon: Bool { get set }
+}
 
 protocol CPButtonViewModel: ObservableObject, CPViewModelBindable {
-    var enabled: Bool { get set }
     var primaryIcon: Image? { get set }
     var primaryTitle: String? { get set }
     var secondaryTitle: String? { get set }

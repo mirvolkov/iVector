@@ -17,10 +17,10 @@ struct HomeDesktop: View {
                     }, onDisconnect: {
                         viewStore.send(.disconnect)
                     })
-                    .frame(width: 280, alignment: .top)
+                    .frame(width: 320, alignment: .top)
                     .padding(0)
                 DetailPanel()
-                    .frame(height: 500, alignment: .top)
+                    .frame(height: 560, alignment: .top)
                     .padding(0)
             }
         }
@@ -34,7 +34,7 @@ struct HomeDesktop: View {
         .sheet(isPresented: $preferences) {
             SettingsView(model: .init(), isPresented: $preferences)
         }
-        .frame(width: 940, height: 500)
+        .frame(width: 940, height: 560)
     }
 }
 #endif

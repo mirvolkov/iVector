@@ -1,6 +1,7 @@
 import SwiftUI
 
 typealias ControlPanelButtonViewModel = CPButtonViewModel
+    & CPViewModelAvailability
     & CPViewModelBindable
     & CPViewModelClickable
 
@@ -14,6 +15,7 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
                 Text(secondaryTitle)
                     .font(vectorRegular(12))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
+                    .opacity(viewModel.disableSecondary ? 0.1 : 1.0)
             } else {
                 Spacer()
                     .frame(height: 14)
@@ -26,12 +28,14 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
                     .foregroundColor(viewModel.enabled ? viewModel.tintColor : .gray)
+                    .opacity(viewModel.disableIcon ? 0.1 : 1.0)
             }
 
             if let primaryTitle = viewModel.primaryTitle {
                 Text(primaryTitle)
                     .font(vectorRegular(20))
                     .foregroundColor(viewModel.enabled ? .black : .gray)
+                    .opacity(viewModel.disableTitle ? 0.1 : 1.0)
             } else {
                 Spacer()
                     .frame(height: 14)

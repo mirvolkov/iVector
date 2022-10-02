@@ -22,7 +22,9 @@ class ControlPanelViewModel: ObservableObject {
         "LIFT": lift,
         "PLAY": play,
         "ENTER": enter,
-        "ESC": esc
+        "ESC": esc,
+        "SAVE": save,
+        "LOAD": load
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
@@ -51,7 +53,26 @@ class ControlPanelViewModel: ObservableObject {
     lazy var play = ButtonPlayViewModel(connection: connection)
     lazy var enter = ButtonEnterViewModel()
     lazy var esc = ButtonEscViewModel()
-    
+    lazy var save = ButtonSaveViewModel()
+    lazy var load = ButtonLoadViewModel()
+
+    @Published var isPrimaryMode: Bool = false {
+        didSet {
+            buttons
+                .filter { !["PWR"].contains($0.key) }
+                .forEach { $0.value.disableTitle = !isPrimaryMode }
+            buttons
+                .filter { !["PWR"].contains($0.key) }
+                .forEach { $0.value.disableIcon = isPrimaryMode }
+        }
+    }
+    @Published var isSecondaryMode: Bool = false {
+        didSet {
+            buttons
+                .filter { !["PWR"].contains($0.key) }
+                .forEach { $0.value.disableSecondary = !isSecondaryMode }
+        }
+    }
     @Published var playPopover: Bool = false
     @Published var ttsAlert: Bool = false
     @Published var isConnected: Bool = false {
@@ -63,13 +84,13 @@ class ControlPanelViewModel: ObservableObject {
                         settings.eyeColor.hsv.satComponent
                     )
                 }
-                
+
                 buttons
-                    .filter { !["PWR", "STT"].contains($0.key) }
+                    .filter { !["PWR", "STT", "SAVE"].contains($0.key) }
                     .forEach { $0.value.enabled = true }
             } else {
                 buttons
-                    .filter { !["PWR", "STT"].contains($0.key) }
+                    .filter { !["PWR", "STT", "SAVE"].contains($0.key) }
                     .forEach { $0.value.enabled = false }
             }
         }

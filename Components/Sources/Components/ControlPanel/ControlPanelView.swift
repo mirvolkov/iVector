@@ -2,12 +2,7 @@ import Features
 import SwiftUI
 
 public struct ControlPanelsView: View {
-    #if os(macOS)
-    @State var size: CGFloat = 50
-    #else
-    @State var size: CGFloat = 70
-    #endif
-    
+    @State var size: CGFloat = 60
     @State var space: CGFloat = 8
     @State var divider: CGFloat = 10
 
@@ -54,7 +49,7 @@ public struct ControlPanelsView: View {
         }
         .padding(10)
     }
-    
+
     private var header: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.powerBtn)
@@ -62,11 +57,11 @@ public struct ControlPanelsView: View {
             build(viewModel.play)
             Spacer()
                 .frame(width: divider)
-            placeholder
+            build(viewModel.save)
             Spacer()
         }.frame(height: size)
     }
-    
+
     private var digitalPanel1: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.btn1)
@@ -78,7 +73,7 @@ public struct ControlPanelsView: View {
             Spacer()
         }.frame(height: size)
     }
-    
+
     private var digitalPanel2: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.btn4)
@@ -90,7 +85,7 @@ public struct ControlPanelsView: View {
             Spacer()
         }.frame(height: size)
     }
-    
+
     private var digitalPanel3: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.btn7)
@@ -102,7 +97,7 @@ public struct ControlPanelsView: View {
             Spacer()
         }.frame(height: size)
     }
-    
+
     private var digitalPanel4: some View {
         HStack(alignment: .center, spacing: space) {
             placeholder
@@ -115,7 +110,7 @@ public struct ControlPanelsView: View {
             
         }.frame(height: size)
     }
-    
+
     private var behaviorPanel: some View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.dockBtn)
@@ -128,12 +123,12 @@ public struct ControlPanelsView: View {
             
         }.frame(height: size)
     }
-    
+
     private var placeholder: some View {
         Spacer()
             .frame(width: size, height: size)
     }
-    
+
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View {
         ControlPanelButtonView(viewModel: viewModel)
             .frame(width: size, height: size)
