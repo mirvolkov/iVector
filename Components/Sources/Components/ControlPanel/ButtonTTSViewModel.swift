@@ -13,7 +13,8 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel {
     @Published var tintColor: Color = .green
     @Published var isLoading: Bool = false
     @Published var ttsAlert: Bool = false
-    
+    @Published var tag: CPViewModelTag?
+
     private let settings: SettingsModel
     private let connection: ConnectionModel
     private var bag = Set<AnyCancellable>()

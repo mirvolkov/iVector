@@ -13,6 +13,7 @@ class ButtonEscViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var onEsc: Bool = false
+    @Published var tag: CPViewModelTag?
 
     init() {
         self.primaryIcon = .init(systemName: "delete.backward")

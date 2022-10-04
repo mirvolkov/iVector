@@ -12,6 +12,7 @@ class ButtonSTTViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var isLoading: Bool = false
+    @Published var tag: CPViewModelTag?
 
     private var stt: SpeechToText?
     private let settings: SettingsModel

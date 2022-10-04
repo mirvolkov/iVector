@@ -1,13 +1,13 @@
 import Algorithms
 import Collections
 
-protocol ProgrammatorSync {
+public protocol ProgrammatorSync {
     func save(name: String)
 }
 
 
 /// Program composer interface
-protocol Assembler {
+public protocol Assembler {
     /// Program stored in stack collection
     var program: Deque<Instruction> { get }
 

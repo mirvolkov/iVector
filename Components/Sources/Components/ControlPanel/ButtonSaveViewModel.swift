@@ -11,6 +11,7 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel {
     @Published var primaryTitle: String?
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
+    @Published var tag: CPViewModelTag?
 
     init() {
         self.primaryIcon = .init(systemName: "externaldrive.badge.plus")

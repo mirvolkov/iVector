@@ -101,7 +101,12 @@ extension MockedConnection: Behavior {
 
     public var battery: VectorBatteryState {
         get async throws {
-            .charging
+            [
+                VectorBatteryState.charging,
+                VectorBatteryState.low,
+                VectorBatteryState.full,
+                VectorBatteryState.normal
+            ].randomElement()!
         }
     }
 }

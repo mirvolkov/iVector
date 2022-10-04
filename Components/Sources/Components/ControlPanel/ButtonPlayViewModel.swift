@@ -12,7 +12,8 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel {
     @Published var tintColor: Color = .green
     @Published var showAudioListPopover: Bool = false
     @Published var sounds = SoundPlayer.SoundName.allCases
-    
+    @Published var tag: CPViewModelTag?
+
     private let connection: ConnectionModel
 
     init(connection: ConnectionModel) {

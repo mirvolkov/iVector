@@ -1,4 +1,5 @@
 import Features
+import Programmator
 import SwiftUI
 
 public struct ControlPanelsView: View {
@@ -10,13 +11,15 @@ public struct ControlPanelsView: View {
 
     public var onConnect: () -> Void
     public var onDisconnect: () -> Void
+
     public init(
         connection: ConnectionModel,
         settings: SettingsModel,
+        assembler: AssemblerModel,
         onConnect: @escaping () -> Void,
         onDisconnect: @escaping () -> Void
     ) {
-        self._viewModel = StateObject(wrappedValue: .init(connection, settings))
+        self._viewModel = StateObject(wrappedValue: .init(connection, settings, assembler))
         self.onConnect = onConnect
         self.onDisconnect = onDisconnect
     }
@@ -107,7 +110,7 @@ public struct ControlPanelsView: View {
                 .frame(width: divider)
             placeholder
             Spacer()
-            
+
         }.frame(height: size)
     }
 
@@ -120,7 +123,7 @@ public struct ControlPanelsView: View {
                 .frame(width: divider)
             placeholder
             Spacer()
-            
+
         }.frame(height: size)
     }
 
@@ -129,8 +132,15 @@ public struct ControlPanelsView: View {
             .frame(width: size, height: size)
     }
 
-    private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View {
+    private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View where ViewModel.Tag == CPViewModelTag {
         ControlPanelButtonView(viewModel: viewModel)
             .frame(width: size, height: size)
+            .simultaneousGesture(
+                TapGesture().onEnded { _ in
+                    if let tag = viewModel.tag {
+                        self.viewModel.onTag(tag)
+                    }
+                }
+            )
     }
 }

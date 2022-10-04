@@ -3,6 +3,7 @@ import Components
 import ComposableArchitecture
 import Features
 import SwiftUI
+import Programmator
 
 enum VectorAppState: Equatable {
     case offline
@@ -23,6 +24,8 @@ enum VectorAppAction {
 class VectorAppEnvironment {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
+    let assembler: AssemblerModel = .init()
+    let settings: SettingsModel = .init()
 }
 
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in

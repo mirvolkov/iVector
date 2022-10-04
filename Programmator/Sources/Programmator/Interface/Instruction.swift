@@ -1,4 +1,4 @@
-enum Instruction {
+public enum Instruction {
     case left(Double)
     case right(Double)
     case towards(Double)

@@ -2,6 +2,7 @@ import Combine
 import Connection
 import Features
 import SwiftUI
+import Programmator
 
 class ControlPanelViewModel: ObservableObject {
     lazy var buttons: [String: any ControlPanelButtonViewModel] = [
@@ -24,7 +25,6 @@ class ControlPanelViewModel: ObservableObject {
         "ENTER": enter,
         "ESC": esc,
         "SAVE": save,
-        "LOAD": load
     ]
     
     lazy var powerBtn = ButtonPowerViewModel(
@@ -54,8 +54,7 @@ class ControlPanelViewModel: ObservableObject {
     lazy var enter = ButtonEnterViewModel()
     lazy var esc = ButtonEscViewModel()
     lazy var save = ButtonSaveViewModel()
-    lazy var load = ButtonLoadViewModel()
-
+    
     @Published var isPrimaryMode: Bool = false {
         didSet {
             buttons
@@ -84,7 +83,7 @@ class ControlPanelViewModel: ObservableObject {
                         settings.eyeColor.hsv.satComponent
                     )
                 }
-
+                
                 buttons
                     .filter { !["PWR", "STT", "SAVE"].contains($0.key) }
                     .forEach { $0.value.enabled = true }
@@ -96,35 +95,15 @@ class ControlPanelViewModel: ObservableObject {
         }
     }
     
-    private let connection: ConnectionModel
-    private let settings: SettingsModel
-    private var bag = Set<AnyCancellable>()
+    let connection: ConnectionModel
+    let settings: SettingsModel
+    let assembler: AssemblerModel
+    var bag = Set<AnyCancellable>()
     
-    init(_ connection: ConnectionModel, _ settings: SettingsModel) {
+    init(_ connection: ConnectionModel, _ settings: SettingsModel, _ assembler: AssemblerModel) {
         self.settings = settings
         self.connection = connection
+        self.assembler = assembler
         bind()
-    }
-    
-    private func bind() {
-        Task { @MainActor [self] in
-            await self.connection.state
-                .receive(on: RunLoop.main)
-                .map { newState in if case .online = newState { return true } else { return false } }
-                .assign(to: \.isConnected, on: self)
-                .store(in: &self.bag)
-            
-            tts.$ttsAlert
-                .assign(to: \.ttsAlert, on: self)
-                .store(in: &bag)
-            
-            play.$showAudioListPopover
-                .assign(to: \.playPopover, on: self)
-                .store(in: &bag)
-        }
-    }
-    
-    private func unbind() {
-        bag.removeAll()
     }
 }

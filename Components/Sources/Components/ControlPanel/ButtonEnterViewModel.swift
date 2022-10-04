@@ -13,6 +13,7 @@ class ButtonEnterViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var onEnter: Bool = false
+    @Published var tag: CPViewModelTag?
 
     init() {
         self.primaryIcon = .init(systemName: "pip.enter")

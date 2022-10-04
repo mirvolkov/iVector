@@ -1,6 +1,6 @@
 import Collections
 
-protocol Program {
+public protocol Program {
     /// Program name
     var name: String { get }
 

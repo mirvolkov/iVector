@@ -41,7 +41,7 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
                     .frame(height: 14)
             }
         }
-        .background(.background.opacity(0.5))
+        .background(.background)
         .cornerRadius(3)
         .shadow(color: .gray, radius: isHighligted ? 0 : 2, x: 1, y: 1)
         .onAppear {

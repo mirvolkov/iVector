@@ -14,9 +14,10 @@ struct HomePhone: View {
                 WithViewStore(AppState.store) { viewStore in
                     ControlPanelsView(
                         connection: AppState.env.connection,
-                        settings: .init(),
+                        settings: AppState.env.settings,
+                        assembler: AppState.env.assembler,
                         onConnect: {
-                            viewStore.send(.connect(.init()))
+                            viewStore.send(.connect(AppState.env.settings))
                         }, onDisconnect: {
                             viewStore.send(.disconnect)
                         })

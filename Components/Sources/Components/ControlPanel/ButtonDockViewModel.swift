@@ -12,6 +12,7 @@ class ButtonDockViewModel: ControlPanelButtonViewModel {
     @Published var primaryTitle: String?
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
+    @Published var tag: CPViewModelTag?
 
     private let connection: ConnectionModel
     private var bag = Set<AnyCancellable>()
@@ -29,7 +30,7 @@ class ButtonDockViewModel: ControlPanelButtonViewModel {
     init(connection: ConnectionModel) {
         self.connection = connection
         self.primaryIcon = .init(systemName: "square.and.arrow.down")
-        self.tintColor = .white
+        self.tintColor = .blue
     }
 
     func bind() {

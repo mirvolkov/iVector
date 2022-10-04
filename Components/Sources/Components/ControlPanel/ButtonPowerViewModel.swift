@@ -12,7 +12,8 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var isLoading: Bool = false
-    
+    @Published var tag: CPViewModelTag?
+
     public var onConnect: () -> Void = { }
     public var onDisconnect: () -> Void = { }
 

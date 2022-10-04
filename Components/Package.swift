@@ -25,6 +25,7 @@ let package = Package(
     dependencies: [
         .package(path: "../Features"),
         .package(path: "../Connection"),
+        .package(path: "../Programmator"),
         .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3")
     ],
     targets: [
@@ -32,6 +33,7 @@ let package = Package(
             name: "Components",
             dependencies: [.product(name: "Connection", package: "Connection"),
                            .product(name: "Features", package: "Features"),
+                           .product(name: "Programmator", package: "Programmator"),
                            .product(name: "Lottie", package: "lottie-ios")],
             resources: resources),
         .testTarget(

@@ -31,6 +31,8 @@
 		E697105B28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105328E9AD0300A0B2D0 /* Live.xcconfig */; };
 		E697105C28E9AF3A00A0B2D0 /* Mock.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */; };
 		E697105D28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105328E9AD0300A0B2D0 /* Live.xcconfig */; };
+		E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106128EAC0DC00A0B2D0 /* Programmator */; };
+		E697106428EAC20400A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106328EAC20400A0B2D0 /* Programmator */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
 		E6C35C7428BF5E140098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C7328BF5E140098F78A /* Connection */; };
 /* End PBXBuildFile section */
@@ -65,6 +67,7 @@
 				E6C35C1E28BD0D090098F78A /* Connection in Frameworks */,
 				E6624C6928C0985200DE292F /* Features in Frameworks */,
 				E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */,
+				E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */,
 				E60EBA1C28C89DB300B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -76,6 +79,7 @@
 				E6C35C7428BF5E140098F78A /* Connection in Frameworks */,
 				E6624C6728C0984800DE292F /* Features in Frameworks */,
 				E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */,
+				E697106428EAC20400A0B2D0 /* Programmator in Frameworks */,
 				E60EBA1E28C89DB700B865E2 /* Components in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -179,6 +183,7 @@
 				E6624C6828C0985200DE292F /* Features */,
 				E60EBA1B28C89DB300B865E2 /* Components */,
 				E68461A828DF094700A83CB0 /* ComposableArchitecture */,
+				E697106128EAC0DC00A0B2D0 /* Programmator */,
 			);
 			productName = "iVector (iOS)";
 			productReference = E67160D228BCFE8200F79DA2 /* iVector.app */;
@@ -204,6 +209,7 @@
 				E6624C6628C0984800DE292F /* Features */,
 				E60EBA1D28C89DB700B865E2 /* Components */,
 				E68461D528DF460500A83CB0 /* ComposableArchitecture */,
+				E697106328EAC20400A0B2D0 /* Programmator */,
 			);
 			productName = "iVector (macOS)";
 			productReference = E67160D828BCFE8200F79DA2 /* iVector.app */;
@@ -477,7 +483,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = iVector;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -514,7 +519,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = iVector;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -677,7 +681,6 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = iVector;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -816,6 +819,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		E697106128EAC0DC00A0B2D0 /* Programmator */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Programmator;
+		};
+		E697106328EAC20400A0B2D0 /* Programmator */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Programmator;
 		};
 		E6C35C1D28BD0D090098F78A /* Connection */ = {
 			isa = XCSwiftPackageProductDependency;

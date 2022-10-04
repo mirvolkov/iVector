@@ -20,6 +20,7 @@ class ButtonLiftViewModel: ControlPanelButtonViewModel {
             }
         }
     }
+    @Published var tag: CPViewModelTag?
 
     private let connection: ConnectionModel
     private var bag = Set<AnyCancellable>()
@@ -29,7 +30,7 @@ class ButtonLiftViewModel: ControlPanelButtonViewModel {
     init(connection: ConnectionModel) {
         self.connection = connection
         self.primaryIcon = .init(systemName: "arrowtriangle.up")
-        self.tintColor = .white
+        self.tintColor = .blue
     }
 
     func bind() {
