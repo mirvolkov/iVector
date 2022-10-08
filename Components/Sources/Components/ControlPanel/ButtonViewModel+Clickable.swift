@@ -1,6 +1,6 @@
-protocol CPViewModelTag {
-    var id: AnyObject { get set }
-}
+import Programmator
+
+protocol CPViewModelTag {}
 
 protocol CPViewModelClickable<Tag> {
     associatedtype Tag
@@ -11,6 +11,4 @@ protocol CPViewModelClickable<Tag> {
 
 extension CPViewModelClickable {
     func onClick() {}
-    
-    var tag: CPViewModelTag? { nil }
 }

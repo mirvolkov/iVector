@@ -1,6 +1,7 @@
 import Combine
 import Features
 import SwiftUI
+import Programmator
 
 class ButtonSaveViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
@@ -12,12 +13,28 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var tag: CPViewModelTag?
+    @Published var showSavePopover = false
 
-    init() {
+    private let assembler: AssemblerModel
+    private var bag = Set<AnyCancellable>()
+
+    init(assembler: AssemblerModel) {
         self.primaryIcon = .init(systemName: "externaldrive.badge.plus")
         self.tintColor = .black
-        self.primaryTitle = "#0"
         self.enabled = false
+        self.assembler = assembler
+    }
+
+    func bind() {
+        assembler.$program
+            .map { "#\($0.count)" }
+            .assign(to: \.primaryTitle, on: self)
+            .store(in: &bag)
+
+        assembler.$program
+            .map { $0.count > 0 }
+            .assign(to: \.enabled, on: self)
+            .store(in: &bag)
     }
 
     func onClick() {

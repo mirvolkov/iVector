@@ -1,7 +1,6 @@
 import Combine
-import Connection
-import Features
 import SwiftUI
+import Programmator
 
 class ButtonEscViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
@@ -15,9 +14,13 @@ class ButtonEscViewModel: ControlPanelButtonViewModel {
     @Published var onEsc: Bool = false
     @Published var tag: CPViewModelTag?
 
-    init() {
+    private let assembler: AssemblerModel
+    private var bag = Set<AnyCancellable>()
+
+    init(assembler: AssemblerModel) {
         self.primaryIcon = .init(systemName: "delete.backward")
         self.primaryTitle = "Esc"
+        self.assembler = assembler
     }
 
     func onClick() {

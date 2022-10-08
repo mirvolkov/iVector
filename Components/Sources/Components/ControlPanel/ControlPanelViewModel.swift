@@ -26,7 +26,7 @@ class ControlPanelViewModel: ObservableObject {
         "ESC": esc,
         "SAVE": save,
     ]
-    
+
     lazy var powerBtn = ButtonPowerViewModel(
         connection: connection
     )
@@ -51,59 +51,34 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn0 = Button0ViewModel()
     lazy var lift = ButtonLiftViewModel(connection: connection)
     lazy var play = ButtonPlayViewModel(connection: connection)
-    lazy var enter = ButtonEnterViewModel()
-    lazy var esc = ButtonEscViewModel()
-    lazy var save = ButtonSaveViewModel()
-    
-    @Published var isPrimaryMode: Bool = false {
+    lazy var enter = ButtonEnterViewModel(assembler: assembler)
+    lazy var esc = ButtonEscViewModel(assembler: assembler)
+    lazy var save = ButtonSaveViewModel(assembler: assembler)
+
+    @Published var mode: Mode = .primary {
         didSet {
-            buttons
-                .filter { !["PWR"].contains($0.key) }
-                .forEach { $0.value.disableTitle = !isPrimaryMode }
-            buttons
-                .filter { !["PWR"].contains($0.key) }
-                .forEach { $0.value.disableIcon = isPrimaryMode }
+            modeButtons()
+            tagButtons()
         }
     }
-    @Published var isSecondaryMode: Bool = false {
-        didSet {
-            buttons
-                .filter { !["PWR"].contains($0.key) }
-                .forEach { $0.value.disableSecondary = !isSecondaryMode }
-        }
-    }
+    @Published var showSavePopover = false
+    @Published var command: String? = nil
     @Published var playPopover: Bool = false
     @Published var ttsAlert: Bool = false
     @Published var isConnected: Bool = false {
         didSet {
-            if isConnected {
-                Task {
-                    try await connection.behavior?.setEyeColor(
-                        settings.eyeColor.hsv.hueComponent,
-                        settings.eyeColor.hsv.satComponent
-                    )
-                }
-                
-                buttons
-                    .filter { !["PWR", "STT", "SAVE"].contains($0.key) }
-                    .forEach { $0.value.enabled = true }
-            } else {
-                buttons
-                    .filter { !["PWR", "STT", "SAVE"].contains($0.key) }
-                    .forEach { $0.value.enabled = false }
-            }
+            onConnected()
         }
     }
-    
-    let connection: ConnectionModel
-    let settings: SettingsModel
-    let assembler: AssemblerModel
-    var bag = Set<AnyCancellable>()
-    
+
+    internal let connection: ConnectionModel
+    internal let settings: SettingsModel
+    internal let assembler: AssemblerModel
+    internal var bag = Set<AnyCancellable>()
+
     init(_ connection: ConnectionModel, _ settings: SettingsModel, _ assembler: AssemblerModel) {
         self.settings = settings
         self.connection = connection
         self.assembler = assembler
-        bind()
     }
 }

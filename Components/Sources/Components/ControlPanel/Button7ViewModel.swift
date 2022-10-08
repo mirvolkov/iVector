@@ -9,10 +9,15 @@ class Button7ViewModel: ControlPanelButtonViewModel {
     @Published var primaryTitle: String?
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
-    @Published var tag: CPViewModelTag?
+    @Published var tag: CPViewModelTag? {
+        didSet {
+            enabled = tag != nil
+        }
+    }
 
     init() {
         self.primaryIcon = .init(systemName: "arrow.down.backward.square")
         self.primaryTitle = "7"
+        self.secondaryTitle = "vision"
     }
 }

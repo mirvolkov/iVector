@@ -17,9 +17,42 @@ extension ControlPanelViewModel {
             play.$showAudioListPopover
                 .assign(to: \.playPopover, on: self)
                 .store(in: &bag)
+            
+            assembler.$current
+                .map { $0?.description }
+                .assign(to: \.command, on: self)
+                .store(in: &bag)
+            
+            assembler.$current
+                .receive(on: RunLoop.main)
+                .sink { value in
+                    self.mode = value == nil ? .primary : .secondary
+                }
+                .store(in: &bag)
+            
+            esc.$onEsc
+                .filter { $0 }
+                .receive(on: RunLoop.main)
+                .sink { value in
+                    self.assembler.esc()
+                }
+                .store(in: &bag)
+
+            enter.$onEnter
+                .filter { $0 }
+                .receive(on: RunLoop.main)
+                .sink { value in
+                    self.assembler.enter()
+                }
+                .store(in: &bag)
+
+            save.$showSavePopover
+                .receive(on: RunLoop.main)
+                .assign(to: \.showSavePopover, on: self)
+                .store(in: &bag)
         }
     }
-    
+
     func unbind() {
         bag.removeAll()
     }

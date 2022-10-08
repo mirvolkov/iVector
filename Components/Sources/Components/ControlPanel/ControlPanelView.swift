@@ -37,6 +37,9 @@ public struct ControlPanelsView: View {
                 Spacer()
                     .frame(height: divider)
                 behaviorPanel
+                Spacer()
+                    .frame(height: divider)
+                pcPanel
             }
             Spacer()
         }
@@ -46,9 +49,13 @@ public struct ControlPanelsView: View {
         .popover(isPresented: $viewModel.ttsAlert, content: {
             PlaySpeechPopover(viewModel: viewModel.tts)
         })
+        .popover(isPresented: $viewModel.showSavePopover, content: {
+            
+        })
         .onAppear {
             viewModel.powerBtn.onConnect = onConnect
             viewModel.powerBtn.onDisconnect = onDisconnect
+            viewModel.bind()
         }
         .padding(10)
     }
@@ -130,6 +137,16 @@ public struct ControlPanelsView: View {
     private var placeholder: some View {
         Spacer()
             .frame(width: size, height: size)
+    }
+
+    private var pcPanel: some View {
+        VStack(alignment: .center) {
+            if let command = viewModel.command {
+                Text(command)
+                    .font(vectorBold(24.0))
+                    .frame(alignment: .center)
+            }
+        }
     }
 
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View where ViewModel.Tag == CPViewModelTag {
