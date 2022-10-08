@@ -1,11 +1,6 @@
 import Algorithms
 import Collections
 
-public protocol ProgrammatorSync {
-    func save(name: String)
-}
-
-
 /// Program composer interface
 public protocol Assembler {
     /// Program stored in stack collection
@@ -14,9 +9,12 @@ public protocol Assembler {
     /// Current instruction in edit mode. Not completed.
     var current: Instruction? { get set }
 
-    /// Program size
-    var counter: Int { get }
+    /// Current instruction extension
+    var ext: ExtensionBox? { get set }
 
     /// Remove last instruction
     func esc()
+
+    /// Enter command
+    func enter()
 }
