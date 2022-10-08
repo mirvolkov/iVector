@@ -1,7 +1,7 @@
 import Features
 import SwiftUI
 
-class ButtonPlayViewModel: ControlPanelButtonViewModel {
+class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -11,7 +11,7 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var showAudioListPopover: Bool = false
-    @Published var sounds = SoundPlayer.SoundName.allCases
+    @Published var items = SoundPlayer.SoundName.allCases
     @Published var tag: CPViewModelTag?
 
     private let connection: ConnectionModel
@@ -26,7 +26,7 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel {
         showAudioListPopover = true
     }
     
-    func onSelect(_ sound: SoundPlayer.SoundName) {
+    func onItemSelected(item: SoundPlayer.SoundName) {
         showAudioListPopover = false
     }
 }

@@ -44,13 +44,25 @@ public struct ControlPanelsView: View {
             Spacer()
         }
         .popover(isPresented: $viewModel.playPopover, content: {
-            PlaySoundPopover(viewModel: viewModel.play)
+            PickListPopover(
+                viewModel: viewModel.play
+            )
         })
         .popover(isPresented: $viewModel.ttsAlert, content: {
-            PlaySpeechPopover(viewModel: viewModel.tts)
+            TextFieldPopover(
+                title: L10n.typeInMessageToSay,
+                placeholder: L10n.say,
+                button: L10n.say,
+                viewModel: viewModel.tts
+            )
         })
         .popover(isPresented: $viewModel.showSavePopover, content: {
-            
+            TextFieldPopover(
+                title: L10n.save,
+                placeholder: L10n.nameTheProgram,
+                button: L10n.save,
+                viewModel: viewModel.tts
+            )
         })
         .onAppear {
             viewModel.powerBtn.onConnect = onConnect

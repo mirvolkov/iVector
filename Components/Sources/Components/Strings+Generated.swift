@@ -10,6 +10,8 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
+  /// BATT
+  public static let batt = L10n.tr("Localizable", "BATT")
   /// Camera
   public static let camera = L10n.tr("Localizable", "Camera")
   /// Cancel
@@ -30,18 +32,32 @@ public enum L10n {
   public static let guid = L10n.tr("Localizable", "GUID")
   /// IP Address
   public static let ipAddress = L10n.tr("Localizable", "IP Address")
+  /// listen
+  public static let listen = L10n.tr("Localizable", "listen")
   /// Locale
   public static let locale = L10n.tr("Localizable", "Locale")
+  /// MEM
+  public static let mem = L10n.tr("Localizable", "MEM")
+  /// Name the program
+  public static let nameTheProgram = L10n.tr("Localizable", "Name the Program")
   /// offline
   public static let offline = L10n.tr("Localizable", "offline")
+  /// PROG
+  public static let prog = L10n.tr("Localizable", "PROG")
+  /// Save
+  public static let save = L10n.tr("Localizable", "Save")
   /// Say
   public static let say = L10n.tr("Localizable", "Say")
   /// Settings
   public static let settings = L10n.tr("Localizable", "Settings")
+  /// sonar
+  public static let sonar = L10n.tr("Localizable", "sonar")
   /// Type in message to say
   public static let typeInMessageToSay = L10n.tr("Localizable", "Type in message to say")
   /// Vector
   public static let vector = L10n.tr("Localizable", "Vector")
+  /// vision
+  public static let vision = L10n.tr("Localizable", "vision")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

@@ -15,3 +15,11 @@
 "Type in message to say" = "Type in message to say";
 "Control" = "Control";
 "Camera" = "Camera";
+"MEM" = "MEM";
+"BATT" = "BATT";
+"PROG" = "PROG";
+"Save" = "Save";
+"Name the Program" = "Name the program";
+"listen" = "listen";
+"vision" = "vision";
+"sonar" = "sonar";

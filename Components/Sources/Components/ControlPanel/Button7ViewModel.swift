@@ -18,6 +18,6 @@ class Button7ViewModel: ControlPanelButtonViewModel {
     init() {
         self.primaryIcon = .init(systemName: "arrow.down.backward.square")
         self.primaryTitle = "7"
-        self.secondaryTitle = "vision"
+        self.secondaryTitle = L10n.vision
     }
 }

@@ -2,7 +2,7 @@ import Combine
 import Features
 import SwiftUI
 
-class ButtonTTSViewModel: ControlPanelButtonViewModel {
+class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -30,7 +30,7 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel {
         ttsAlert = true
     }
     
-    func say(_ text: String) {
+    @MainActor func onTextChange(text: String) {
         Task.detached {
             try await self.connection.say(text: text, locale: Locale(identifier: self.settings.locale))
         }

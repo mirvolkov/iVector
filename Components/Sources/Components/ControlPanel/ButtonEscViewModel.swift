@@ -23,6 +23,15 @@ class ButtonEscViewModel: ControlPanelButtonViewModel {
         self.assembler = assembler
     }
 
+    func bind() {
+        assembler.$program
+            .compactMap { $0.count > 0 }
+            .combineLatest(assembler.$current.map { $0 != nil})
+            .map { $0.0 || $0.1 }
+            .assign(to: \.enabled, on: self)
+            .store(in: &bag)
+    }
+
     func onClick() {
         onEsc = true
     }

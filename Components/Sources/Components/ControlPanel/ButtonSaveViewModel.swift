@@ -3,7 +3,7 @@ import Features
 import SwiftUI
 import Programmator
 
-class ButtonSaveViewModel: ControlPanelButtonViewModel {
+class ButtonSaveViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -38,5 +38,10 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel {
     }
 
     func onClick() {
+        showSavePopover = true
+    }
+    
+    func onTextChange(text: String) {
+        showSavePopover = false
     }
 }
