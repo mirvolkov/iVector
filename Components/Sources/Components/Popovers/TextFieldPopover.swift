@@ -19,6 +19,7 @@ struct TextFieldPopover<ViewModel: TextFieldPopoverCallback>: View {
             TextField(placeholder, text: $text)
                 .font(vectorRegular(18))
                 .multilineTextAlignment(.center)
+                .autocorrectionDisabled()
             Button(button, role: .destructive, action: {
                 viewModel.onTextChange(text: text)
             })

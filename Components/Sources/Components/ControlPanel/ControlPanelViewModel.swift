@@ -70,6 +70,7 @@ class ControlPanelViewModel: ObservableObject {
             onConnected()
         }
     }
+    @Published var saveError: ControlPanelSaveError? = nil
 
     internal let connection: ConnectionModel
     internal let settings: SettingsModel

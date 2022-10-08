@@ -61,7 +61,7 @@ public struct ControlPanelsView: View {
                 title: L10n.save,
                 placeholder: L10n.nameTheProgram,
                 button: L10n.save,
-                viewModel: viewModel.tts
+                viewModel: viewModel.save
             )
         })
         .onAppear {
@@ -69,6 +69,9 @@ public struct ControlPanelsView: View {
             viewModel.powerBtn.onDisconnect = onDisconnect
             viewModel.bind()
         }
+        .errorAlert(
+            error: $viewModel.saveError
+        )
         .padding(10)
     }
 

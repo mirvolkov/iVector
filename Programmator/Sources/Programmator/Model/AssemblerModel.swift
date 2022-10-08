@@ -50,3 +50,13 @@ public final class AssemblerModel: Assembler, ObservableObject {
         }
     }
 }
+
+extension AssemblerModel: ProgrammatorSync {
+    public enum SaveError: Error {
+        case alreadyExists
+    }
+    
+    public func save(name: String) throws {
+        throw SaveError.alreadyExists
+    }
+}

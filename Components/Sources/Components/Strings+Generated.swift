@@ -42,8 +42,12 @@ public enum L10n {
   public static let nameTheProgram = L10n.tr("Localizable", "Name the Program")
   /// offline
   public static let offline = L10n.tr("Localizable", "offline")
+  /// OK
+  public static let ok = L10n.tr("Localizable", "OK")
   /// PROG
   public static let prog = L10n.tr("Localizable", "PROG")
+  /// Program already exists
+  public static let programAlreadyExists = L10n.tr("Localizable", "Program already exists")
   /// Save
   public static let save = L10n.tr("Localizable", "Save")
   /// Say

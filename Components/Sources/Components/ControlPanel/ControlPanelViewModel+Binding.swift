@@ -50,6 +50,11 @@ extension ControlPanelViewModel {
                 .receive(on: RunLoop.main)
                 .assign(to: \.showSavePopover, on: self)
                 .store(in: &bag)
+
+            save.$saveError
+                .receive(on: RunLoop.main)
+                .assign(to: \.saveError, on: self)
+                .store(in: &bag)
         }
     }
 

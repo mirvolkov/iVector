@@ -23,3 +23,5 @@
 "listen" = "listen";
 "vision" = "vision";
 "sonar" = "sonar";
+"Program already exists" = "Program already exists";
+"OK" = "OK";

@@ -1,5 +1,7 @@
 /// Synching: save and load
 public protocol ProgrammatorSync {
-    func save(name: String)
+    /// Saves current program. Empties program stack
+    /// - Throws alreadyExists error if name overlaps existing name
+    func save(name: String) throws
 }
 
