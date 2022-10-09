@@ -1,5 +1,6 @@
 import Collections
 import Combine
+import Foundation
 
 public final class AssemblerModel: Assembler, ObservableObject {
     @Published public var program: DequeModule.Deque<Instruction> = []
@@ -51,12 +52,22 @@ public final class AssemblerModel: Assembler, ObservableObject {
     }
 }
 
-extension AssemblerModel: ProgrammatorSync {
+extension AssemblerModel: ProgrammatorSave {
     public enum SaveError: Error {
         case alreadyExists
+        case fsError
     }
     
     public func save(name: String) throws {
-        throw SaveError.alreadyExists
+        let rootPath = try progLocation()
+        let json = try JSONEncoder().encode(program)
+        let docPath = makeFilePath(root: rootPath, filename: name)
+        try json.write(to: docPath)
+    }
+
+    func makeFilePath(root: URL, filename: String) -> URL {
+        return root
+            .appendingPathComponent(filename)
+            .appendingPathExtension(progFileExtension)
     }
 }

@@ -1,3 +1,4 @@
+/** TODO: this model doesn't look like good solution. Consider refactoring + test coverage */
 public enum ExtensionBox: CustomStringConvertible {
     case distance(Int)
     case angle(Int)
@@ -20,6 +21,9 @@ public enum ExtensionBox: CustomStringConvertible {
             return "\(condition.uppercased())"
         }
     }
+}
+
+extension ExtensionBox: Codable {
 }
 
 public extension Instruction {

@@ -5,12 +5,18 @@ import Features
 import SwiftUI
 
 struct DetailPanel: View {
+    let store = AppState.store
+
     var body: some View {
-        WithViewStore(AppState.store) { viewStore in
+        WithViewStore(store) { viewStore in
             switch viewStore.state {
             case .online(let vision):
-                VisionView(connection: AppState.env.connection, vision: vision)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                VisionView(
+                    connection: AppState.env.connection,
+                    vision: vision,
+                    executor: AppState.env.executor
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
 
             case .offline:
                 VisionOfflineView()

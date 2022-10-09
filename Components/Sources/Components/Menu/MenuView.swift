@@ -26,29 +26,31 @@ struct MenuView: View {
                 .padding(.horizontal, 8)
             }
 
-            Text("PROG: \(viewModel.prog ?? "")")
+            Text("PROG: \(viewModel.prog?.uppercased() ?? "")")
                 .font(vectorBold(22))
                 .foregroundColor(.white)
                 .padding(.horizontal, 8)
                 .onTapGesture {
-                    viewModel.loadProgramPopover = true
+                    viewModel.onProgTap()
                 }
 
-            Button {
-                viewModel.onCancelTap()
-            } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .resizable()
-                    .foregroundColor(.white)
-                    .frame(width: 24, height: 24)
+            if viewModel.isRunning {
+                Button {
+                    viewModel.onCancelTap()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .resizable()
+                        .foregroundColor(.white)
+                        .frame(width: 18, height: 18)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .onAppear {
             viewModel.bind()
         }
-        .sheet(isPresented: $viewModel.loadProgramPopover, content: {
-            MenuLoadProgram(viewModel: viewModel)
+        .popover(isPresented: $viewModel.loadProgramPopover, content: {
+            PickListPopover(viewModel: viewModel)
         })
         .opacity(0.85)
     }

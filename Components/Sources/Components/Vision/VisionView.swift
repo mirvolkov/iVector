@@ -1,13 +1,14 @@
 import Features
 import SwiftUI
+import Programmator
 
 public struct VisionView: View {
     @StateObject var camViewModel: ViewModel
     @StateObject var menuViewModel: MenuViewModel
     
-    public init(connection: ConnectionModel, vision: VisionModel) {
+    public init(connection: ConnectionModel, vision: VisionModel, executor: ExecutorModel) {
         self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection, vision: vision))
-        self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection))
+        self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection, executor: executor))
     }
     
     public var body: some View {

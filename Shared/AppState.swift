@@ -25,6 +25,7 @@ class VectorAppEnvironment {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
     let assembler: AssemblerModel = .init()
+    let executor: ExecutorModel = .init()
     let settings: SettingsModel = .init()
 }
 

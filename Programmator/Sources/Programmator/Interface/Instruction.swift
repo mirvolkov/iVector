@@ -81,3 +81,5 @@ extension Instruction: InstructionBox {
         }
     }
 }
+
+extension Instruction: Codable { }

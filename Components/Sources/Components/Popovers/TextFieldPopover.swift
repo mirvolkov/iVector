@@ -20,6 +20,9 @@ struct TextFieldPopover<ViewModel: TextFieldPopoverCallback>: View {
                 .font(vectorRegular(18))
                 .multilineTextAlignment(.center)
                 .autocorrectionDisabled()
+            #if os(iOS)
+                .textInputAutocapitalization(.never)
+            #endif
             Button(button, role: .destructive, action: {
                 viewModel.onTextChange(text: text)
             })
