@@ -2,7 +2,7 @@ import Combine
 import Features
 import SwiftUI
 
-class ButtonDockViewModel: ControlPanelButtonViewModel {
+class ButtonUndockViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -14,7 +14,7 @@ class ButtonDockViewModel: ControlPanelButtonViewModel {
     @Published var tag: CPViewModelTag?
 
     init() {
-        self.primaryIcon = .init(systemName: "tray.and.arrow.up")
+        self.primaryIcon = .init(systemName: "tray.and.arrow.down")
         self.tintColor = .cyan
     }
 }

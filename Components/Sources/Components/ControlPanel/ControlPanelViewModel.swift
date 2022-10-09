@@ -5,28 +5,6 @@ import SwiftUI
 import Programmator
 
 class ControlPanelViewModel: ObservableObject {
-    lazy var buttons: [String: any ControlPanelButtonViewModel] = [
-        "PWR": powerBtn,
-        "DOCK": dockBtn,
-        "BTN1": btn1,
-        "BTN2": btn2,
-        "BTN3": btn3,
-        "BTN4": btn4,
-        "BTN5": btn5,
-        "BTN6": btn6,
-        "BTN7": btn7,
-        "BTN8": btn8,
-        "BTN9": btn9,
-        "BTN0": btn0,
-        "STT": stt,
-        "TTS": tts,
-        "LIFT": lift,
-        "PLAY": play,
-        "ENTER": enter,
-        "ESC": esc,
-        "SAVE": save,
-    ]
-
     lazy var powerBtn = ButtonPowerViewModel(
         connection: connection
     )
@@ -38,7 +16,8 @@ class ControlPanelViewModel: ObservableObject {
         connection: connection,
         settings: settings
     )
-    lazy var dockBtn = ButtonDockViewModel(connection: connection)
+    lazy var dockBtn = ButtonDockViewModel()
+    lazy var undockBtn = ButtonUndockViewModel()
     lazy var btn1 = Button1ViewModel()
     lazy var btn2 = Button2ViewModel()
     lazy var btn3 = Button3ViewModel()
@@ -49,7 +28,8 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn8 = Button8ViewModel()
     lazy var btn9 = Button9ViewModel()
     lazy var btn0 = Button0ViewModel()
-    lazy var lift = ButtonLiftViewModel(connection: connection)
+    lazy var lift = ButtonLiftViewModel()
+    lazy var down = ButtonDownViewModel()
     lazy var play = ButtonPlayViewModel(connection: connection)
     lazy var enter = ButtonEnterViewModel(assembler: assembler)
     lazy var esc = ButtonEscViewModel(assembler: assembler)

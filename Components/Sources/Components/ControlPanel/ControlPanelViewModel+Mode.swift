@@ -29,6 +29,10 @@ extension ControlPanelViewModel {
         case secondary
         case alt
     }
+    
+    var digitalButtons: [any ControlPanelButtonViewModel] {
+        [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9]
+    }
 
     func onConnected() {
         if isConnected {
@@ -55,30 +59,27 @@ extension ControlPanelViewModel {
     func modeButtons() {
         switch mode {
         case .primary:
-            buttons
-                .filter { $0.key.starts(with: "BTN") }
+            digitalButtons
                 .forEach { value in
-                    value.value.disableIcon = false
-                    value.value.disableTitle = true
-                    value.value.disableSecondary = true
+                    value.disableIcon = false
+                    value.disableTitle = true
+                    value.disableSecondary = true
                 }
 
         case .secondary:
-            buttons
-                .filter { $0.key.starts(with: "BTN") }
+            digitalButtons
                 .forEach { value in
-                    value.value.disableIcon = true
-                    value.value.disableTitle = false
-                    value.value.disableSecondary = true
+                    value.disableIcon = true
+                    value.disableTitle = false
+                    value.disableSecondary = true
                 }
 
         case .alt:
-            buttons
-                .filter { $0.key.starts(with: "BTN") }
+            digitalButtons
                 .forEach { value in
-                    value.value.disableIcon = true
-                    value.value.disableTitle = true
-                    value.value.disableSecondary = false
+                    value.disableIcon = true
+                    value.disableTitle = true
+                    value.disableSecondary = false
                 }
         }
     }

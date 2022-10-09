@@ -68,6 +68,7 @@ public struct ControlPanelsView: View {
             viewModel.powerBtn.onConnect = onConnect
             viewModel.powerBtn.onDisconnect = onDisconnect
             viewModel.bind()
+            viewModel.tagInitial()
         }
         .errorAlert(
             error: $viewModel.saveError
@@ -125,28 +126,41 @@ public struct ControlPanelsView: View {
 
     private var digitalPanel4: some View {
         HStack(alignment: .center, spacing: space) {
-            build(viewModel.pause)
-            build(viewModel.btn0)
             placeholder
+            build(viewModel.btn0)
+            build(viewModel.pause)
             Spacer()
                 .frame(width: divider)
             placeholder
             Spacer()
-
         }.frame(height: size)
     }
 
     private var behaviorPanel: some View {
-        HStack(alignment: .center, spacing: space) {
-            build(viewModel.dockBtn)
-            build(viewModel.lift)
-            placeholder
+        VStack(spacing: 0) {
+            HStack(alignment: .center, spacing: space) {
+                build(viewModel.dockBtn)
+                build(viewModel.lift)
+                placeholder
+                Spacer()
+                    .frame(width: divider)
+                placeholder
+                Spacer()
+
+            }.frame(height: size)
             Spacer()
                 .frame(width: divider)
-            placeholder
-            Spacer()
+            HStack(alignment: .center, spacing: space) {
+                build(viewModel.undockBtn)
+                build(viewModel.down)
+                placeholder
+                Spacer()
+                    .frame(width: divider)
+                placeholder
+                Spacer()
 
-        }.frame(height: size)
+            }.frame(height: size)
+        }
     }
 
     private var placeholder: some View {
@@ -161,7 +175,7 @@ public struct ControlPanelsView: View {
                     .font(vectorBold(24.0))
                     .frame(alignment: .center)
             }
-        }
+        }.frame(height: 32)
     }
 
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View where ViewModel.Tag == CPViewModelTag {

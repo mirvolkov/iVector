@@ -2,6 +2,13 @@ import Combine
 import Programmator
 
 extension ControlPanelViewModel {
+    func tagInitial() {
+        dockBtn.tag = Instruction.dock
+        undockBtn.tag = Instruction.undock
+        lift.tag = Instruction.liftUp
+        down.tag = Instruction.liftDown
+    }
+
     func tagPrimary() {
         btn0.tag = Instruction.goto(nil, nil)
         btn1.tag = nil
