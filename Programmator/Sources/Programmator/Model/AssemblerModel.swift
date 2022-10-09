@@ -21,6 +21,9 @@ public final class AssemblerModel: Assembler, ObservableObject {
         case .angle(let value):
             guard value < 100 else { return }
             ext = .angle(value*10 + digit)
+        case .sec(let value):
+            guard value < 30 else { return }
+            ext = .sec(value*10 + digit)
         default:
             break
         }

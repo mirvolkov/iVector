@@ -3,7 +3,8 @@ public enum ExtensionBox: CustomStringConvertible {
     case distance(Int)
     case angle(Int)
     case text(String)
-    
+    case sec(Int)
+
     case program(String)
     case condition(String)
     
@@ -15,6 +16,8 @@ public enum ExtensionBox: CustomStringConvertible {
             return "\(rad)°"
         case .text(let str):
             return "\(str)"
+        case .sec(let time):
+            return "\(time)SEC"
         case .program(let name):
             return "\(name.uppercased())"
         case .condition(let condition):
@@ -23,8 +26,7 @@ public enum ExtensionBox: CustomStringConvertible {
     }
 }
 
-extension ExtensionBox: Codable {
-}
+extension ExtensionBox: Codable {}
 
 public extension Instruction {
     var ext: ExtensionBox? {
@@ -40,7 +42,8 @@ public extension Instruction {
                 return ext ?? .distance(0)
             case .rotate(let ext):
                 return ext ?? .angle(0)
-                
+            case .pause(let ext):
+                return ext ?? .sec(0)
             case .goto(let ifExt, let thenExt):
                 if let thenExt = thenExt {
                     return thenExt
@@ -49,12 +52,11 @@ public extension Instruction {
                     return ifExt
                 }
                 return nil
-
             default:
                 return nil
             }
         }
-        
+
         set {
             switch self {
             case .forward(_):
@@ -67,14 +69,14 @@ public extension Instruction {
                 self = .right(newValue)
             case .rotate(_):
                 self = .rotate(newValue)
-                
+            case .pause(_):
+                self = .pause(newValue)
             case .goto(let ifExt, let thenExt):
                 if ifExt == nil {
                     self = .goto(newValue, nil)
                 } else if thenExt == nil {
                     self = .goto(ifExt, newValue)
                 }
-
             default:
                 break
             }
@@ -93,6 +95,8 @@ public extension Instruction {
             self = .right(nil)
         case .rotate(_):
             self = .rotate(nil)
+        case .pause(_):
+            self = .pause(nil)
         case .goto(let ifExt, let thenExt):
             if thenExt != nil {
                 self = .goto(ifExt, nil)

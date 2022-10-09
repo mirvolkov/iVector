@@ -54,6 +54,7 @@ class ControlPanelViewModel: ObservableObject {
     lazy var enter = ButtonEnterViewModel(assembler: assembler)
     lazy var esc = ButtonEscViewModel(assembler: assembler)
     lazy var save = ButtonSaveViewModel(assembler: assembler)
+    lazy var pause = ButtonPauseViewModel()
 
     @Published var mode: Mode = .primary {
         didSet {

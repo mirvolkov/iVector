@@ -125,7 +125,7 @@ public struct ControlPanelsView: View {
 
     private var digitalPanel4: some View {
         HStack(alignment: .center, spacing: space) {
-            placeholder
+            build(viewModel.pause)
             build(viewModel.btn0)
             placeholder
             Spacer()

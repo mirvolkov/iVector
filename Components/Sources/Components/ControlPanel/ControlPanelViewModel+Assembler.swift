@@ -13,6 +13,7 @@ extension ControlPanelViewModel {
         btn7.tag = nil
         btn8.tag = Instruction.backward(nil)
         btn9.tag = nil
+        pause.tag = Instruction.pause(nil)
     }
 
     func tagSecondary() {
@@ -26,6 +27,7 @@ extension ControlPanelViewModel {
         btn7.tag = SecondaryTag.btn7
         btn8.tag = SecondaryTag.btn8
         btn9.tag = SecondaryTag.btn9
+        pause.tag = nil
     }
 
     func tagAlt() {
@@ -39,5 +41,6 @@ extension ControlPanelViewModel {
         btn7.tag = AltTag.vision
         btn8.tag = AltTag.sonar
         btn9.tag = AltTag.stt
+        pause.tag = nil
     }
 }

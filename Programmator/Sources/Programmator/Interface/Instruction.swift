@@ -15,6 +15,7 @@ public enum Instruction {
     case liftDown
     case rotate(ExtensionBox?)
     case goto(ExtensionBox?, ExtensionBox?)
+    case pause(ExtensionBox?)
 }
 
 extension Instruction: CustomStringConvertible {
@@ -47,6 +48,8 @@ extension Instruction: CustomStringConvertible {
                return "IF \(ifExt.description) THEN \(thenExt?.description ?? "")"
             }
             return "IF \(ifExt?.description ?? "")"
+        case .pause(let ext):
+            return "PAUSE \(ext?.description ?? "")"
         }
     }
 }
@@ -78,8 +81,10 @@ extension Instruction: InstructionBox {
             return ext != nil
         case .goto(let ifExt, let thenExt):
             return ifExt != nil && thenExt != nil
+        case .pause(let ext):
+            return ext != nil
         }
     }
 }
 
-extension Instruction: Codable { }
+extension Instruction: Codable {}
