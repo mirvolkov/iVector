@@ -14,16 +14,11 @@ struct MenuView: View {
                 }
 
             if let batt = viewModel.batt {
-                HStack(alignment: .center) {
-                    Text("BATT:")
-                        .font(vectorBold(22))
-
-                    batt
-                        .resizable()
-                        .frame(width: 32, height: 22)
-                }
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
+                batt
+                    .resizable()
+                    .frame(width: 32, height: 22)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 8)
             }
 
             Text("PROG: \(viewModel.prog?.uppercased() ?? "")")

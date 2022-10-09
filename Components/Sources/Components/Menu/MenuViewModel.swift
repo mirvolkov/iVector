@@ -6,7 +6,7 @@ import Programmator
 
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     @Published var memory: Bool = false
-    @Published var batt: Image?
+    @Published var batt: Image? = .init(systemName: "battery.0")
     @Published var prog: String? = nil
     @Published var items: [Program] = []
     @Published var isRunning = false
@@ -34,31 +34,35 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
             .assign(to: \.prog, on: self)
             .store(in: &bag)
 
-//        Task { @MainActor [self] in
-//            await self.connection.battery
-//                .receive(on: RunLoop.main)
-//                .map {
-//                    switch $0 {
-//                    case .unknown:
-//                        return nil
-//                    case .charging:
-//                        return .init(systemName: "battery.100.bolt")
-//                    case .full:
-//                        return .init(systemName: "battery.100")
-//                    case .normal:
-//                        return .init(systemName: "battery.50")
-//                    case .low:
-//                        return .init(systemName: "battery.25")
-//                    }
-//                }
-//                .assign(to: \.batt, on: self)
-//                .store(in: &self.bag)
-//        }
+        Task { @MainActor [self] in
+            await self.connection.battery
+                .receive(on: RunLoop.main)
+                .map {
+                    switch $0 {
+                    case .unknown:
+                        return nil
+                    case .charging:
+                        return .init(systemName: "battery.100.bolt")
+                    case .full:
+                        return .init(systemName: "battery.100")
+                    case .normal:
+                        return .init(systemName: "battery.50")
+                    case .low:
+                        return .init(systemName: "battery.25")
+                    }
+                }
+                .assign(to: \.batt, on: self)
+                .store(in: &self.bag)
+        }
     }
 
     func onProgTap() {
-        items = executor.programs
-        loadProgramPopover = true
+        do {
+            items = try executor.programs
+            loadProgramPopover = true
+        } catch {
+            print(error)
+        }
     }
 
     func onCancelTap() {

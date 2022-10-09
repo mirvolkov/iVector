@@ -24,9 +24,9 @@ extension Instruction: CustomStringConvertible {
         case .say(let ext):
             return "SAY \(ext?.description ?? "")"
         case .dock:
-            return "dock"
+            return "DOCK"
         case .undock:
-            return "undock"
+            return "UNDOCK"
         case .left(let ext):
             return "LEFT \(ext?.description ?? "")"
         case .right(let ext):

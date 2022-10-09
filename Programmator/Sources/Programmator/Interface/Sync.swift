@@ -22,7 +22,7 @@ public protocol ProgrammatorSave: ProgrammatorSync {
 /// Synching: load
 public protocol ProgrammatorLoad: ProgrammatorSync {
     /// List of programs
-    var programs: [Program] { get }
+    var programs: [Program] { get throws }
 }
 
 public extension ProgrammatorSync {
