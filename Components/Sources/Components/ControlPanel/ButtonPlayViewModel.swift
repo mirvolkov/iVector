@@ -14,10 +14,7 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
     @Published var items = SoundPlayer.SoundName.allCases
     @Published var tag: CPViewModelTag?
 
-    private let connection: ConnectionModel
-
-    init(connection: ConnectionModel) {
-        self.connection = connection
+    init() {
         self.primaryIcon = .init(systemName: "bell.badge")
         self.tintColor = .orange
     }

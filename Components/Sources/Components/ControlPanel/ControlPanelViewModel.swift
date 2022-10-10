@@ -5,17 +5,8 @@ import SwiftUI
 import Programmator
 
 class ControlPanelViewModel: ObservableObject {
-    lazy var powerBtn = ButtonPowerViewModel(
-        connection: connection
-    )
-    lazy var stt = ButtonSTTViewModel(
-        connection: connection,
-        settings: settings
-    )
-    lazy var tts = ButtonTTSViewModel(
-        connection: connection,
-        settings: settings
-    )
+    lazy var powerBtn = ButtonPowerViewModel(connection: connection)
+    lazy var tts = ButtonTTSViewModel()
     lazy var dockBtn = ButtonDockViewModel()
     lazy var undockBtn = ButtonUndockViewModel()
     lazy var btn1 = Button1ViewModel()
@@ -30,7 +21,7 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn0 = Button0ViewModel()
     lazy var lift = ButtonLiftViewModel()
     lazy var down = ButtonDownViewModel()
-    lazy var play = ButtonPlayViewModel(connection: connection)
+    lazy var play = ButtonPlayViewModel()
     lazy var enter = ButtonEnterViewModel(assembler: assembler)
     lazy var esc = ButtonEscViewModel(assembler: assembler)
     lazy var save = ButtonSaveViewModel(assembler: assembler)

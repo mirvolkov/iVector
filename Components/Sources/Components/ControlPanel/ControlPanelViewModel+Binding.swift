@@ -9,27 +9,35 @@ extension ControlPanelViewModel {
                 .map { newState in if case .online = newState { return true } else { return false } }
                 .assign(to: \.isConnected, on: self)
                 .store(in: &self.bag)
-            
+
             tts.$ttsAlert
                 .assign(to: \.ttsAlert, on: self)
                 .store(in: &bag)
-            
+
             play.$showAudioListPopover
                 .assign(to: \.playPopover, on: self)
                 .store(in: &bag)
-            
+
             assembler.$current
                 .map { $0?.description }
                 .assign(to: \.command, on: self)
                 .store(in: &bag)
-            
+
             assembler.$current
                 .receive(on: RunLoop.main)
-                .sink { value in
-                    self.mode = value == nil ? .primary : .secondary
+                .map { $0?.ext }
+                .map { ext in
+                    guard let ext = ext else { return .primary }
+                    switch ext {
+                    case .sec, .angle, .distance:
+                        return .secondary
+                    case .condition, .program, .text:
+                        return .alt
+                    }
                 }
+                .assign(to: \.mode, on: self)
                 .store(in: &bag)
-            
+
             esc.$onEsc
                 .filter { $0 }
                 .receive(on: RunLoop.main)

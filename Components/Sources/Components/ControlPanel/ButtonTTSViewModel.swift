@@ -15,24 +15,19 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback 
     @Published var ttsAlert: Bool = false
     @Published var tag: CPViewModelTag?
 
-    private let settings: SettingsModel
-    private let connection: ConnectionModel
-    private var bag = Set<AnyCancellable>()
-
-    init(connection: ConnectionModel, settings: SettingsModel) {
-        self.connection = connection
-        self.settings = settings
+    init() {
         self.primaryIcon = .init(systemName: "text.bubble")
         self.tintColor = .orange
     }
-    
+
     func onClick() {
         ttsAlert = true
     }
-    
+
     @MainActor func onTextChange(text: String) {
-        Task.detached {
-            try await self.connection.say(text: text, locale: Locale(identifier: self.settings.locale))
-        }
+        ttsAlert = false
+//        Task.detached {
+//            try await self.connection.say(text: text, locale: Locale(identifier: self.settings.locale))
+//        }
     }
 }

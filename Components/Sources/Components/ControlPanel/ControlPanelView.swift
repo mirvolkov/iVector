@@ -25,22 +25,17 @@ public struct ControlPanelsView: View {
     }
 
     public var body: some View {
-        VStack {
-            VStack(spacing: divider) {
-                header
-                Spacer()
-                    .frame(height: divider)
-                digitalPanel1
-                digitalPanel2
-                digitalPanel3
-                digitalPanel4
-                Spacer()
-                    .frame(height: divider)
-                behaviorPanel
-                Spacer()
-                    .frame(height: divider)
-                pcPanel
-            }
+        VStack(spacing: divider) {
+            header
+            Spacer()
+                .frame(height: divider)
+            digitalPanel
+            Spacer()
+                .frame(height: divider)
+            behaviorPanel
+            behaviorPanel1
+            Spacer()
+            pcPanel
             Spacer()
         }
         .popover(isPresented: $viewModel.playPopover, content: {
@@ -86,6 +81,15 @@ public struct ControlPanelsView: View {
             build(viewModel.save)
             Spacer()
         }.frame(height: size)
+    }
+
+    private var digitalPanel: some View {
+        VStack {
+            digitalPanel1
+            digitalPanel2
+            digitalPanel3
+            digitalPanel4
+        }
     }
 
     private var digitalPanel1: some View {
@@ -137,30 +141,27 @@ public struct ControlPanelsView: View {
     }
 
     private var behaviorPanel: some View {
-        VStack(spacing: 0) {
-            HStack(alignment: .center, spacing: space) {
-                build(viewModel.dockBtn)
-                build(viewModel.lift)
-                placeholder
-                Spacer()
-                    .frame(width: divider)
-                placeholder
-                Spacer()
-
-            }.frame(height: size)
+        HStack(alignment: .center, spacing: space) {
+            build(viewModel.dockBtn)
+            build(viewModel.lift)
+            placeholder
             Spacer()
                 .frame(width: divider)
-            HStack(alignment: .center, spacing: space) {
-                build(viewModel.undockBtn)
-                build(viewModel.down)
-                placeholder
-                Spacer()
-                    .frame(width: divider)
-                placeholder
-                Spacer()
+            placeholder
+            Spacer()
+        }.frame(height: size)
+    }
 
-            }.frame(height: size)
-        }
+    private var behaviorPanel1: some View {
+        HStack(alignment: .center, spacing: space) {
+            build(viewModel.undockBtn)
+            build(viewModel.down)
+            placeholder
+            Spacer()
+                .frame(width: divider)
+            placeholder
+            Spacer()
+        }.frame(height: size)
     }
 
     private var placeholder: some View {
