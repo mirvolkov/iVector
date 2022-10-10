@@ -1,6 +1,7 @@
 import Collections
 import Combine
 import Foundation
+import Features
 
 public final class AssemblerModel: Assembler, ObservableObject {
     @Published public var program: DequeModule.Deque<Instruction> = []
@@ -13,26 +14,22 @@ public final class AssemblerModel: Assembler, ObservableObject {
 
     public init() { }
 
-    public func extend(with digit: Int) {
-        switch ext {
-        case .distance(let value):
+    public func extend<T>(with value: T) {
+        switch (value, ext) {
+        case (let digit as Int, .distance(let value)):
             guard value < 100 else { return }
             ext = .distance(value*10 + digit)
-        case .angle(let value):
+        case (let digit as Int, .angle(let value)):
             guard value < 100 else { return }
             ext = .angle(value*10 + digit)
-        case .sec(let value):
-            guard value < 30 else { return }
+        case (let digit as Int, .sec(let value)):
+            guard value < 10 else { return }
             ext = .sec(value*10 + digit)
-        default:
-            break
-        }
-    }
-
-    public func extend(with string: String) {
-        switch ext {
-        case .text(_):
-            ext = .text(string)
+        case (let text as String, .text):
+            guard text.count < 16 else { return }
+            ext = .text(text)
+        case (let sound as SoundPlayer.SoundName, .sound):
+            ext = .sound(sound)
         default:
             break
         }

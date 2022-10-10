@@ -1,9 +1,13 @@
 import Foundation
+import Features
 
 public final class ExecutorModel: Executor {
     @Published public var running: Program?
+    private let connection: ConnectionModel
 
-    public init() { }
+    public init(with connection: ConnectionModel) {
+        self.connection = connection
+    }
 
     public func run(program: Program) {
         running = program
@@ -25,5 +29,11 @@ extension ExecutorModel: ProgrammatorLoad {
                 )
             return content.map { Program.init(url: $0) }
         }
+    }
+}
+
+extension ExecutorModel: Equatable {
+    public static func == (lhs: ExecutorModel, rhs: ExecutorModel) -> Bool {
+        true
     }
 }

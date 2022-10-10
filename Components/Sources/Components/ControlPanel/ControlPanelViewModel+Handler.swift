@@ -12,5 +12,8 @@ extension ControlPanelViewModel: ControlPanelViewModelHandling {
         if let ext = tag as? SecondaryTag {
             assembler.extend(with: ext.rawValue)
         }
+        if let ext = tag as? AltTag {
+            assembler.extend(with: ext)
+        }
     }
 }

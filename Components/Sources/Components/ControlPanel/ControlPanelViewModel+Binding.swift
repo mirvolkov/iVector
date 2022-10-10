@@ -29,9 +29,11 @@ extension ControlPanelViewModel {
                 .map { ext in
                     guard let ext = ext else { return .primary }
                     switch ext {
+                    case .sound, .text:
+                        return .primary
                     case .sec, .angle, .distance:
                         return .secondary
-                    case .condition, .program, .text:
+                    case .condition, .program:
                         return .alt
                     }
                 }

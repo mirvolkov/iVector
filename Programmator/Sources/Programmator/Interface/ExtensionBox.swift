@@ -1,9 +1,12 @@
+import Features
+
 /** TODO: this model doesn't look like good solution. Consider refactoring + test coverage */
 public enum ExtensionBox: CustomStringConvertible {
     case distance(Int)
     case angle(Int)
     case text(String)
     case sec(Int)
+    case sound(SoundPlayer.SoundName?)
 
     case program(String)
     case condition(String)
@@ -15,13 +18,15 @@ public enum ExtensionBox: CustomStringConvertible {
         case .angle(let rad):
             return "\(rad)°"
         case .text(let str):
-            return "\(str)"
+            return "\(str.uppercased())"
         case .sec(let time):
             return "\(time)SEC"
         case .program(let name):
             return "\(name.uppercased())"
         case .condition(let condition):
             return "\(condition.uppercased())"
+        case .sound(let name):
+            return "\(name?.rawValue.uppercased() ?? "")"
         }
     }
 }
@@ -52,6 +57,10 @@ public extension Instruction {
                     return ifExt
                 }
                 return nil
+            case .say(let ext):
+                return ext ?? .text("")
+            case .play(let ext):
+                return ext ?? .sound(.alarm)
             default:
                 return nil
             }
@@ -77,8 +86,18 @@ public extension Instruction {
                 } else if thenExt == nil {
                     self = .goto(ifExt, newValue)
                 }
-            default:
-                break
+            case .play(_):
+                self = .play(newValue)
+            case .say(_):
+                self = .say(newValue)
+            case .dock:
+                self = .dock
+            case .undock:
+                self = .undock
+            case .liftUp:
+                self = .liftUp
+            case .liftDown:
+                self = .liftDown
             }
         }
     }

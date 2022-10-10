@@ -7,6 +7,8 @@ extension ControlPanelViewModel {
         undockBtn.tag = Instruction.undock
         lift.tag = Instruction.liftUp
         down.tag = Instruction.liftDown
+        tts.tag = Instruction.say(nil)
+        play.tag = Instruction.play(nil)
     }
 
     func tagPrimary() {

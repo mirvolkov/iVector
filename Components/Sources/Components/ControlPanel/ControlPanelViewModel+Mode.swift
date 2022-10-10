@@ -29,7 +29,7 @@ extension ControlPanelViewModel {
         case secondary
         case alt
     }
-    
+
     var digitalButtons: [any ControlPanelButtonViewModel] {
         [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9]
     }

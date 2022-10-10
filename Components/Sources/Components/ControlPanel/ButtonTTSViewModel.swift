@@ -1,6 +1,7 @@
 import Combine
 import Features
 import SwiftUI
+import Programmator
 
 class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback {
     @Published var disableSecondary: Bool = false
@@ -15,7 +16,10 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback 
     @Published var ttsAlert: Bool = false
     @Published var tag: CPViewModelTag?
 
-    init() {
+    private let assembler: AssemblerModel
+
+    init(assembler: AssemblerModel) {
+        self.assembler = assembler
         self.primaryIcon = .init(systemName: "text.bubble")
         self.tintColor = .orange
     }
@@ -26,8 +30,6 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback 
 
     @MainActor func onTextChange(text: String) {
         ttsAlert = false
-//        Task.detached {
-//            try await self.connection.say(text: text, locale: Locale(identifier: self.settings.locale))
-//        }
+        assembler.extend(with: text)
     }
 }

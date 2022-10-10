@@ -1,5 +1,6 @@
 import Features
 import SwiftUI
+import Programmator
 
 class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback {
     @Published var disableSecondary: Bool = false
@@ -14,7 +15,10 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
     @Published var items = SoundPlayer.SoundName.allCases
     @Published var tag: CPViewModelTag?
 
-    init() {
+    private let assembler: AssemblerModel
+
+    init(assembler: AssemblerModel) {
+        self.assembler = assembler
         self.primaryIcon = .init(systemName: "bell.badge")
         self.tintColor = .orange
     }
@@ -25,6 +29,7 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
     
     func onItemSelected(item: SoundPlayer.SoundName) {
         showAudioListPopover = false
+        assembler.extend(with: item)
     }
 }
 
