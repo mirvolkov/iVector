@@ -7,7 +7,7 @@ import Programmator
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     @Published var memory: Bool = false
     @Published var batt: Image? = .init(systemName: "battery.0")
-    @Published var prog: String? = nil
+    @Published var prog: String = .init()
     @Published var items: [Program] = []
     @Published var isRunning = false
     @Published var loadProgramPopover = false
@@ -25,13 +25,19 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
         executor.$running
             .map { $0 != nil }
             .receive(on: RunLoop.main)
-            .assign(to: \.isRunning, on: self)
+            .weakAssign(to: \.isRunning, on: self)
             .store(in: &bag)
 
-        executor.$running
-            .map { $0?.name }
+        executor.$pc.combineLatest(executor.$running)
             .receive(on: RunLoop.main)
-            .assign(to: \.prog, on: self)
+            .map { value in
+                guard let pc = value.0, let prog = value.1 else {
+                    return nil
+                }
+                return "\(prog.name.prefix(8)) [\(pc.0)/\(pc.1)]"
+            }
+            .replaceNil(with: "PROG")
+            .weakAssign(to: \.prog, on: self)
             .store(in: &bag)
 
         Task { @MainActor [self] in
@@ -51,7 +57,7 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
                         return .init(systemName: "battery.25")
                     }
                 }
-                .assign(to: \.batt, on: self)
+                .weakAssign(to: \.batt, on: self)
                 .store(in: &self.bag)
         }
     }

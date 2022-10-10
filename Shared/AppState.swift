@@ -7,7 +7,7 @@ import Programmator
 
 enum VectorAppState: Equatable {
     case offline
-    case online(VisionModel)
+    case online(VisionModel, ExecutorModel)
 
     fileprivate static var initial: Self {
         .offline
@@ -25,7 +25,6 @@ class VectorAppEnvironment {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
     let assembler: AssemblerModel = .init()
-    let executor: ExecutorModel = .init()
     let settings: SettingsModel = .init()
 }
 
@@ -41,7 +40,7 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
         }
 
     case .connected:
-        state = .online(VisionModel(with: env.connection))
+        state = .online(VisionModel(with: env.connection), ExecutorModel(with: env.connection))
         return .none
 
     case .disconnect:
@@ -58,12 +57,12 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
 
 final class AppState {
     static let env = VectorAppEnvironment()
-    static let store = Store(initialState: .initial, reducer: reducer, environment: env)
+    static let store = Store<VectorAppState, VectorAppAction>(initialState: .initial, reducer: reducer, environment: env)
     private var bag = Set<AnyCancellable>()
 
     func bind() {
         Task { @MainActor [self] in
-            let viewStore = ViewStore(Self.store)
+            let viewStore = ViewStore<VectorAppState, VectorAppAction>(Self.store)
             await Self.env.connection
                 .state
                 .receive(on: RunLoop.main)

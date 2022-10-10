@@ -27,3 +27,5 @@ extension Program: CustomStringConvertible {
         name
     }
 }
+
+extension Program: Sendable { }

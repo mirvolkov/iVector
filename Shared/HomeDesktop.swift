@@ -22,7 +22,7 @@ struct HomeDesktop: View {
                     .frame(width: 320, alignment: .top)
                     .padding(0)
                 DetailPanel()
-                    .frame(height: 600, alignment: .top)
+                    .frame(height: 610, alignment: .top)
                     .padding(0)
             }
         }
@@ -36,7 +36,7 @@ struct HomeDesktop: View {
         .sheet(isPresented: $preferences) {
             SettingsView(model: .init(), isPresented: $preferences)
         }
-        .frame(width: 940, height: 600)
+        .frame(width: 940, height: 610)
     }
 }
 #endif

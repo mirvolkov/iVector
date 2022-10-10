@@ -21,7 +21,7 @@ struct MenuView: View {
                     .padding(.horizontal, 8)
             }
 
-            Text("PROG: \(viewModel.prog?.uppercased() ?? "")")
+            Text("\(viewModel.prog.uppercased())")
                 .font(vectorBold(22))
                 .foregroundColor(.white)
                 .padding(.horizontal, 8)

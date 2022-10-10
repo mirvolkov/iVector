@@ -4,6 +4,7 @@
 import Foundation
 import GRPC
 import SwiftUI
+import OSLog
 
 #if os(macOS)
 import AppKit
@@ -29,7 +30,8 @@ public final class MockedConnection: Connection {
     public var delegate: ConnectionDelegate?
     private var eventStream: Timer?
     private var visionStream: Timer?
-
+    private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
+    
     public init() {}
 
     public func requestControl() throws {
@@ -85,19 +87,40 @@ extension MockedConnection: Camera {
 extension MockedConnection: Behavior {
     public func say(text: String) async throws {}
 
-    public func setEyeColor(_ hue: Float, _ sat: Float) async throws {}
+    public func setEyeColor(_ hue: Float, _ sat: Float) async throws {
+        logger.debug("setEyeColor \(hue) \(sat)")
+        try await Task.sleep(nanoseconds: 100_000_000)
+    }
 
-    public func setHeadAngle(_ angle: Float) async throws {}
+    public func setHeadAngle(_ angle: Float) async throws {
+        logger.debug("setHeadAngle \(angle)")
+        try await Task.sleep(nanoseconds: 100_000_000)
+    }
 
-    public func lift(_ height: Float) async throws {}
+    public func lift(_ height: Float) async throws {
+        logger.debug("lift \(height)")
+        try await Task.sleep(nanoseconds: 100_000_000)
+    }
 
-    public func move(_ distance: Float, speed: Float, animate: Bool) async throws {}
+    public func move(_ distance: Float, speed: Float, animate: Bool) async throws {
+        logger.debug("move \(distance) \(speed) \(animate)")
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * distance / 100.0))
+    }
 
-    public func turn(_ angle: Float, speed: Float, accel: Float, angleTolerance: Float) async throws {}
+    public func turn(_ angle: Float, speed: Float, accel: Float, angleTolerance: Float) async throws {
+        logger.debug("turn \(angle) \(speed) \(accel) \(angleTolerance)")
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * angle / 100.0))
+    }
 
-    public func driveOffCharger() async throws {}
+    public func driveOffCharger() async throws {
+        logger.debug("driveOffCharger")
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0...1)))
+    }
 
-    public func driveOnCharger() async throws {}
+    public func driveOnCharger() async throws {
+        logger.debug("driveOnCharger")
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0...1)))
+    }
 
     public var battery: VectorBatteryState {
         get async throws {

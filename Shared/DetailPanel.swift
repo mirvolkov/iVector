@@ -10,11 +10,11 @@ struct DetailPanel: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             switch viewStore.state {
-            case .online(let vision):
+            case .online(let vision, let executor):
                 VisionView(
                     connection: AppState.env.connection,
                     vision: vision,
-                    executor: AppState.env.executor
+                    executor: executor
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
