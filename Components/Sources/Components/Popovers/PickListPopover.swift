@@ -18,8 +18,6 @@ struct PickListPopover<ViewModel: PickListPopoverCallback>: View {
                 }
         }
         .listStyle(.plain)
-#if os(macOS)
-        .frame(width: 320, height: 240)
-#endif
+        .frame(minWidth: 320, minHeight: 240)
     }
 }
