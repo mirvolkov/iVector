@@ -16,7 +16,7 @@ public final class ExecutorModel: Executor {
         running = program
         task = Task.detached(operation: {
             do {
-                var pc = 0
+                var pc = 1
                 let instructions = try await program.instructions
                 var stack = instructions.makeIterator()
                 while let instruction = stack.next() {

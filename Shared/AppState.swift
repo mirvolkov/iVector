@@ -26,6 +26,9 @@ class VectorAppEnvironment {
     let config: Config = .init()
     let assembler: AssemblerModel = .init()
     let settings: SettingsModel = .init()
+#if os(iOS)
+    let stt = STT.shared
+#endif
 }
 
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in
@@ -80,5 +83,10 @@ final class AppState {
                 }
                 .store(in: &self.bag)
         }
+#if os(iOS)
+        Task {
+            Self.env.stt.start(currentLocale: .init(identifier: Self.env.settings.locale), onEdge:true)
+        }
+#endif
     }
 }
