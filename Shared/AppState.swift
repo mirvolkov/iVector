@@ -19,6 +19,7 @@ enum VectorAppAction {
     case connected
     case disconnect
     case disconnected
+    case stt(String)
 }
 
 class VectorAppEnvironment {
@@ -26,9 +27,13 @@ class VectorAppEnvironment {
     let config: Config = .init()
     let assembler: AssemblerModel = .init()
     let settings: SettingsModel = .init()
+    var stt: SpeechRecognizer?
+
+    init() {
 #if os(iOS)
-    let stt = STT.shared
+        self.stt = STT.shared
 #endif
+    }
 }
 
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in
@@ -43,7 +48,10 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
         }
 
     case .connected:
-        state = .online(VisionModel(with: env.connection), ExecutorModel(with: env.connection))
+        state = .online(
+            VisionModel(with: env.connection),
+            ExecutorModel(with: env.connection)
+        )
         return .none
 
     case .disconnect:
@@ -55,6 +63,15 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
     case .disconnected:
         state = .offline
         return .none
+
+    case .stt(let text):
+        switch state {
+        case .offline:
+            break
+        case .online(_, let executorModel):
+            executorModel.input(text: text)
+        }
+        return .none
     }
 }
 
@@ -64,8 +81,9 @@ final class AppState {
     private var bag = Set<AnyCancellable>()
 
     func bind() {
+        let viewStore = ViewStore<VectorAppState, VectorAppAction>(Self.store)
+        
         Task { @MainActor [self] in
-            let viewStore = ViewStore<VectorAppState, VectorAppAction>(Self.store)
             await Self.env.connection
                 .state
                 .receive(on: RunLoop.main)
@@ -83,10 +101,19 @@ final class AppState {
                 }
                 .store(in: &self.bag)
         }
-#if os(iOS)
+
         Task {
-            Self.env.stt.start(currentLocale: .init(identifier: Self.env.settings.locale), onEdge:true)
+            Self.env.stt?.stt
+                .map { VectorAppAction.stt($0) }
+                .sink { [weak viewStore] action in
+                    viewStore?.send(action)
+                }
+                .store(in: &bag)
+
+            Self.env.stt?.start(
+                currentLocale: .init(identifier: Self.env.settings.locale),
+                onEdge:true
+            )
         }
-#endif
     }
 }

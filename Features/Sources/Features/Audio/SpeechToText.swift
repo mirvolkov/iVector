@@ -4,12 +4,19 @@ import Foundation
 import OSLog
 import Speech
 
-#if os(iOS)
-public final class STT: NSObject, SFSpeechRecognizerDelegate {
-    typealias SpeechRecognizerCallback = (String?) -> Void
+public protocol SpeechRecognizer {
+    typealias Callback = (String) -> Void
 
-    @Published public var available = false
-    @Published public var stt: String?
+    var available: PassthroughSubject<Bool, Never> { get }
+    var stt: PassthroughSubject<String, Never> { get }
+
+    func start(currentLocale: Locale, onEdge: Bool)
+}
+
+#if os(iOS)
+public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
+    public var available: PassthroughSubject<Bool, Never> = .init()
+    public var stt: PassthroughSubject<String, Never> = .init()
 
     public static var shared = STT()
 
@@ -32,23 +39,23 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
             SFSpeechRecognizer.requestAuthorization { authStatus in
                 switch authStatus {
                 case .authorized:
-                    self.available = true
+                    self.available.send(true)
                     self.startRecording(speechRecognizer: speechRecognizer) { [weak self] text in
-                        self?.stt = text
+                        self?.stt.send(text)
                     }
 
                 default:
-                    self.available = false
+                    self.available.send(false)
                 }
             }
         } else {
-            self.available = false
+            self.available.send(false)
         }
     }
 
     private func startRecording(
         speechRecognizer: SFSpeechRecognizer,
-        callback: @escaping SpeechRecognizerCallback
+        callback: @escaping SpeechRecognizer.Callback
     ) {
         if recognitionTask != nil {
             recognitionTask?.cancel()
@@ -72,7 +79,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
         let inputNode = audioEngine.inputNode
 
         guard let recognitionRequest = recognitionRequest else {
-            self.available = false
+            self.available.send(false)
             return
         }
 
@@ -86,8 +93,8 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
                     return
                 }
 
-                if let result = result {
-                    self.stt = result.bestTranscription.segments.last?.substring
+                if let result = result, let substring = result.bestTranscription.segments.last?.substring {
+                    self.stt.send(substring)
                     if result.isFinal {
                         self.stop()
                         self.startRecording(speechRecognizer: speechRecognizer, callback: callback)
@@ -113,7 +120,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
             audioEngine.prepare()
             try audioEngine.start()
         } catch {
-            self.available = false
+            self.available.send(false)
         }
     }
 
@@ -121,11 +128,11 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate {
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
         recognitionRequest?.endAudio()
-        available = false
+        available.send(false)
     }
 
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
-        self.available = available
+        self.available.send(available)
     }
 }
 #endif

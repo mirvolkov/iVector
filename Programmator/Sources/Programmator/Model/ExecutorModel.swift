@@ -38,6 +38,10 @@ public final class ExecutorModel: Executor {
         running = nil
         pc = nil
     }
+    
+    public func input(text: String) {
+        print(text)
+    }
 
     private func run(instruction: Instruction) async throws {
         switch instruction {
