@@ -4,7 +4,7 @@ import Foundation
 import os.log
 
 public final actor ConnectionModel {
-    typealias VectorDevice = Connection & Behavior & Camera & Audio
+    typealias VectorDevice = Connection & Behavior & Camera & Audio & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -65,35 +65,39 @@ public final actor ConnectionModel {
             .store(in: &bag)
     }
 
-    public func connect(with ipAddress: String, port: Int = 443) {
-        guard case .disconnected = state.value else {
-            return
-        }
+    public nonisolated func connect(with ipAddress: String, port: Int = 443) async {
+        Task.detached {
+            guard case .disconnected = await self.state.value else {
+                return
+            }
 
-        connection = VectorConnection(with: ipAddress, port: port)
-        connection?.delegate = self
-        do {
-            state.send(.connecting)
-            try connection?.requestControl()
-        } catch {
-            self.logger.error("\(error.localizedDescription)")
-            state.send(.disconnected)
+            await self.setConnection(VectorConnection(with: ipAddress, port: port))
+            await self.connection?.delegate = self
+            do {
+                await self.state.send(.connecting)
+                try await self.connection?.requestControl()
+            } catch {
+                self.logger.error("\(error.localizedDescription)")
+                await self.state.send(.disconnected)
+            }
         }
     }
 
-    public func mock() {
-        guard case .disconnected = state.value else {
-            return
-        }
+    public nonisolated func mock() async {
+        Task.detached {
+            guard case .disconnected = await self.state.value else {
+                return
+            }
 
-        connection = MockedConnection()
-        connection?.delegate = self
-        do {
-            state.send(.connecting)
-            try connection?.requestControl()
-        } catch {
-            self.logger.error("\(error.localizedDescription)")
-            state.send(.disconnected)
+            await self.setConnection(MockedConnection())
+            await self.connection?.delegate = self
+            do {
+                await self.state.send(.connecting)
+                try await self.connection?.requestControl()
+            } catch {
+                self.logger.error("\(error.localizedDescription)")
+                await self.state.send(.disconnected)
+            }
         }
     }
 
@@ -150,6 +154,10 @@ public final actor ConnectionModel {
         await MainActor.run(body: {
             timer?.invalidate()
         })
+    }
+
+    private func setConnection(_ connection: VectorDevice?) {
+        self.connection = connection
     }
 }
 

@@ -39,7 +39,7 @@ struct HomePhone: View {
                 NavigationStack {
                     ZStack {
                         DetailPanel()
-                            .frame(height: 420)
+                            .frame(height: 320)
                             .clipped()
                             .navigationTitle(L10n.camera)
                             .navigationBarTitleDisplayMode(.inline)

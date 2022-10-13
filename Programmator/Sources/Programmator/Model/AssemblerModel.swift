@@ -63,6 +63,7 @@ extension AssemblerModel: ProgrammatorSave {
         let json = try JSONEncoder().encode(program)
         let docPath = makeFilePath(root: rootPath, filename: name)
         try json.write(to: docPath)
+        program.removeAll()
     }
 
     func makeFilePath(root: URL, filename: String) -> URL {

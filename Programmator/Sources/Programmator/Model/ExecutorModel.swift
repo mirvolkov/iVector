@@ -1,5 +1,6 @@
 import Foundation
 import Features
+import Collections
 
 public final class ExecutorModel: Executor {
     @Published public var running: Program?
@@ -7,7 +8,8 @@ public final class ExecutorModel: Executor {
 
     private let connection: ConnectionModel
     private var task: Task<Bool, Error>?
-
+    private var buffer = Deque<String>()
+    
     public init(with connection: ConnectionModel) {
         self.connection = connection
     }
@@ -39,8 +41,10 @@ public final class ExecutorModel: Executor {
         pc = nil
     }
     
+    // TODO: this is mocked solution for stage 1 demo
     public func input(text: String) {
-        print(text)
+        buffer.append(text)
+        
     }
 
     private func run(instruction: Instruction) async throws {
@@ -63,26 +67,25 @@ public final class ExecutorModel: Executor {
             }
         case .forward(let ext):
             if case .distance(let mm) = ext {
-                try await connection.behavior?.move(Float(mm), speed: 10, animate: true)
+                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
             }
         case .right(let ext):
             if case .distance(let mm) = ext {
-                try await connection.behavior?.turn(90, speed: 10, accel: 1, angleTolerance: 1)
-                try await connection.behavior?.move(Float(mm), speed: 10, animate: true)
+                try await connection.behavior?.turn(90, speed: 30, accel: 10, angleTolerance: 0)
+                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
             }
         case .left(let ext):
             if case .distance(let mm) = ext {
-                try await connection.behavior?.turn(-90, speed: 10, accel: 1, angleTolerance: 1)
-                try await connection.behavior?.move(Float(mm), speed: 10, animate: true)
+                try await connection.behavior?.turn(-90, speed: 30, accel: 10, angleTolerance: 0)
+                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
             }
         case .backward(let ext):
             if case .distance(let mm) = ext {
-                try await connection.behavior?.turn(180, speed: 10, accel: 1, angleTolerance: 1)
-                try await connection.behavior?.move(Float(mm), speed: 10, animate: true)
+                try await connection.behavior?.move(-Float(mm), speed: 50, animate: true)
             }
         case .rotate(let ext):
             if case .angle(let angle) = ext {
-                try await connection.behavior?.turn(Float(angle), speed: 10, accel: 1, angleTolerance: 1)
+                try await connection.behavior?.turn(Float(angle), speed: 30, accel: 10, angleTolerance: 0)
             }
         case .pause(let ext):
             if case .sec(let sec) = ext {

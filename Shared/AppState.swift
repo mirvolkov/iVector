@@ -105,6 +105,7 @@ final class AppState {
         Task {
             Self.env.stt?.stt
                 .map { VectorAppAction.stt($0) }
+                .receive(on: RunLoop.main)
                 .sink { [weak viewStore] action in
                     viewStore?.send(action)
                 }

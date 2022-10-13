@@ -5,7 +5,7 @@ import SwiftUI
 public struct ControlPanelsView: View {
     @State var size: CGFloat = 60
     @State var space: CGFloat = 8
-    @State var divider: CGFloat = 10
+    @State var divider: CGFloat = 4
 
     @StateObject var viewModel: ControlPanelViewModel
 
@@ -28,13 +28,14 @@ public struct ControlPanelsView: View {
         VStack(spacing: divider) {
             header
             Spacer()
-                .frame(height: divider)
+                .frame(minHeight: divider)
             digitalPanel
             Spacer()
-                .frame(height: divider)
+                .frame(minHeight: divider)
             behaviorPanel
             behaviorPanel1
             Spacer()
+                .frame(minHeight: divider)
             pcPanel
             Spacer()
         }
@@ -176,7 +177,7 @@ public struct ControlPanelsView: View {
                     .font(vectorBold(24.0))
                     .frame(alignment: .center)
             }
-        }.frame(height: 32)
+        }.frame(height: 24)
     }
 
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View where ViewModel.Tag == CPViewModelTag {

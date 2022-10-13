@@ -101,6 +101,7 @@ extension VectorConnection: Behavior {
         request.distMm = distance
         request.speedMmps = speed
         request.shouldPlayAnimation = animate
+        request.idTag = VectorConnection.firstSDKTag
         let call: UnaryCall<Anki_Vector_ExternalInterface_DriveStraightRequest,
             Anki_Vector_ExternalInterface_DriveStraightResponse> = connection.makeUnaryCall(
             path: "\(prefixURI)DriveStraight",

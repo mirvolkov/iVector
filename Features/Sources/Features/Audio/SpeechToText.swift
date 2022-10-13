@@ -106,8 +106,10 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
         do {
             let recordingFormat = inputNode.inputFormat(forBus: 0)
             guard recordingFormat.channelCount > 0 else {
+                self.available.send(false)
                 return
             }
+
             inputNode.removeTap(onBus: 0)
             inputNode.installTap(
                 onBus: 0,
