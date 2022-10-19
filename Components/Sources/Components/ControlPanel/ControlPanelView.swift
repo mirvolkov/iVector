@@ -44,6 +44,11 @@ public struct ControlPanelsView: View {
                 viewModel: viewModel.play
             )
         })
+        .popover(isPresented: $viewModel.showPrograms, content: {
+            PickListPopover(
+                viewModel: viewModel.goto
+            )
+        })
         .popover(isPresented: $viewModel.ttsAlert, content: {
             TextFieldPopover(
                 title: L10n.typeInMessageToSay,
@@ -145,7 +150,7 @@ public struct ControlPanelsView: View {
         HStack(alignment: .center, spacing: space) {
             build(viewModel.dockBtn)
             build(viewModel.lift)
-            placeholder
+            build(viewModel.goto)
             Spacer()
                 .frame(width: divider)
             placeholder

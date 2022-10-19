@@ -49,18 +49,14 @@ public extension Instruction {
                 return ext ?? .angle(0)
             case .pause(let ext):
                 return ext ?? .sec(0)
-            case .goto(let ifExt, let thenExt):
-                if let thenExt = thenExt {
-                    return thenExt
-                }
-                if let ifExt = ifExt {
-                    return ifExt
-                }
-                return nil
             case .say(let ext):
                 return ext ?? .text("")
             case .play(let ext):
                 return ext ?? .sound(.alarm)
+            case .goto(let ifExt, let thenExt):
+                guard let _ = ifExt else { return .condition("") }
+                guard let thenExt = thenExt else { return .program("") }
+                return thenExt
             default:
                 return nil
             }

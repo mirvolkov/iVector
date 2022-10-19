@@ -30,8 +30,12 @@ extension ControlPanelViewModel {
         case alt
     }
 
-    var digitalButtons: [any ControlPanelButtonViewModel] {
+    private var digitalButtons: [any ControlPanelButtonViewModel] {
         [btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9]
+    }
+
+    private var behaviorButtons: [any ControlPanelButtonViewModel] {
+        [tts, play, goto, lift, down, dockBtn, undockBtn]
     }
 
     func onConnected() {
@@ -59,28 +63,38 @@ extension ControlPanelViewModel {
     func modeButtons() {
         switch mode {
         case .primary:
-            digitalButtons
-                .forEach { value in
-                    value.disableIcon = false
-                    value.disableTitle = true
-                    value.disableSecondary = true
-                }
+            digitalButtons.forEach { primary($0) }
+            behaviorButtons.forEach { enable($0, enabled: true) }
 
         case .secondary:
-            digitalButtons
-                .forEach { value in
-                    value.disableIcon = true
-                    value.disableTitle = false
-                    value.disableSecondary = true
-                }
+            digitalButtons.forEach { secondary($0) }
+            behaviorButtons.forEach { enable($0, enabled: false) }
 
         case .alt:
-            digitalButtons
-                .forEach { value in
-                    value.disableIcon = true
-                    value.disableTitle = true
-                    value.disableSecondary = false
-                }
+            digitalButtons.forEach { alt($0) }
+            behaviorButtons.forEach { enable($0, enabled: false) }
         }
+    }
+
+    private func enable(_ value: CPViewModelAvailability, enabled: Bool) {
+        value.enabled = enabled
+    }
+
+    private func primary(_ value: CPViewModelAvailability) {
+        value.disableIcon = false
+        value.disableTitle = true
+        value.disableSecondary = true
+    }
+
+    private func secondary(_ value: CPViewModelAvailability) {
+        value.disableIcon = true
+        value.disableTitle = false
+        value.disableSecondary = true
+    }
+
+    private func alt(_ value: CPViewModelAvailability) {
+        value.disableIcon = true
+        value.disableTitle = true
+        value.disableSecondary = false
     }
 }

@@ -26,6 +26,7 @@ class ControlPanelViewModel: ObservableObject {
     lazy var esc = ButtonEscViewModel(assembler: assembler)
     lazy var save = ButtonSaveViewModel(assembler: assembler)
     lazy var pause = ButtonPauseViewModel()
+    lazy var goto = ButtonGotoViewModel(assembler: assembler)
 
     @Published var mode: Mode = .primary {
         didSet {
@@ -33,6 +34,8 @@ class ControlPanelViewModel: ObservableObject {
             tagButtons()
         }
     }
+
+    @Published var showPrograms: Bool = false
     @Published var showSavePopover = false
     @Published var command: String? = nil
     @Published var playPopover: Bool = false

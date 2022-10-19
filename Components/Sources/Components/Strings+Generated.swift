@@ -28,6 +28,8 @@ public enum L10n {
   public static let controlPanel = L10n.tr("Localizable", "Control Panel")
   /// Eye color
   public static let eyeColor = L10n.tr("Localizable", "Eye color")
+  /// goto
+  public static let goto = L10n.tr("Localizable", "goto")
   /// GUID
   public static let guid = L10n.tr("Localizable", "GUID")
   /// IP Address

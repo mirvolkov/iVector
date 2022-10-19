@@ -7,21 +7,8 @@ extension ControlPanelViewModel {
             await self.connection.state
                 .receive(on: RunLoop.main)
                 .map { newState in if case .online = newState { return true } else { return false } }
-                .assign(to: \.isConnected, on: self)
+                .weakAssign(to: \.isConnected, on: self)
                 .store(in: &self.bag)
-
-            tts.$ttsAlert
-                .assign(to: \.ttsAlert, on: self)
-                .store(in: &bag)
-
-            play.$showAudioListPopover
-                .assign(to: \.playPopover, on: self)
-                .store(in: &bag)
-
-            assembler.$current
-                .map { $0?.description }
-                .assign(to: \.command, on: self)
-                .store(in: &bag)
 
             assembler.$current
                 .receive(on: RunLoop.main)
@@ -56,19 +43,23 @@ extension ControlPanelViewModel {
                 }
                 .store(in: &bag)
 
-            save.$showSavePopover
-                .receive(on: RunLoop.main)
-                .assign(to: \.showSavePopover, on: self)
-                .store(in: &bag)
-
-            save.$saveError
-                .receive(on: RunLoop.main)
-                .assign(to: \.saveError, on: self)
-                .store(in: &bag)
+            bind(with: assembler.$current.map { $0?.description }, destination: \.command)
+            bind(with: play.$showAudioListPopover, destination: \.playPopover)
+            bind(with: tts.$ttsAlert, destination: \.ttsAlert)
+            bind(with: save.$showSavePopover, destination: \.showSavePopover)
+            bind(with: save.$saveError, destination: \.saveError)
+            bind(with: goto.$showPrograms, destination: \.showPrograms)
         }
     }
 
     func unbind() {
         bag.removeAll()
+    }
+
+    private func bind<T: Publisher>(with object: T, destination: ReferenceWritableKeyPath<ControlPanelViewModel, T.Output>) where T.Failure == Never {
+        object
+            .receive(on: RunLoop.main)
+            .weakAssign(to: destination, on: self)
+            .store(in: &bag)
     }
 }

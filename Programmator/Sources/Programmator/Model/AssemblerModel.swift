@@ -57,13 +57,25 @@ extension AssemblerModel: ProgrammatorSave {
         case alreadyExists
         case fsError
     }
-    
+
     public func save(name: String) throws {
         let rootPath = try progLocation()
         let json = try JSONEncoder().encode(program)
         let docPath = makeFilePath(root: rootPath, filename: name)
         try json.write(to: docPath)
         program.removeAll()
+    }
+
+    public var programs: [Program] {
+        get async throws {
+            let path = try progLocation()
+            let content = try FileManager.default
+                .contentsOfDirectory(
+                    at: path,
+                    includingPropertiesForKeys: nil
+                )
+            return content.map { Program.init(url: $0) }
+        }
     }
 
     func makeFilePath(root: URL, filename: String) -> URL {

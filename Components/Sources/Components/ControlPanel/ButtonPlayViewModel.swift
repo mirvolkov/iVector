@@ -20,7 +20,6 @@ class ButtonPlayViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
     init(assembler: AssemblerModel) {
         self.assembler = assembler
         self.primaryIcon = .init(systemName: "bell.badge")
-        self.tintColor = .orange
     }
 
     func onClick() {

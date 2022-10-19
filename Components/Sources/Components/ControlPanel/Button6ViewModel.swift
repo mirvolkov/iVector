@@ -18,6 +18,6 @@ class Button6ViewModel: ControlPanelButtonViewModel {
     init() {
         self.primaryIcon = .init(systemName: "arrow.forward.square")
         self.primaryTitle = "6"
-        self.secondaryTitle = "great"
+        self.secondaryTitle = "greater"
     }
 }

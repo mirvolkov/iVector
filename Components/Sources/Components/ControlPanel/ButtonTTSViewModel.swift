@@ -21,7 +21,6 @@ class ButtonTTSViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback 
     init(assembler: AssemblerModel) {
         self.assembler = assembler
         self.primaryIcon = .init(systemName: "text.bubble")
-        self.tintColor = .orange
     }
 
     func onClick() {

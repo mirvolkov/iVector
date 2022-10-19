@@ -17,6 +17,9 @@ public protocol ProgrammatorSave: ProgrammatorSync {
     /// Saves current program. Empties program stack
     /// - Throws alreadyExists error if name overlaps existing name
     func save(name: String) throws
+
+    /// List of programs
+    var programs: [Program] { get async throws }
 }
 
 /// Synching: load

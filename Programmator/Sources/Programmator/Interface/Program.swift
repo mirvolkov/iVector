@@ -1,9 +1,9 @@
 import Collections
 import Foundation
 
-public class Program {
+public final class Program {
     /// Program name
-    public var name: String
+    public let name: String
 
     /// List of instructions
     public var instructions: Deque<Instruction> {
