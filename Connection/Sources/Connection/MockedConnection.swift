@@ -104,12 +104,12 @@ extension MockedConnection: Behavior {
 
     public func move(_ distance: Float, speed: Float, animate: Bool) async throws {
         logger.debug("move \(distance) \(speed) \(animate)")
-        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * distance / 100.0))
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(distance) / 100.0))
     }
 
     public func turn(_ angle: Float, speed: Float, accel: Float, angleTolerance: Float) async throws {
         logger.debug("turn \(angle) \(speed) \(accel) \(angleTolerance)")
-        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * angle / 100.0))
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(angle) / 100.0))
     }
 
     public func driveOffCharger() async throws {

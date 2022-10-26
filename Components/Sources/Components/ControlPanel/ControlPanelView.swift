@@ -25,20 +25,27 @@ public struct ControlPanelsView: View {
     }
 
     public var body: some View {
-        VStack(spacing: divider) {
-            header
-            Spacer()
-                .frame(minHeight: divider)
-            digitalPanel
-            Spacer()
-                .frame(minHeight: divider)
-            behaviorPanel
-            behaviorPanel1
-            Spacer()
-                .frame(minHeight: divider)
-            pcPanel
+        VStack(spacing: 0) {
+            Grid(horizontalSpacing: 0, verticalSpacing: space) {
+                header
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                    .frame(minHeight: divider)
+                digitalPanel1
+                digitalPanel2
+                digitalPanel3
+                digitalPanel4
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                    .frame(minHeight: divider)
+                behaviorPanel
+                behaviorPanel1
+                pcPanel
+            }
+            .gridColumnAlignment(.leading)
             Spacer()
         }
+        .padding(space)
         .popover(isPresented: $viewModel.playPopover, content: {
             PickListPopover(
                 viewModel: viewModel.play
@@ -74,123 +81,107 @@ public struct ControlPanelsView: View {
         .errorAlert(
             error: $viewModel.saveError
         )
-        .padding(10)
     }
 
     private var header: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.powerBtn)
             build(viewModel.tts)
             build(viewModel.play)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             build(viewModel.save)
-            Spacer()
-        }.frame(height: size)
-    }
-
-    private var digitalPanel: some View {
-        VStack {
-            digitalPanel1
-            digitalPanel2
-            digitalPanel3
-            digitalPanel4
         }
     }
 
     private var digitalPanel1: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.btn1)
             build(viewModel.btn2)
             build(viewModel.btn3)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             build(viewModel.esc)
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var digitalPanel2: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.btn4)
             build(viewModel.btn5)
             build(viewModel.btn6)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             build(viewModel.enter)
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var digitalPanel3: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.btn7)
             build(viewModel.btn8)
             build(viewModel.btn9)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             placeholder
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var digitalPanel4: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             placeholder
             build(viewModel.btn0)
             build(viewModel.pause)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             placeholder
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var behaviorPanel: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.dockBtn)
             build(viewModel.lift)
             build(viewModel.goto)
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             placeholder
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var behaviorPanel1: some View {
-        HStack(alignment: .center, spacing: space) {
+        GridRow {
             build(viewModel.undockBtn)
             build(viewModel.down)
             placeholder
             Spacer()
-                .frame(width: divider)
+                .gridCellUnsizedAxes(.horizontal)
             placeholder
-            Spacer()
-        }.frame(height: size)
+        }
     }
 
     private var placeholder: some View {
         Spacer()
+            .gridCellUnsizedAxes(.horizontal)
             .frame(width: size, height: size)
     }
 
     private var pcPanel: some View {
-        VStack(alignment: .center) {
-            if let command = viewModel.command {
-                Text(command)
-                    .font(vectorBold(24.0))
-                    .frame(alignment: .center)
-            }
-        }.frame(height: 24)
+        HStack {
+            Text(viewModel.command ?? "")
+                .font(vectorBold(24.0))
+                .frame(height: 24, alignment: .center)
+            Spacer()
+        }
     }
 
     private func build<ViewModel: ControlPanelButtonViewModel>(_ viewModel: ViewModel) -> some View where ViewModel.Tag == CPViewModelTag {
         ControlPanelButtonView(viewModel: viewModel)
+            .compositingGroup()
             .frame(width: size, height: size)
             .simultaneousGesture(
                 TapGesture().onEnded { _ in
-                    if let tag = viewModel.tag {
+                    if let tag = viewModel.tag, viewModel.enabled {
                         self.viewModel.onTag(tag)
                     }
                 }
