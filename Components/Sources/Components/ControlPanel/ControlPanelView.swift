@@ -53,7 +53,7 @@ public struct ControlPanelsView: View {
         })
         .popover(isPresented: $viewModel.showPrograms, content: {
             PickListPopover(
-                viewModel: viewModel.goto
+                viewModel: viewModel.exec
             )
         })
         .popover(isPresented: $viewModel.ttsAlert, content: {
@@ -142,7 +142,7 @@ public struct ControlPanelsView: View {
         GridRow {
             build(viewModel.dockBtn)
             build(viewModel.lift)
-            build(viewModel.goto)
+            build(viewModel.exec)
             Spacer()
                 .gridCellUnsizedAxes(.horizontal)
             placeholder

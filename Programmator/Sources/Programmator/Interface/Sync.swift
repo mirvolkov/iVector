@@ -3,13 +3,13 @@ import Foundation
 /// Synching
 public protocol ProgrammatorSync {
     /// Programs storage location
-    var progStorageName: String { get }
+    static var progStorageName: String { get }
 
     /// Program file extension
-    var progFileExtension: String { get }
+    static var progFileExtension: String { get }
 
     /// Gets documents directory + location storage
-    func progLocation() throws -> URL
+    static func progLocation() throws -> URL
 }
 
 /// Synching: save
@@ -19,7 +19,7 @@ public protocol ProgrammatorSave: ProgrammatorSync {
     func save(name: String) throws
 
     /// List of programs
-    var programs: [Program] { get async throws }
+    static var programs: [Program] { get async throws }
 }
 
 /// Synching: load
@@ -29,7 +29,7 @@ public protocol ProgrammatorLoad: ProgrammatorSync {
 }
 
 public extension ProgrammatorSync {
-    func progLocation() throws -> URL {
+    static func progLocation() throws -> URL {
         let location = try FileManager
             .default
             .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -42,11 +42,25 @@ public extension ProgrammatorSync {
         return location
     }
     
-    var progStorageName: String {
+    static var progStorageName: String {
         "Programs"
     }
     
-    var progFileExtension: String {
+    static var progFileExtension: String {
         "json"
+    }
+}
+
+public extension ProgrammatorSync {
+    static var programs: [Program] {
+        get async throws {
+            let path = try Self.progLocation()
+            let content = try FileManager.default
+                .contentsOfDirectory(
+                    at: path,
+                    includingPropertiesForKeys: nil
+                )
+            return content.map { Program.init(url: $0) }
+        }
     }
 }

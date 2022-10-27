@@ -48,7 +48,7 @@ extension ControlPanelViewModel {
             bind(with: tts.$ttsAlert, destination: \.ttsAlert)
             bind(with: save.$showSavePopover, destination: \.showSavePopover)
             bind(with: save.$saveError, destination: \.saveError)
-            bind(with: goto.$showPrograms, destination: \.showPrograms)
+            bind(with: exec.$showPrograms, destination: \.showPrograms)
         }
     }
 

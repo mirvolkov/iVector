@@ -1,7 +1,7 @@
 import SwiftUI
 import Programmator
 
-class ButtonGotoViewModel: ControlPanelButtonViewModel, PickListPopoverCallback {
+class ButtonExecViewModel: ControlPanelButtonViewModel, PickListPopoverCallback {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -19,7 +19,7 @@ class ButtonGotoViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
 
     var items: [Program] {
         get async {
-            await (try? assembler.programs) ?? []
+            await (try? AssemblerModel.programs) ?? []
         }
     }
 
@@ -35,6 +35,7 @@ class ButtonGotoViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
     }
 
     func onItemSelected(item: Programmator.Program) {
+        assembler.extend(with: item)
         showPrograms = false
     }
 }

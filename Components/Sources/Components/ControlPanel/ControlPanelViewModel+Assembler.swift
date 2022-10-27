@@ -9,10 +9,11 @@ extension ControlPanelViewModel {
         down.tag = Instruction.liftDown
         tts.tag = Instruction.say(nil)
         play.tag = Instruction.play(nil)
+        exec.tag = Instruction.exec(nil)
     }
 
     func tagPrimary() {
-        btn0.tag = Instruction.goto(nil, nil)
+        btn0.tag = Instruction.cmp(nil, nil)
         btn1.tag = nil
         btn2.tag = Instruction.forward(nil)
         btn3.tag = nil

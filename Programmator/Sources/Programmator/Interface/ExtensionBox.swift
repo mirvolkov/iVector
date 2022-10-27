@@ -53,10 +53,12 @@ public extension Instruction {
                 return ext ?? .text("")
             case .play(let ext):
                 return ext ?? .sound(.alarm)
-            case .goto(let ifExt, let thenExt):
+            case .cmp(let ifExt, let thenExt):
                 guard let _ = ifExt else { return .condition("") }
                 guard let thenExt = thenExt else { return .program("") }
                 return thenExt
+            case .exec(let ext):
+                return ext ?? .program("")
             default:
                 return nil
             }
@@ -76,11 +78,11 @@ public extension Instruction {
                 self = .rotate(newValue)
             case .pause(_):
                 self = .pause(newValue)
-            case .goto(let ifExt, let thenExt):
+            case .cmp(let ifExt, let thenExt):
                 if ifExt == nil {
-                    self = .goto(newValue, nil)
+                    self = .cmp(newValue, nil)
                 } else if thenExt == nil {
-                    self = .goto(ifExt, newValue)
+                    self = .cmp(ifExt, newValue)
                 }
             case .play(_):
                 self = .play(newValue)
@@ -94,6 +96,8 @@ public extension Instruction {
                 self = .liftUp
             case .liftDown:
                 self = .liftDown
+            case .exec(_):
+                self = .exec(newValue)
             }
         }
     }
@@ -112,12 +116,14 @@ public extension Instruction {
             self = .rotate(nil)
         case .pause(_):
             self = .pause(nil)
-        case .goto(let ifExt, let thenExt):
+        case .cmp(let ifExt, let thenExt):
             if thenExt != nil {
-                self = .goto(ifExt, nil)
+                self = .cmp(ifExt, nil)
             } else if ifExt != nil {
-                self = .goto(nil, nil)
+                self = .cmp(nil, nil)
             }
+        case .exec(_):
+            self = .exec(nil)
         default:
             break
         }

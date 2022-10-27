@@ -14,42 +14,49 @@ public enum Instruction {
     case liftUp
     case liftDown
     case rotate(ExtensionBox?)
-    case goto(ExtensionBox?, ExtensionBox?)
+    case cmp(ExtensionBox?, ExtensionBox?)
+    case exec(ExtensionBox?)
     case pause(ExtensionBox?)
 }
 
 extension Instruction: CustomStringConvertible {
     public var description: String {
+        let descr: (ExtensionBox?) -> String = { ext in
+            return ext?.description ?? ""
+        }
+
         switch self {
         case .say(let ext):
-            return "SAY \(ext?.description ?? "")"
+            return "SAY \(descr(ext))"
         case .dock:
             return "DOCK"
         case .undock:
             return "UNDOCK"
         case .left(let ext):
-            return "LEFT \(ext?.description ?? "")"
+            return "LEFT \(descr(ext))"
         case .right(let ext):
-            return "RIGHT \(ext?.description ?? "")"
+            return "RIGHT \(descr(ext))"
         case .forward(let ext):
-            return "FWD \(ext?.description ?? "")"
+            return "FWD \(descr(ext))"
         case .backward(let ext):
-            return "BWRD \(ext?.description ?? "")"
+            return "BWRD \(descr(ext))"
         case .play(let ext):
-            return "PLAY \(ext?.description ?? "")"
+            return "PLAY \(descr(ext))"
         case .liftUp:
             return "UP"
         case .liftDown:
             return "DOWN"
         case .rotate(let ext):
-            return "ROT \(ext?.description ?? "")"
-        case .goto(let ifExt, let thenExt):
+            return "ROT \(descr(ext))"
+        case .cmp(let ifExt, let thenExt):
             if let ifExt {
-               return "IF \(ifExt.description) THEN \(thenExt?.description ?? "")"
+               return "IF \(ifExt.description) THEN \(descr(thenExt))"
             }
-            return "IF \(ifExt?.description ?? "")"
+            return "IF \(descr(ifExt))"
+        case .exec(let ext):
+            return "EXEC \(descr(ext))"
         case .pause(let ext):
-            return "PAUSE \(ext?.description ?? "")"
+            return "PAUSE \(descr(ext))"
         }
     }
 }
@@ -79,8 +86,10 @@ extension Instruction: InstructionBox {
             return true
         case .rotate(let ext):
             return ext != nil
-        case .goto(let ifExt, let thenExt):
+        case .cmp(let ifExt, let thenExt):
             return ifExt != nil && thenExt != nil
+        case .exec(let ext):
+            return ext != nil
         case .pause(let ext):
             return ext != nil
         }

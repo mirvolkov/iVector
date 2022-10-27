@@ -63,12 +63,8 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     }
 
     func onProgTap() {
-        do {
-            items = try executor.programs
-            loadProgramPopover = true
-        } catch {
-            print(error)
-        }
+        Task { items = try await AssemblerModel.programs }
+        loadProgramPopover = true
     }
 
     func onCancelTap() {

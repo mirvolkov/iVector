@@ -91,22 +91,15 @@ public final class ExecutorModel: Executor {
             if case .sec(let sec) = ext {
                 try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * sec))
             }
-        case .goto(_, _):
+        case .cmp(_, _):
             fatalError("NOT IMPLEMENTED")
-        }
-    }
-}
-
-extension ExecutorModel: ProgrammatorLoad {
-    public var programs: [Program] {
-        get throws {
-            let path = try progLocation()
-            let content = try FileManager.default
-                .contentsOfDirectory(
-                    at: path,
-                    includingPropertiesForKeys: nil
-                )
-            return content.map { Program.init(url: $0) }
+        case .exec(let ext):
+            if case .program(let name) = ext,
+                let prog = try await AssemblerModel
+                .programs
+                .first(where: { $0.name == name}) {
+                run(program: prog)
+            }
         }
     }
 }

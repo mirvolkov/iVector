@@ -7,7 +7,7 @@ public final class AssemblerModel: Assembler, ObservableObject {
     @Published public var program: DequeModule.Deque<Instruction> = []
     @Published public var current: Instruction?
 
-    public var ext: ExtensionBox? {
+    public fileprivate(set) var ext: ExtensionBox? {
         get { current?.ext }
         set { current?.ext = newValue }
     }
@@ -30,6 +30,8 @@ public final class AssemblerModel: Assembler, ObservableObject {
             ext = .text(text)
         case (let sound as SoundPlayer.SoundName, .sound):
             ext = .sound(sound)
+        case (let prog as Program, .program(_)):
+            ext = .program(prog.name)
         default:
             break
         }
@@ -59,28 +61,16 @@ extension AssemblerModel: ProgrammatorSave {
     }
 
     public func save(name: String) throws {
-        let rootPath = try progLocation()
+        let rootPath = try Self.progLocation()
         let json = try JSONEncoder().encode(program)
         let docPath = makeFilePath(root: rootPath, filename: name)
         try json.write(to: docPath)
         program.removeAll()
     }
 
-    public var programs: [Program] {
-        get async throws {
-            let path = try progLocation()
-            let content = try FileManager.default
-                .contentsOfDirectory(
-                    at: path,
-                    includingPropertiesForKeys: nil
-                )
-            return content.map { Program.init(url: $0) }
-        }
-    }
-
     func makeFilePath(root: URL, filename: String) -> URL {
         return root
             .appendingPathComponent(filename)
-            .appendingPathExtension(progFileExtension)
+            .appendingPathExtension(Self.progFileExtension)
     }
 }

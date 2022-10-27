@@ -10,7 +10,7 @@ public protocol Assembler {
     var current: Instruction? { get set }
 
     /// Current instruction extension
-    var ext: ExtensionBox? { get set }
+    var ext: ExtensionBox? { get }
 
     /// Remove last instruction
     func esc()
