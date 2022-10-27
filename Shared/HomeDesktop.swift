@@ -1,14 +1,14 @@
 import Components
 import ComposableArchitecture
-import SwiftUI
 import Programmator
+import SwiftUI
 
 #if os(macOS)
 struct HomeDesktop: View {
     @State private var preferences = false
 
     var body: some View {
-        HSplitView {
+        NavigationSplitView {
             WithViewStore(AppState.store) { viewStore in
                 ControlPanelsView(
                     connection: AppState.env.connection,
@@ -21,10 +21,11 @@ struct HomeDesktop: View {
                     })
                     .frame(width: 320, alignment: .top)
                     .padding(0)
-                DetailPanel()
-                    .frame(height: 610, alignment: .top)
-                    .padding(0)
             }
+        } detail: {
+            DetailPanel()
+                .frame(height: 610, alignment: .top)
+                .padding(0)
         }
         .toolbar {
             Button {
