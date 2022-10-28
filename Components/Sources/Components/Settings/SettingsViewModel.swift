@@ -8,6 +8,8 @@ extension SettingsView {
         @Published public var eyeColor: Color = .white
         @Published public var isValid: Bool = false
         @Published public var locale: String = "en"
+        @Published public var certPath: URL? = nil
+        @Published public var guid: String? = nil
         
         private let model: SettingsModel
         private var bag = Set<AnyCancellable>()

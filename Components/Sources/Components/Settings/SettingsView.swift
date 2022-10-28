@@ -1,20 +1,21 @@
-import SwiftUI
 import Features
+import SwiftUI
 
 public struct SettingsView: View {
     @StateObject private var viewModel: ViewModel
-    
+
     private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
     @State private var ip: String = ""
-    @State private var certPath: String = ""
+    @State private var certPath: String = ".cert"
     @State private var guid: String = ""
     @Binding private var isPresented: Bool
-    
+    @State private var showCertPicker = false
+
     public init(model: SettingsModel, isPresented: Binding<Bool>) {
         self._isPresented = isPresented
         self._viewModel = StateObject(wrappedValue: .init(model))
     }
-    
+
     public var body: some View {
         NavigationView {
             Form {
@@ -32,17 +33,26 @@ public struct SettingsView: View {
                             ip = viewModel.ip
                         }
                         .disableAutocorrection(true)
-                    
-                    TextField(L10n.certificate, text: $certPath)
+
+                    Button {
+                        showCertPicker = true
+                    } label: {
+                        TextField(
+                            L10n.certificate,
+                            text: $certPath
+                        )
+                        .textFieldStyle(.plain)
                         .disabled(true)
-                    
+                    }
+                    .buttonStyle(.borderless)
+
                     TextField(L10n.guid, text: $guid)
                         .disabled(true)
                 }
-                
+
                 Section(L10n.vector) {
                     ColorPicker(L10n.eyeColor, selection: $viewModel.eyeColor)
-                    
+
                     Picker(L10n.locale, selection: $viewModel.locale) {
                         ForEach(Locale.preferredLanguages, id: \.self) {
                             let locale = Locale(identifier: $0)
@@ -50,7 +60,7 @@ public struct SettingsView: View {
                         }
                     }
                 }
-                
+
 #if os(macOS)
                 Section {
                     HStack {
@@ -67,7 +77,7 @@ public struct SettingsView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(!viewModel.isValid)
-                        
+
                         Button {
                             isPresented = false
                         } label: {
@@ -82,6 +92,9 @@ public struct SettingsView: View {
                 }
 #endif
             }
+            .onChange(of: viewModel.certPath) { newValue in
+                self.certPath = newValue?.lastPathComponent ?? ".cert"
+            }
 #if os(iOS)
             .navigationBarTitle(L10n.settings)
             .toolbar {
@@ -95,12 +108,25 @@ public struct SettingsView: View {
                 .buttonStyle(.plain)
                 .disabled(!viewModel.isValid)
             }
+            .sheet(isPresented: $showCertPicker) {
+                DocumentPicker(filePath: $viewModel.certPath)
+            }
 #elseif os(macOS)
+            .onChange(of: showCertPicker) { show in
+                if show {
+                    openDocPicker { url in
+                        viewModel.certPath = url
+                    }
+                }
+                do {
+                    showCertPicker = false
+                }
+            }
             .padding(10)
 #endif
         }
     }
-    
+
     private func trimInvalidCharacters(_ source: String) -> String {
         source
             .components(separatedBy: invalidCharacters)
