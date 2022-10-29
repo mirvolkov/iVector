@@ -49,6 +49,8 @@ extension ControlPanelViewModel {
             bind(with: save.$showSavePopover, destination: \.showSavePopover)
             bind(with: save.$saveError, destination: \.saveError)
             bind(with: exec.$showPrograms, destination: \.showPrograms)
+            bind(with: btn7.$showVisionObjects, destination: \.showVisionObjects)
+            bind(with: btn9.$showTextRequest, destination: \.showTextRequest)
         }
     }
 

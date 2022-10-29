@@ -12,7 +12,6 @@ let resources: [Resource] = [
     .copy("Animation/offline.json"),
 ]
 
-
 let package = Package(
     name: "Components",
     defaultLocalization: "en",
@@ -20,13 +19,16 @@ let package = Package(
     products: [
         .library(
             name: "Components",
-            targets: ["Components"]),
+            targets: ["Components"]
+        ),
     ],
     dependencies: [
         .package(path: "../Features"),
         .package(path: "../Connection"),
         .package(path: "../Programmator"),
-        .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3")
+        .package(url: "https://github.com/Quick/Quick", branch: "main"),
+        .package(url: "https://github.com/Quick/Nimble", branch: "main"),
+        .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3"),
     ],
     targets: [
         .target(
@@ -35,10 +37,15 @@ let package = Package(
                            .product(name: "Features", package: "Features"),
                            .product(name: "Programmator", package: "Programmator"),
                            .product(name: "Lottie", package: "lottie-ios")],
-            resources: resources),
+            resources: resources
+        ),
         .testTarget(
             name: "ComponentsTests",
-            dependencies: ["Components"],
+            dependencies: [
+                "Components",
+                .product(name: "Quick", package: "Quick"),
+                .product(name: "Nimble", package: "Nimble"),
+            ],
             resources: resources
         ),
     ]

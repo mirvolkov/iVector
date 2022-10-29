@@ -9,7 +9,7 @@ public enum ExtensionBox: CustomStringConvertible {
     case sound(SoundPlayer.SoundName?)
 
     case program(String)
-    case condition(String)
+    case condition(ConditionType, ConditionValue?)
     
     public var description: String {
         switch self {
@@ -23,8 +23,8 @@ public enum ExtensionBox: CustomStringConvertible {
             return "\(time)SEC"
         case .program(let name):
             return "\(name.uppercased())"
-        case .condition(let condition):
-            return "\(condition.uppercased())"
+        case .condition(let type, let value):
+            return "\(type.description.uppercased()):\(value?.description.uppercased() ?? "")"
         case .sound(let name):
             return "\(name?.rawValue.uppercased() ?? "")"
         }
@@ -54,7 +54,7 @@ public extension Instruction {
             case .play(let ext):
                 return ext ?? .sound(.alarm)
             case .cmp(let ifExt, let thenExt):
-                guard let _ = ifExt else { return .condition("") }
+                guard let _ = ifExt else { return .condition(.eq, .unknown) }
                 guard let thenExt = thenExt else { return .program("") }
                 return thenExt
             case .exec(let ext):
@@ -126,6 +126,47 @@ public extension Instruction {
             self = .exec(nil)
         default:
             break
+        }
+    }
+}
+
+extension ExtensionBox {
+    public enum ConditionValue: Codable, CustomStringConvertible {
+        case vision(VisionObject)
+        case sonar(Int)
+        case text(String)
+        case unknown
+
+        public var description: String {
+            switch self {
+            case .vision(let object):
+                return "VIS(\(object))"
+            case .sonar(let distance):
+                return "SON(\(distance)"
+            case .text(let text):
+                return "MSG(\(text))"
+            case .unknown:
+                return ""
+            }
+        }
+    }
+}
+
+extension ExtensionBox {
+    public enum ConditionType: Codable, CustomStringConvertible {
+        case less
+        case eq
+        case greater
+
+        public var description: String {
+            switch self {
+            case .less:
+                return "less"
+            case .eq:
+                return "eq"
+            case .greater:
+                return "greater"
+            }
         }
     }
 }

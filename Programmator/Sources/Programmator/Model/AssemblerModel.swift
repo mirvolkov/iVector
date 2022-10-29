@@ -32,6 +32,8 @@ public final class AssemblerModel: Assembler, ObservableObject {
             ext = .sound(sound)
         case (let prog as Program, .program(_)):
             ext = .program(prog.name)
+        case (let vision as VisionObject, .condition(let type, _)):
+            ext = .condition(type, .vision(vision))
         default:
             break
         }

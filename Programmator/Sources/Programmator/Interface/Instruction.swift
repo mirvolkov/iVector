@@ -50,7 +50,7 @@ extension Instruction: CustomStringConvertible {
             return "ROT \(descr(ext))"
         case .cmp(let ifExt, let thenExt):
             if let ifExt {
-               return "IF \(ifExt.description) THEN \(descr(thenExt))"
+               return "IF \(ifExt.description) \nTHEN \(descr(thenExt))"
             }
             return "IF \(descr(ifExt))"
         case .exec(let ext):

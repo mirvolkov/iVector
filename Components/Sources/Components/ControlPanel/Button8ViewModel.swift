@@ -1,4 +1,5 @@
 import SwiftUI
+import Programmator
 
 class Button8ViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
@@ -15,7 +16,10 @@ class Button8ViewModel: ControlPanelButtonViewModel {
         }
     }
 
-    init() {
+    private let assembler: AssemblerModel
+
+    init(assembler: AssemblerModel) {
+        self.assembler = assembler
         self.primaryIcon = .init(systemName: "arrow.down.square")
         self.primaryTitle = "8"
         self.secondaryTitle = L10n.sonar

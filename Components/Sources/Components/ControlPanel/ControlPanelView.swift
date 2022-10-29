@@ -56,6 +56,19 @@ public struct ControlPanelsView: View {
                 viewModel: viewModel.exec
             )
         })
+        .popover(isPresented: $viewModel.showVisionObjects, content: {
+            PickListPopover(
+                viewModel: viewModel.btn7
+            )
+        })
+        .popover(isPresented: $viewModel.showTextRequest, content: {
+            TextFieldPopover(
+                title: L10n.typeInMessageToListen,
+                placeholder: L10n.listen,
+                button: L10n.listen,
+                viewModel: viewModel.btn9
+            )
+        })
         .popover(isPresented: $viewModel.ttsAlert, content: {
             TextFieldPopover(
                 title: L10n.typeInMessageToSay,
@@ -170,7 +183,8 @@ public struct ControlPanelsView: View {
         HStack {
             Text(viewModel.command ?? "")
                 .font(vectorBold(24.0))
-                .frame(height: 24, alignment: .center)
+                .fixedSize(horizontal: false, vertical: true)
+                .lineLimit(2)
             Spacer()
         }
     }

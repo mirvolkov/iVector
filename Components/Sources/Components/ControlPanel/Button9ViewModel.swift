@@ -1,6 +1,7 @@
 import SwiftUI
+import Programmator
 
-class Button9ViewModel: ControlPanelButtonViewModel {
+class Button9ViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -14,10 +15,22 @@ class Button9ViewModel: ControlPanelButtonViewModel {
             enabled = tag != nil
         }
     }
+    @Published var showTextRequest: Bool = false
 
-    init() {
+    private let assembler: AssemblerModel
+
+    init(assembler: AssemblerModel) {
+        self.assembler = assembler
         self.primaryIcon = .init(systemName: "arrow.down.right.square")
         self.primaryTitle = "9"
         self.secondaryTitle = L10n.listen
+    }
+
+    func onClick() {
+        showTextRequest = true
+    }
+
+    func onTextChange(text: String) {
+        showTextRequest = false
     }
 }

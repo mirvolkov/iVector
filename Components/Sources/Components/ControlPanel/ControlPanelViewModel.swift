@@ -15,10 +15,10 @@ class ControlPanelViewModel: ObservableObject {
     lazy var btn4 = Button4ViewModel()
     lazy var btn5 = Button5ViewModel()
     lazy var btn6 = Button6ViewModel()
-    lazy var btn7 = Button7ViewModel()
-    lazy var btn8 = Button8ViewModel()
-    lazy var btn9 = Button9ViewModel()
-    lazy var btn0 = Button0ViewModel()
+    lazy var btn7 = Button7ViewModel(assembler: assembler)
+    lazy var btn8 = Button8ViewModel(assembler: assembler)
+    lazy var btn9 = Button9ViewModel(assembler: assembler)
+    lazy var btn0 = Button0ViewModel(assembler: assembler)
     lazy var lift = ButtonLiftViewModel()
     lazy var down = ButtonDownViewModel()
     lazy var play = ButtonPlayViewModel(assembler: assembler)
@@ -35,6 +35,8 @@ class ControlPanelViewModel: ObservableObject {
         }
     }
 
+    @Published var showVisionObjects: Bool = false
+    @Published var showTextRequest: Bool = false
     @Published var showPrograms: Bool = false
     @Published var showSavePopover = false
     @Published var command: String? = nil

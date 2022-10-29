@@ -10,14 +10,22 @@ import Foundation
 // swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 public enum L10n {
+  /// apple
+  public static let apple = L10n.tr("Localizable", "apple")
   /// BATT
   public static let batt = L10n.tr("Localizable", "BATT")
   /// Camera
   public static let camera = L10n.tr("Localizable", "Camera")
   /// Cancel
   public static let cancel = L10n.tr("Localizable", "Cancel")
+  /// cat
+  public static let cat = L10n.tr("Localizable", "cat")
+  /// cell phone
+  public static let cellPhone = L10n.tr("Localizable", "cell phone")
   /// Certificate
   public static let certificate = L10n.tr("Localizable", "Certificate")
+  /// clock
+  public static let clock = L10n.tr("Localizable", "clock")
   /// Connect
   public static let connect = L10n.tr("Localizable", "Connect")
   /// connection
@@ -46,6 +54,8 @@ public enum L10n {
   public static let offline = L10n.tr("Localizable", "offline")
   /// OK
   public static let ok = L10n.tr("Localizable", "OK")
+  /// person
+  public static let person = L10n.tr("Localizable", "person")
   /// PROG
   public static let prog = L10n.tr("Localizable", "PROG")
   /// Program already exists
@@ -58,6 +68,10 @@ public enum L10n {
   public static let settings = L10n.tr("Localizable", "Settings")
   /// sonar
   public static let sonar = L10n.tr("Localizable", "sonar")
+  /// stop sign
+  public static let stopSign = L10n.tr("Localizable", "stop sign")
+  /// Type in message to listen
+  public static let typeInMessageToListen = L10n.tr("Localizable", "type in message to listen")
   /// Type in message to say
   public static let typeInMessageToSay = L10n.tr("Localizable", "Type in message to say")
   /// Vector
