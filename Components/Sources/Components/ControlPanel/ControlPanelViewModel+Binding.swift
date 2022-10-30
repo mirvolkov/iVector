@@ -1,4 +1,5 @@
 import Combine
+import Programmator
 import SwiftUI
 
 extension ControlPanelViewModel {
@@ -12,17 +13,8 @@ extension ControlPanelViewModel {
 
             assembler.$current
                 .receive(on: RunLoop.main)
-                .map { $0?.ext }
-                .map { ext in
-                    guard let ext = ext else { return .primary }
-                    switch ext {
-                    case .sound, .text:
-                        return .primary
-                    case .sec, .angle, .distance:
-                        return .secondary
-                    case .condition, .program:
-                        return .alt
-                    }
+                .map { [unowned self] current in
+                    self.reactToCurrent(current)
                 }
                 .assign(to: \.mode, on: self)
                 .store(in: &bag)
@@ -30,7 +22,7 @@ extension ControlPanelViewModel {
             esc.$onEsc
                 .filter { $0 }
                 .receive(on: RunLoop.main)
-                .sink { value in
+                .sink { _ in
                     self.assembler.esc()
                 }
                 .store(in: &bag)
@@ -38,7 +30,7 @@ extension ControlPanelViewModel {
             enter.$onEnter
                 .filter { $0 }
                 .receive(on: RunLoop.main)
-                .sink { value in
+                .sink { _ in
                     self.assembler.enter()
                 }
                 .store(in: &bag)
@@ -56,6 +48,39 @@ extension ControlPanelViewModel {
 
     func unbind() {
         bag.removeAll()
+    }
+
+    private func reactToCurrent(_ current: Instruction?) -> Mode {
+        guard let ext = current?.getValue() else { return .primary }
+        switch ext {
+        case _ as Extension.Distance:
+            return .secondary
+        case _ as Extension.Angle:
+            return .secondary
+        case _ as Extension.Time:
+            return .secondary
+        case let condition as Extension.Condition:
+            return reactToCondition(condition)
+        case _ as Extension.ProgramID:
+            return .alt
+        default:
+            return .primary
+        }
+    }
+
+    private func reactToCondition(_ condition: Extension.Condition) -> Mode {
+        if let value = condition.value {
+            switch value {
+            case .vision(let object):
+                return object == nil ? .alt : .exec
+            case .text(let text):
+                return text == nil ? .alt : .exec
+            case .sonar(_, let cmp):
+                return cmp == nil ? .cmp : .secondary
+            }
+        }
+
+        return .alt
     }
 
     private func bind<T: Publisher>(with object: T, destination: ReferenceWritableKeyPath<ControlPanelViewModel, T.Output>) where T.Failure == Never {

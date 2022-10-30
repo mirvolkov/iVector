@@ -2,7 +2,9 @@ import Programmator
 
 extension Programmator.Instruction: CPViewModelTag {}
 
-extension Programmator.ExtensionBox: CPViewModelTag {}
+extension Extension.ConditionValue: CPViewModelTag {}
+
+extension Extension.ConditionType: CPViewModelTag {}
 
 extension ControlPanelViewModel {
     enum SecondaryTag: Int, CPViewModelTag {
@@ -18,16 +20,16 @@ extension ControlPanelViewModel {
         case btn9
     }
 
-    enum AltTag: CPViewModelTag {
-        case vision
-        case sonar
-        case stt
+    enum AltTag: Int, CPViewModelTag {
+        case exec
     }
 
     enum Mode {
         case primary
         case secondary
         case alt
+        case cmp
+        case exec
     }
 
     private var digitalButtons: [any ControlPanelButtonViewModel] {
@@ -57,6 +59,10 @@ extension ControlPanelViewModel {
             tagSecondary()
         case .alt:
             tagAlt()
+        case .cmp:
+            tagCmp()
+        case .exec:
+            tagExec()
         }
     }
 
@@ -70,9 +76,14 @@ extension ControlPanelViewModel {
             digitalButtons.forEach { secondary($0) }
             behaviorButtons.forEach { enable($0, enabled: false) }
 
-        case .alt:
+        case .alt, .cmp:
             digitalButtons.forEach { alt($0) }
             behaviorButtons.forEach { enable($0, enabled: false) }
+
+        case .exec:
+            digitalButtons.forEach { enable($0, enabled: false) }
+            behaviorButtons.forEach { enable($0, enabled: false) }
+            exec.enabled = true
         }
     }
 

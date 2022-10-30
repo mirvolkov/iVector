@@ -27,10 +27,13 @@ class Button9ViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback {
     }
 
     func onClick() {
-        showTextRequest = true
+        if tag is Extension.ConditionValue{
+            showTextRequest = true
+        }
     }
 
     func onTextChange(text: String) {
+        assembler.extend(with: text)
         showTextRequest = false
     }
 }

@@ -12,7 +12,10 @@ extension ControlPanelViewModel: ControlPanelViewModelHandling {
         if let ext = tag as? SecondaryTag {
             assembler.extend(with: ext.rawValue)
         }
-        if let ext = tag as? AltTag {
+        if let ext = tag as? Extension.ConditionValue {
+            assembler.extend(with: ext)
+        }
+        if let ext = tag as? Extension.ConditionType {
             assembler.extend(with: ext)
         }
     }

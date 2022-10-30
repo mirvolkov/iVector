@@ -9,9 +9,6 @@ public protocol Assembler {
     /// Current instruction in edit mode. Not completed.
     var current: Instruction? { get set }
 
-    /// Current instruction extension
-    var ext: ExtensionBox? { get }
-
     /// Remove last instruction
     func esc()
 

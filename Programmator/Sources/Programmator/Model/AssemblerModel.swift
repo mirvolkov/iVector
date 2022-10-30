@@ -7,36 +7,10 @@ public final class AssemblerModel: Assembler, ObservableObject {
     @Published public var program: DequeModule.Deque<Instruction> = []
     @Published public var current: Instruction?
 
-    public fileprivate(set) var ext: ExtensionBox? {
-        get { current?.ext }
-        set { current?.ext = newValue }
-    }
-
     public init() { }
 
     public func extend<T>(with value: T) {
-        switch (value, ext) {
-        case (let digit as Int, .distance(let value)):
-            guard value < 100 else { return }
-            ext = .distance(value*10 + digit)
-        case (let digit as Int, .angle(let value)):
-            guard value < 100 else { return }
-            ext = .angle(value*10 + digit)
-        case (let digit as Int, .sec(let value)):
-            guard value < 10 else { return }
-            ext = .sec(value*10 + digit)
-        case (let text as String, .text):
-            guard text.count < 16 else { return }
-            ext = .text(text)
-        case (let sound as SoundPlayer.SoundName, .sound):
-            ext = .sound(sound)
-        case (let prog as Program, .program(_)):
-            ext = .program(prog.name)
-        case (let vision as VisionObject, .condition(let type, _)):
-            ext = .condition(type, .vision(vision))
-        default:
-            break
-        }
+        try? current?.setValue(value)
     }
 
     public func esc() {

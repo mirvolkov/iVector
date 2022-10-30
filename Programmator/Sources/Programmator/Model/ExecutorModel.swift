@@ -57,47 +57,47 @@ public final class ExecutorModel: Executor {
             try await connection.behavior?.lift(1)
         case .liftDown:
             try await connection.behavior?.lift(0)
-        case .say(let ext) :
-            if case .text(let text) = ext {
-                try await connection.say(text: text)
+        case .say(let ext):
+            if let value = ext.value {
+                try await connection.say(text: value)
             }
         case .play(let ext):
-            if case .sound(let sound) = ext, let sound {
-                try await connection.play(name: sound)
+            if let value = ext.value {
+                try await connection.play(name: value)
             }
         case .forward(let ext):
-            if case .distance(let mm) = ext {
-                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
+            if let value = ext.value {
+                try await connection.behavior?.move(Float(value), speed: 50, animate: true)
             }
         case .right(let ext):
-            if case .distance(let mm) = ext {
+            if let value = ext.value {
                 try await connection.behavior?.turn(90, speed: 30, accel: 10, angleTolerance: 0)
-                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
+                try await connection.behavior?.move(Float(value), speed: 50, animate: true)
             }
         case .left(let ext):
-            if case .distance(let mm) = ext {
+            if let value = ext.value {
                 try await connection.behavior?.turn(-90, speed: 30, accel: 10, angleTolerance: 0)
-                try await connection.behavior?.move(Float(mm), speed: 50, animate: true)
+                try await connection.behavior?.move(Float(value), speed: 50, animate: true)
             }
         case .backward(let ext):
-            if case .distance(let mm) = ext {
-                try await connection.behavior?.move(-Float(mm), speed: 50, animate: true)
+            if let value = ext.value {
+                try await connection.behavior?.move(-Float(value), speed: 50, animate: true)
             }
         case .rotate(let ext):
-            if case .angle(let angle) = ext {
-                try await connection.behavior?.turn(Float(angle), speed: 30, accel: 10, angleTolerance: 0)
+            if let value = ext.value {
+                try await connection.behavior?.turn(Float(value), speed: 30, accel: 10, angleTolerance: 0)
             }
         case .pause(let ext):
-            if case .sec(let sec) = ext {
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * sec))
+            if let value = ext.value {
+                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * value))
             }
         case .cmp(_, _):
             fatalError("NOT IMPLEMENTED")
         case .exec(let ext):
-            if case .program(let name) = ext,
+            if let value = ext.value,
                 let prog = try await AssemblerModel
                 .programs
-                .first(where: { $0.name == name}) {
+                .first(where: { $0.name == value}) {
                 run(program: prog)
             }
         }

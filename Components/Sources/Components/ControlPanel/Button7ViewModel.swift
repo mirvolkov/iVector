@@ -29,7 +29,7 @@ class Button7ViewModel: ControlPanelButtonViewModel, PickListPopoverCallback {
     }
     
     func onClick() {
-        if let tag = tag as? ControlPanelViewModel.AltTag, tag == ControlPanelViewModel.AltTag.vision {
+        if tag is Extension.ConditionValue {
             showVisionObjects = true
         }
     }
