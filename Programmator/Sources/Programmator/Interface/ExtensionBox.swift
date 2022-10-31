@@ -148,8 +148,8 @@ public enum Extension {
             self.value = value
         }
 
-        public init() {
-            self.value = nil
+        public init(_ value: ConditionValue? = nil) {
+            self.value = value
         }
     }
 
