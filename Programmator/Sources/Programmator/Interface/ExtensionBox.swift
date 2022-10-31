@@ -1,5 +1,9 @@
 import Features
 
+/// Extension box existential wrapper protocol
+/// T is a contained value type
+/// isValid means if value is valid (usually it means it is not nil)
+/// mutating func setValue - value setter
 public protocol ExtensionBox: Codable, CustomStringConvertible {
     associatedtype T: Codable
     var isValid: Bool { get }
@@ -7,19 +11,27 @@ public protocol ExtensionBox: Codable, CustomStringConvertible {
     mutating func setValue(_ value: T) throws
 }
 
+/// ExtensionBox default implementation
 public extension ExtensionBox {
-    var isValid: Bool { value != nil }
+    var isValid: Bool {
+        value != nil
+    }
+
     var description: String {
         guard let value else { return "" }
         return "\(value)".uppercased()
     }
 }
 
+/// Extension box possible errors
 public enum ExtensionBoxError: Error {
     case invalidValue
 }
 
+/// Extension box namespace
 public enum Extension {
+    /// Distance extension
+    /// min: 0, max: 999
     public class Distance: ExtensionBox {
         public var value: Int?
 
@@ -39,6 +51,8 @@ public enum Extension {
         }
     }
 
+    /// Angle extension
+    /// min: 0, max: 999
     public class Angle: ExtensionBox {
         public var value: Int?
 
@@ -58,10 +72,13 @@ public enum Extension {
         }
     }
 
+    /// Text extension
+    /// max len 16 symbols
     public class Text: ExtensionBox {
         public var value: String?
 
         public func setValue(_ value: String) throws {
+            guard value.count <= 16 else { throw ExtensionBoxError.invalidValue }
             self.value = value
         }
 
@@ -70,6 +87,8 @@ public enum Extension {
         }
     }
 
+    /// Time extension
+    /// max value: 99 seconds
     public class Time: ExtensionBox {
         public var value: Int?
 
@@ -89,6 +108,7 @@ public enum Extension {
         }
     }
 
+    /// Sound wrapper extension box
     public class Sound: ExtensionBox {
         public var value: SoundPlayer.SoundName?
 
@@ -101,6 +121,7 @@ public enum Extension {
         }
     }
 
+    /// Program ID extension box
     public class ProgramID: ExtensionBox {
         public var value: String?
 
@@ -118,6 +139,8 @@ public enum Extension {
         }
     }
 
+    /// Condition wrapper extension box
+    /// - value ConditionValue enum
     public class Condition: ExtensionBox {
         public var value: ConditionValue?
 
@@ -130,6 +153,7 @@ public enum Extension {
         }
     }
 
+    /// Condition value wrapper enum
     public enum ConditionValue: Codable, CustomStringConvertible {
         case vision(VisionObject?)
         case sonar(Extension.Distance, ConditionType?)
@@ -150,6 +174,7 @@ public enum Extension {
         }
     }
 
+    /// Condition type wrapper enum
     public enum ConditionType: Codable, CustomStringConvertible {
         case less
         case eq
