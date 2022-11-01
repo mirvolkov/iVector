@@ -1,15 +1,34 @@
-import Foundation
-import Features
 import Collections
+import Features
+import Foundation
 
 public final class ExecutorModel: Executor {
+    struct ExecutorCondition {
+        let value: Extension.ConditionValue
+        let program: Extension.ProgramID
+
+        init?(_ value: Extension.ConditionValue?, _ program: Extension.ProgramID) {
+            guard let value else { return nil }
+            self.value = value
+            self.program = program
+        }
+    }
+
     @Published public var running: Program?
     @Published public var pc: (Int, Int)?
 
+    /// Connection instance
     private let connection: ConnectionModel
+
+    /// Executor running task. Boolean value shows if task is still running (false = not completed, true = completed)
     private var task: Task<Bool, Error>?
+
+    /// Buffer of text input
     private var buffer = Deque<String>()
-    
+
+    /// Condition (CMP) operation list
+    private var conditions: [ExecutorCondition] = []
+
     public init(with connection: ConnectionModel) {
         self.connection = connection
     }
@@ -20,6 +39,16 @@ public final class ExecutorModel: Executor {
             do {
                 var pc = 1
                 let instructions = try await program.instructions
+                self.conditions = instructions
+                    .map { instruction in
+                        switch instruction {
+                        case .cmp(let condition, let programID):
+                            return ExecutorCondition(condition.value, programID)
+                        default:
+                            return nil
+                        }
+                    }.compactMap { $0 }
+
                 var stack = instructions.makeIterator()
                 while let instruction = stack.next() {
                     self.pc = (pc, instructions.count)
@@ -27,6 +56,7 @@ public final class ExecutorModel: Executor {
                     try await self.run(instruction: instruction)
                     pc += 1
                 }
+
                 return true
             } catch {
                 print(error)
@@ -37,14 +67,13 @@ public final class ExecutorModel: Executor {
 
     public func cancel() {
         task?.cancel()
+        conditions.removeAll()
         running = nil
         pc = nil
     }
-    
-    // TODO: this is mocked solution for stage 1 demo
+
     public func input(text: String) {
-        buffer.append(text)
-        
+        buffer.append(text.lowercased())
     }
 
     private func run(instruction: Instruction) async throws {
@@ -91,13 +120,14 @@ public final class ExecutorModel: Executor {
             if let value = ext.value {
                 try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * value))
             }
-        case .cmp(_, _):
-            fatalError("NOT IMPLEMENTED")
+        case .cmp:
+            break
         case .exec(let ext):
             if let value = ext.value,
-                let prog = try await AssemblerModel
-                .programs
-                .first(where: { $0.name == value}) {
+               let prog = try await AssemblerModel
+               .programs
+               .first(where: { $0.name == value })
+            {
                 run(program: prog)
             }
         }
