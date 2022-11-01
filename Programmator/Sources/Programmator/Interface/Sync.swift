@@ -30,10 +30,9 @@ public protocol ProgrammatorLoad: ProgrammatorSync {
 
 public extension ProgrammatorSync {
     static func progLocation() throws -> URL {
-        let location = try FileManager
-            .default
-            .url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent(progStorageName)
+        let location = URL
+            .documentsDirectory
+            .appending(path: progStorageName)
         
         if !FileManager.default.fileExists(atPath: location.path) {
             try FileManager.default.createDirectory(atPath: location.path, withIntermediateDirectories: true, attributes: nil)

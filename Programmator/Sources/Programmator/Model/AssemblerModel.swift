@@ -46,7 +46,7 @@ extension AssemblerModel: ProgrammatorSave {
 
     func makeFilePath(root: URL, filename: String) -> URL {
         return root
-            .appendingPathComponent(filename)
+            .appending(path: filename)
             .appendingPathExtension(Self.progFileExtension)
     }
 }
