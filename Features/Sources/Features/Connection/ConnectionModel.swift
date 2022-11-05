@@ -65,13 +65,13 @@ public final actor ConnectionModel {
             .store(in: &bag)
     }
 
-    public nonisolated func connect(with ipAddress: String, port: Int = 443) async {
-        Task.detached {
+    public nonisolated func connect(with ipAddress: String, port: Int = 443) async throws {
+        let connectTask: Task = .detached {
             guard case .disconnected = await self.state.value else {
                 return
             }
 
-            await self.setConnection(VectorConnection(with: ipAddress, port: port))
+            await self.setConnection(try VectorConnection(with: ipAddress, port: port))
             await self.connection?.delegate = self
             do {
                 await self.state.send(.connecting)
@@ -81,6 +81,8 @@ public final actor ConnectionModel {
                 await self.state.send(.disconnected)
             }
         }
+
+        try await connectTask.result.get()
     }
 
     public nonisolated func mock() async {

@@ -30,6 +30,10 @@ actor DataAccumulator: Sendable {
     }
 }
 
+public enum VectorConnectionError: Error, Equatable {
+    case noCertificate
+}
+
 public final class VectorConnection: Connection {
     public weak var delegate: ConnectionDelegate?
 
@@ -42,9 +46,9 @@ public final class VectorConnection: Connection {
     var requestStream: ControlRequestStream?
     var eventStream: EventStream?
 
-    public init?(with ipAddress: String, port: Int) {
+    public init?(with ipAddress: String, port: Int) throws {
         guard let certificatePath = Bundle.module.path(forResource: "Vector-E1B6-003099a9", ofType: "cert") else {
-            return nil
+            throw VectorConnectionError.noCertificate
         }
 
         Self.log("Vector connection init")

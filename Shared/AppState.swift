@@ -43,7 +43,7 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
             if env.config.useMocked {
                 await env.connection.mock()
             } else {
-                await env.connection.connect(with: settings.ip, port: settings.port)
+                try await env.connection.connect(with: settings.ip, port: settings.port)
             }
         }
 
