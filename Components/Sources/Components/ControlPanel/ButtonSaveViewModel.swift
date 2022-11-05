@@ -3,10 +3,8 @@ import Features
 import SwiftUI
 import Programmator
 
-enum ControlPanelSaveError: LocalizedError {
-    case alreadyExists
-
-    var errorDescription: String? {
+extension AssemblerModel.SaveError: LocalizedError {
+    public var errorDescription: String? {
         switch self {
         case .alreadyExists:
             return L10n.programAlreadyExists
@@ -25,7 +23,7 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback
     @Published var tintColor: Color = .green
     @Published var tag: CPViewModelTag?
     @Published var showSavePopover = false
-    @Published var saveError: ControlPanelSaveError? = nil
+    @Published var saveError: Error? = nil
     
     private let assembler: AssemblerModel
     private var bag = Set<AnyCancellable>()
@@ -57,10 +55,8 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback
         do {
             try assembler.save(name: text)
             showSavePopover = false
-        } catch is AssemblerModel.SaveError {
-            self.saveError = .alreadyExists
         } catch {
-            print(error)
+            saveError = error
         }
     }
 }

@@ -33,13 +33,15 @@ public final class AssemblerModel: Assembler, ObservableObject {
 extension AssemblerModel: ProgrammatorSave {
     public enum SaveError: Error {
         case alreadyExists
-        case fsError
     }
 
     public func save(name: String) throws {
         let rootPath = try Self.progLocation()
-        let json = try JSONEncoder().encode(program)
         let docPath = makeFilePath(root: rootPath, filename: name)
+        guard !FileManager.default.fileExists(atPath: docPath.relativePath) else {
+            throw AssemblerModel.SaveError.alreadyExists
+        }
+        let json = try JSONEncoder().encode(program)
         try json.write(to: docPath)
         program.removeAll()
     }

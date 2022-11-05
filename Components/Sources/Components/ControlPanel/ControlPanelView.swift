@@ -8,6 +8,7 @@ public struct ControlPanelsView: View {
     @State var divider: CGFloat = 4
 
     @StateObject var viewModel: ControlPanelViewModel
+    @EnvironmentObject var errorHandling: ErrorHandlerViewModel
 
     public var onConnect: () -> Void
     public var onDisconnect: () -> Void
@@ -91,9 +92,9 @@ public struct ControlPanelsView: View {
             viewModel.bind()
             viewModel.tagInitial()
         }
-        .errorAlert(
-            error: $viewModel.saveError
-        )
+        .onAppear {
+            self.viewModel.saveError = errorHandling
+        }
     }
 
     private var header: some View {

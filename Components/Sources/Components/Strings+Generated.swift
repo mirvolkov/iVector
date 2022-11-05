@@ -34,6 +34,8 @@ public enum L10n {
   public static let control = L10n.tr("Localizable", "Control")
   /// Control Panel
   public static let controlPanel = L10n.tr("Localizable", "Control Panel")
+  /// Error
+  public static let error = L10n.tr("Localizable", "error")
   /// Eye color
   public static let eyeColor = L10n.tr("Localizable", "Eye color")
   /// goto

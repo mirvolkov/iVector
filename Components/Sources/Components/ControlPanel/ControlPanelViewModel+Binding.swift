@@ -30,8 +30,15 @@ extension ControlPanelViewModel {
             enter.$onEnter
                 .filter { $0 }
                 .receive(on: RunLoop.main)
-                .sink { _ in
-                    self.assembler.enter()
+                .sink { [weak self] _ in
+                    self?.assembler.enter()
+                }
+                .store(in: &bag)
+
+            save.$saveError
+                .compactMap { $0 }
+                .sink { [weak self] error in
+                    self?.saveError?.handle(error: error)
                 }
                 .store(in: &bag)
 
@@ -39,7 +46,6 @@ extension ControlPanelViewModel {
             bind(with: play.$showAudioListPopover, destination: \.playPopover)
             bind(with: tts.$ttsAlert, destination: \.ttsAlert)
             bind(with: save.$showSavePopover, destination: \.showSavePopover)
-            bind(with: save.$saveError, destination: \.saveError)
             bind(with: exec.$showPrograms, destination: \.showPrograms)
             bind(with: btn7.$showVisionObjects, destination: \.showVisionObjects)
             bind(with: btn9.$showTextRequest, destination: \.showTextRequest)

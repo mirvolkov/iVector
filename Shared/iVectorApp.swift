@@ -1,4 +1,5 @@
 import SwiftUI
+import Components
 
 @main
 struct iVectorApp: App {
@@ -12,13 +13,16 @@ struct iVectorApp: App {
         WindowGroup {
 #if os(macOS)
             HomeDesktop()
+                .withErrorHandler()
 #endif
 
 #if os(iOS)
             if UIDevice.current.userInterfaceIdiom == .pad {
                 HomeTablet()
+                    .withErrorHandler()
             } else {
                 HomePhone()
+                    .withErrorHandler()
             }
 #endif
         }
