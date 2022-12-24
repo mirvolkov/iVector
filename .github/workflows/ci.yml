@@ -16,7 +16,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
+    - name: Build connection package
+      run: |
+        cd Connection
+        swift build -v
     - name: Run tests
-      run: swift test -v
+      run: |
+        cd Connection
+        swift test -v
