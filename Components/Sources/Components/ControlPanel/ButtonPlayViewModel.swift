@@ -37,8 +37,20 @@ extension SoundPlayer.SoundName: CustomStringConvertible {
         switch self {
         case .alarm:
             return "ALARM"
+        case .cputer1:
+            return "CPUTER 1"
         case .cputer2:
-            return "PC UP"
+            return "CPUTER 2"
+        case .r2d21:
+            return "R2D2 1"
+        case .r2d22:
+            return "R2D2 2"
+        case .scream:
+            return "SCREAM"
+        case .ping:
+            return "PING"
+        case .pcup:
+            return "PCUP"
         }
     }
 }

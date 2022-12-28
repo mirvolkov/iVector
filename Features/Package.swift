@@ -7,7 +7,13 @@ let resources: [Resource] = [
     .copy("Resources/MobileNetV2.mlmodelc"),
     .copy("Resources/test_sample.jpeg"),
     .copy("Sounds/alarm.wav"),
-    .copy("Sounds/cputer2.wav")
+    .copy("Sounds/cputer1.wav"),
+    .copy("Sounds/cputer2.wav"),
+    .copy("Sounds/r2d21.wav"),
+    .copy("Sounds/r2d22.wav"),
+    .copy("Sounds/ping.wav"),
+    .copy("Sounds/scream.wav"),
+    .copy("Sounds/pcup.wav"),
 ]
 
 let package = Package(

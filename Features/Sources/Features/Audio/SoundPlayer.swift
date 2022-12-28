@@ -10,7 +10,13 @@ public final class SoundPlayer {
 
     public enum SoundName: String, CaseIterable, Codable {
         case alarm
+        case cputer1
         case cputer2
+        case r2d21
+        case r2d22
+        case ping
+        case scream
+        case pcup
     }
 
     public init() {}
