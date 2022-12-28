@@ -7,15 +7,15 @@
        params:
          publicAccess: true
 
- xcassets:
-   inputs:
-     - Assets/Media.xcassets
-   outputs:
-     - templateName: swift5
-       params:
-         forceProvidesNamespaces: true
-         publicAccess: true
-       output: XCAssets+Generated.swift
+# xcassets:
+#   inputs:
+#     - Assets/Media.xcassets
+#   outputs:
+#     - templateName: swift5
+#       params:
+#         forceProvidesNamespaces: true
+#         publicAccess: true
+#       output: XCAssets+Generated.swift
        
  fonts:
    inputs: Fonts

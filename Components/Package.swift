@@ -29,6 +29,7 @@ let package = Package(
         .package(url: "https://github.com/Quick/Quick", branch: "main"),
         .package(url: "https://github.com/Quick/Nimble", branch: "main"),
         .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3"),
+        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0")
     ],
     targets: [
         .target(
@@ -37,7 +38,8 @@ let package = Package(
                            .product(name: "Features", package: "Features"),
                            .product(name: "Programmator", package: "Programmator"),
                            .product(name: "Lottie", package: "lottie-ios")],
-            resources: resources
+            resources: resources,
+            plugins: [ .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")]
         ),
         .testTarget(
             name: "ComponentsTests",
