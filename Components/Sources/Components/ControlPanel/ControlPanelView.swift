@@ -53,7 +53,7 @@ public struct ControlPanelsView: View {
             )
         })
         .popover(isPresented: $viewModel.showPrograms, content: {
-            PickListPopover(
+            ProgramPickListPopover(
                 viewModel: viewModel.exec
             )
         })

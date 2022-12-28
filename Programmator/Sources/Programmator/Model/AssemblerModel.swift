@@ -46,6 +46,13 @@ extension AssemblerModel: ProgrammatorSave {
         program.removeAll()
     }
 
+    public func delete(name: String) throws {
+        let rootPath = try Self.progLocation()
+        let docPath = makeFilePath(root: rootPath, filename: name)
+        try FileManager.default.removeItem(at: docPath)
+        program.removeAll()
+    }
+
     func makeFilePath(root: URL, filename: String) -> URL {
         return root
             .appending(path: filename)

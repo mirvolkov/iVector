@@ -28,4 +28,18 @@ extension Program: CustomStringConvertible {
     }
 }
 
-extension Program: Sendable { }
+extension Program: Sendable {}
+
+extension Program: Hashable {
+    public static func == (lhs: Program, rhs: Program) -> Bool {
+        lhs.url == rhs.url
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(url)
+    }
+}
+
+extension Program: Identifiable {
+    public var id: String { url.absoluteString }
+}

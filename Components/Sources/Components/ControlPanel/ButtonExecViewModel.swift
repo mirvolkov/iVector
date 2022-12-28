@@ -39,3 +39,9 @@ class ButtonExecViewModel: ControlPanelButtonViewModel, PickListPopoverCallback 
         showPrograms = false
     }
 }
+
+extension ButtonExecViewModel: PickListPopoverDelegate {
+    func onDelete(item: Program) {
+        try? assembler.delete(name: item.name)
+    }
+}

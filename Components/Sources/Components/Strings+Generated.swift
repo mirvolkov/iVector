@@ -34,6 +34,8 @@ public enum L10n {
   public static let control = L10n.tr("Localizable", "Control")
   /// Control Panel
   public static let controlPanel = L10n.tr("Localizable", "Control Panel")
+  /// Delete
+  public static let delete = L10n.tr("Localizable", "delete")
   /// Error
   public static let error = L10n.tr("Localizable", "error")
   /// Eye color
@@ -62,6 +64,8 @@ public enum L10n {
   public static let prog = L10n.tr("Localizable", "PROG")
   /// Program already exists
   public static let programAlreadyExists = L10n.tr("Localizable", "Program already exists")
+  /// Programs
+  public static let programs = L10n.tr("Localizable", "programs")
   /// Save
   public static let save = L10n.tr("Localizable", "Save")
   /// Say
@@ -78,8 +82,12 @@ public enum L10n {
   public static let typeInMessageToSay = L10n.tr("Localizable", "Type in message to say")
   /// Vector
   public static let vector = L10n.tr("Localizable", "Vector")
+  /// View
+  public static let view = L10n.tr("Localizable", "view")
   /// vision
   public static let vision = L10n.tr("Localizable", "vision")
+  /// Delete program?
+  public static let warning = L10n.tr("Localizable", "warning")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces

@@ -14,12 +14,16 @@ public protocol ProgrammatorSync {
 
 /// Synching: save
 public protocol ProgrammatorSave: ProgrammatorSync {
+    /// List of programs
+    static var programs: [Program] { get async throws }
+
     /// Saves current program. Empties program stack
     /// - Throws alreadyExists error if name overlaps existing name
     func save(name: String) throws
 
-    /// List of programs
-    static var programs: [Program] { get async throws }
+    /// Delete  program.
+    /// - Throws fs error
+    func delete(name: String) throws
 }
 
 /// Synching: load
