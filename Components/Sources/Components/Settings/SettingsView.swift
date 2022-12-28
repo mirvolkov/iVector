@@ -112,6 +112,7 @@ public struct SettingsView: View {
                 DocumentPicker(filePath: $viewModel.certPath)
             }
 #elseif os(macOS)
+            .frame(maxWidth: .infinity)
             .onChange(of: showCertPicker) { show in
                 if show {
                     openDocPicker { url in
@@ -125,6 +126,9 @@ public struct SettingsView: View {
             .padding(10)
 #endif
         }
+#if os(macOS)
+        .frame(width: 320)
+#endif
     }
 
     private func trimInvalidCharacters(_ source: String) -> String {
