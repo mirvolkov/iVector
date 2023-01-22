@@ -96,6 +96,29 @@ extension VectorConnection: Behavior {
         }
     }
 
+    /// set_screen_with_image_data expected 35328 bytes - (2 bytes each for 17664 pixels)
+    public func oled(with data: Data) async throws {
+        var request = Anki_Vector_ExternalInterface_DisplayFaceImageRGBRequest()
+        request.faceData = data
+        request.interruptRunning = true
+
+        let call: UnaryCall<Anki_Vector_ExternalInterface_DisplayFaceImageRGBRequest,
+            Anki_Vector_ExternalInterface_DisplayFaceImageRGBResponse> = connection.makeUnaryCall(
+            path: "\(prefixURI)DisplayFaceImageRGB",
+            request: request,
+            callOptions: callOptions
+        )
+
+        return try await withCheckedThrowingContinuation { continuation in
+            call.response.whenSuccess { result in
+                continuation.resume(returning: ())
+            }
+            call.response.whenFailure { error in
+                continuation.resume(throwing: error)
+            }
+        }
+    }
+
     public func move(_ distance: Float, speed: Float, animate: Bool) async throws {
         var request: Anki_Vector_ExternalInterface_DriveStraightRequest = .init()
         request.distMm = distance

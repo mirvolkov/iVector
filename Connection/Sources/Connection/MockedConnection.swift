@@ -92,6 +92,10 @@ extension MockedConnection: Behavior {
         try await Task.sleep(nanoseconds: 100_000_000)
     }
 
+    public func oled(with data: Data) async throws {
+        logger.debug("OLED")
+    }
+
     public func setHeadAngle(_ angle: Float) async throws {
         logger.debug("setHeadAngle \(angle)")
         try await Task.sleep(nanoseconds: 100_000_000)

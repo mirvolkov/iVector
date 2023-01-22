@@ -53,6 +53,11 @@ public protocol Behavior {
     /// - Throws error set eye color failed
     func setEyeColor(_ hue: Float, _ sat: Float) async throws
 
+    /// Set out image into OLED
+    /// - Parameter image
+    /// - Throws error set eye color failed
+    func oled(with data: Data) async throws
+
     /// Set head angle
     /// - Parameter angle 22.000000..45.000000 range
     /// - Throws set angle error failed
