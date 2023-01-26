@@ -65,7 +65,9 @@ extension MockedConnection: Audio {
         }
     }
 
-    public func playAudio(stream: AsyncStream<VectorAudioFrame>) throws {}
+    public func playAudio(stream: AsyncStream<VectorAudioFrame>) throws {
+        print("TTS mocked method. Please note, this doesn't use AVPlayer and produce nothing more than silence")
+    }
 }
 
 extension MockedConnection: Camera {
