@@ -6,7 +6,8 @@ public protocol Executor {
     var pc: (Int, Int)? { get }
     
     /// Run new program
-    func run(program: Program)
+    /// - Throws  possible error
+    func run(program: Program) async throws
     
     /// cancel running program
     func cancel()

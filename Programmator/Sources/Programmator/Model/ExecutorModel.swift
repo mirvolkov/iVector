@@ -21,7 +21,7 @@ public final class ExecutorModel: Executor {
     private let connection: ConnectionModel
 
     /// Executor running task. Boolean value shows if task is still running (false = not completed, true = completed)
-    private var task: Task<Bool, Error>?
+    private var task: Task<Void, Error>?
 
     /// Buffer of text input
     private var buffer = Deque<String>()
@@ -33,36 +33,31 @@ public final class ExecutorModel: Executor {
         self.connection = connection
     }
 
-    public func run(program: Program) {
+    public func run(program: Program) async throws {
         running = program
         task = Task.detached(operation: {
-            do {
-                var pc = 1
-                let instructions = try await program.instructions
-                self.conditions = instructions
-                    .map { instruction in
-                        switch instruction {
-                        case .cmp(let condition, let programID):
-                            return ExecutorCondition(condition.value, programID)
-                        default:
-                            return nil
-                        }
-                    }.compactMap { $0 }
+            var pc = 1
+            let instructions = try await program.instructions
+            self.conditions = instructions
+                .map { instruction in
+                    switch instruction {
+                    case .cmp(let condition, let programID):
+                        return ExecutorCondition(condition.value, programID)
+                    default:
+                        return nil
+                    }
+                }.compactMap { $0 }
 
-                var stack = instructions.makeIterator()
-                while let instruction = stack.next() {
-                    self.pc = (pc, instructions.count)
-                    try Task.checkCancellation()
-                    try await self.run(instruction: instruction)
-                    pc += 1
-                }
-
-                return true
-            } catch {
-                print(error)
-                return false
+            var stack = instructions.makeIterator()
+            while let instruction = stack.next() {
+                self.pc = (pc, instructions.count)
+                try Task.checkCancellation()
+                try await self.run(instruction: instruction)
+                pc += 1
             }
         })
+        
+        try await task?.value
     }
 
     public func cancel() {
@@ -128,7 +123,7 @@ public final class ExecutorModel: Executor {
                .programs
                .first(where: { $0.name == value })
             {
-                run(program: prog)
+                try await run(program: prog)
             }
         }
     }
