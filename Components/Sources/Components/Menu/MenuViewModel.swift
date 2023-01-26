@@ -5,12 +5,12 @@ import SwiftUI
 import Programmator
 
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
-    @Published var memory: Bool = false
-    @Published var batt: Image? = .init(systemName: "battery.0")
-    @Published var prog: String = .init()
-    @Published var items: [Program] = []
-    @Published var isRunning = false
-    @Published var loadProgramPopover = false
+    @MainActor @Published var memory: Bool = false
+    @MainActor @Published var batt: Image? = .init(systemName: "battery.0")
+    @MainActor @Published var prog: String = .init()
+    @MainActor @Published var items: [Program] = []
+    @MainActor @Published var isRunning = false
+    @MainActor @Published var execError: Error? = nil
 
     private let connection: ConnectionModel
     private let executor: ExecutorModel
@@ -63,8 +63,9 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     }
 
     func onProgTap() {
-        Task { items = try await AssemblerModel.programs }
-        loadProgramPopover = true
+        Task { @MainActor [self] in
+            items = try await AssemblerModel.programs
+        }
     }
 
     func onCancelTap() {
@@ -72,7 +73,14 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     }
 
     func onItemSelected(item: Program) {
-        loadProgramPopover = false
-        executor.run(program: item)
+        Task {
+            do {
+                try await executor.run(program: item)
+            } catch {
+                await MainActor.run {
+                    self.execError = error
+                }
+            }
+        }
     }
 }

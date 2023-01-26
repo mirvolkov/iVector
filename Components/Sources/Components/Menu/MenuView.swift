@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MenuView: View {
     @ObservedObject var viewModel: MenuViewModel
+    @State private var loadProgramPopover = false
 
     var body: some View {
         HStack {
@@ -26,6 +27,7 @@ struct MenuView: View {
                 .foregroundColor(.white)
                 .padding(.horizontal, 8)
                 .onTapGesture {
+                    loadProgramPopover = true
                     viewModel.onProgTap()
                 }
 
@@ -44,8 +46,10 @@ struct MenuView: View {
         .onAppear {
             viewModel.bind()
         }
-        .popover(isPresented: $viewModel.loadProgramPopover, content: {
-            PickListPopover(viewModel: viewModel)
+        .popover(isPresented: $loadProgramPopover, content: {
+            PickListPopover(viewModel: viewModel) {
+                loadProgramPopover = false
+            }
         })
         .opacity(0.85)
     }

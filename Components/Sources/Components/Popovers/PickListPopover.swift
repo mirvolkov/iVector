@@ -9,6 +9,7 @@ protocol PickListPopoverCallback: ObservableObject where ListItem: CustomStringC
 struct PickListPopover<ViewModel: PickListPopoverCallback>: View {
     @ObservedObject var viewModel: ViewModel
     @State var items: [ViewModel.ListItem] = []
+    var onPickerDismiss: () -> () = { }
 
     var body: some View {
         List(items, id: \.description) { item in
@@ -16,6 +17,7 @@ struct PickListPopover<ViewModel: PickListPopoverCallback>: View {
                 .font(vectorRegular(18))
                 .onTapGesture {
                     viewModel.onItemSelected(item: item)
+                    onPickerDismiss()
                 }
         }
         .task {
