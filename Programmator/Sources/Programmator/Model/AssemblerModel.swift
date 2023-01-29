@@ -3,7 +3,7 @@ import Combine
 import Foundation
 import Features
 
-public final class AssemblerModel: Assembler, ObservableObject {
+public final class AssemblerModel: Assembler, ObservableObject, @unchecked Sendable {
     @Published public var program: DequeModule.Deque<Instruction> = []
     @Published public var current: Instruction?
 

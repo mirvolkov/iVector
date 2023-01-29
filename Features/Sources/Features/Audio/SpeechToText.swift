@@ -4,7 +4,7 @@ import Foundation
 import OSLog
 import Speech
 
-public protocol SpeechRecognizer {
+public protocol SpeechRecognizer: Sendable {
     typealias Callback = (String) -> Void
 
     var available: PassthroughSubject<Bool, Never> { get }

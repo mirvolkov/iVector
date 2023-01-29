@@ -27,10 +27,6 @@
 		E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461D528DF460500A83CB0 /* ComposableArchitecture */; };
 		E697105828E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697105928E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
-		E697105A28E9AF3A00A0B2D0 /* Mock.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */; };
-		E697105B28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105328E9AD0300A0B2D0 /* Live.xcconfig */; };
-		E697105C28E9AF3A00A0B2D0 /* Mock.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */; };
-		E697105D28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E697105328E9AD0300A0B2D0 /* Live.xcconfig */; };
 		E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106128EAC0DC00A0B2D0 /* Programmator */; };
 		E697106428EAC20400A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106328EAC20400A0B2D0 /* Programmator */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
@@ -226,7 +222,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1330;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1410;
 				TargetAttributes = {
 					E67160D128BCFE8200F79DA2 = {
 						CreatedOnToolsVersion = 13.3.1;
@@ -263,8 +259,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E697105A28E9AF3A00A0B2D0 /* Mock.xcconfig in Resources */,
-				E697105B28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */,
 				E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,8 +267,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E697105C28E9AF3A00A0B2D0 /* Mock.xcconfig in Resources */,
-				E697105D28E9AF3A00A0B2D0 /* Live.xcconfig in Resources */,
 				E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +385,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -451,6 +444,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -560,6 +554,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
@@ -594,6 +589,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = K8GMF5PASC;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -651,6 +647,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -727,6 +724,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;

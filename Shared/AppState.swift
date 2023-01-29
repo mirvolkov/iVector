@@ -22,7 +22,7 @@ enum VectorAppAction {
     case stt(String)
 }
 
-class VectorAppEnvironment {
+final class VectorAppEnvironment: Sendable {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
     let assembler: AssemblerModel = .init()
@@ -75,7 +75,7 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
     }
 }
 
-final class AppState {
+final class AppState: Sendable {
     static let env = VectorAppEnvironment()
     static let store = Store<VectorAppState, VectorAppAction>(initialState: .initial, reducer: reducer, environment: env)
     private var bag = Set<AnyCancellable>()

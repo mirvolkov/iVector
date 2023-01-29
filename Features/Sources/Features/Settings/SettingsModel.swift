@@ -1,6 +1,6 @@
 import SwiftUI
 
-public final class SettingsModel {
+public final class SettingsModel: @unchecked Sendable {
     /// Vector's IP port
     @AppStorage("port") public var port: Int = 443
     /// Vector's IP address
