@@ -472,9 +472,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "iVector (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
@@ -495,6 +497,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = iVector;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = iVector;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -511,9 +514,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "iVector (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
@@ -534,6 +539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = iVector;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = iVector;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -682,9 +688,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "iVector (iOS).entitlements";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
@@ -705,6 +713,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = iVector;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = iVector;
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
