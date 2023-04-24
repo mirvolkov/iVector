@@ -15,9 +15,9 @@ public struct LottieView: UIViewRepresentable {
         self.loopMode = loopModel
     }
     
-    public func makeUIView(context: UIViewRepresentableContext<LottieView>) -> AnimationView {
-        let animationView = AnimationView()
-        let animation = Animation.named(name, bundle: Bundle.module, subdirectory: nil, animationCache: nil)
+    public func makeUIView(context: UIViewRepresentableContext<LottieView>) -> LottieAnimationView {
+        let animationView = LottieAnimationView()
+        let animation = LottieAnimation.named(name, bundle: Bundle.module, subdirectory: nil, animationCache: nil)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFill
         animationView.loopMode = loopMode
@@ -25,7 +25,7 @@ public struct LottieView: UIViewRepresentable {
         return animationView
     }
 
-    public func updateUIView(_ uiView: AnimationView, context: UIViewRepresentableContext<LottieView>) {}
+    public func updateUIView(_ uiView: LottieAnimationView, context: UIViewRepresentableContext<LottieView>) {}
 }
 #endif
 
@@ -39,9 +39,9 @@ public struct LottieView: NSViewRepresentable {
         self.loopMode = loopModel
     }
     
-    public func makeNSView(context: NSViewRepresentableContext<LottieView>) -> AnimationView {
-        let animationView = AnimationView()
-        let animation = Animation.named(name, bundle: Bundle.module, subdirectory: nil, animationCache: nil)
+    public func makeNSView(context: NSViewRepresentableContext<LottieView>) -> LottieAnimationView {
+        let animationView = LottieAnimationView()
+        let animation = LottieAnimation.named(name, bundle: Bundle.module, subdirectory: nil, animationCache: nil)
         animationView.animation = animation
         animationView.contentMode = .scaleAspectFill
         animationView.loopMode = loopMode
@@ -49,6 +49,6 @@ public struct LottieView: NSViewRepresentable {
         return animationView
     }
 
-    public func updateNSView(_ uiView: AnimationView, context: NSViewRepresentableContext<LottieView>) {}
+    public func updateNSView(_ uiView: LottieAnimationView, context: NSViewRepresentableContext<LottieView>) {}
 }
 #endif

@@ -28,7 +28,7 @@ let package = Package(
         .package(path: "../Programmator"),
         .package(url: "https://github.com/Quick/Quick", branch: "main"),
         .package(url: "https://github.com/Quick/Nimble", branch: "main"),
-        .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.4.3"),
+        .package(url: "https://github.com/airbnb/lottie-ios", exact: "4.1.3"),
         .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0")
     ],
     targets: [
