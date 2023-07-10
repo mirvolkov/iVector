@@ -3,6 +3,12 @@ import Components
 
 @main
 struct iVectorApp: App {
+#if os(iOS)
+    @UIApplicationDelegateAdaptor(iVectorAppDelegate.self) private var delegate: iVectorAppDelegate
+#elseif os(macOS)
+    @NSApplicationDelegateAdaptor(iVectorAppDelegate.self) private var delegate: iVectorAppDelegate
+#endif
+
     let app = AppState()
     
     init() {

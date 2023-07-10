@@ -25,6 +25,8 @@
 		E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68461A328DE25A700A83CB0 /* HomePhone.swift */; };
 		E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461A828DF094700A83CB0 /* ComposableArchitecture */; };
 		E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461D528DF460500A83CB0 /* ComposableArchitecture */; };
+		E6914ABA2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
+		E6914ABB2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
 		E697105828E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697105928E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106128EAC0DC00A0B2D0 /* Programmator */; };
@@ -46,6 +48,7 @@
 		E67160DA28BCFE8200F79DA2 /* macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = macOS.entitlements; sourceTree = "<group>"; };
 		E67160E928BCFF0B00F79DA2 /* Connection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Connection; sourceTree = "<group>"; };
 		E68461A328DE25A700A83CB0 /* HomePhone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhone.swift; sourceTree = "<group>"; };
+		E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iVectorAppDelegate.swift; sourceTree = "<group>"; };
 		E697104A28E5A90900A0B2D0 /* Programmator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Programmator; sourceTree = "<group>"; };
 		E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Mock.xcconfig; sourceTree = "<group>"; };
 		E697105328E9AD0300A0B2D0 /* Live.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Live.xcconfig; sourceTree = "<group>"; };
@@ -101,6 +104,7 @@
 			isa = PBXGroup;
 			children = (
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
+				E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */,
 				E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */,
 				E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */,
 				E68461A328DE25A700A83CB0 /* HomePhone.swift */,
@@ -318,6 +322,7 @@
 			files = (
 				E64D7CFE28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
+				E6914ABA2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */,
 				E63933A528C1F729007C1F79 /* AppState.swift in Sources */,
 				E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
@@ -331,6 +336,7 @@
 			files = (
 				E64D7CFF28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0528D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
+				E6914ABB2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */,
 				E63933A628C1F729007C1F79 /* AppState.swift in Sources */,
 				E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
@@ -474,7 +480,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
@@ -516,7 +522,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;
@@ -690,7 +696,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = K8GMF5PASC;
 				ENABLE_PREVIEWS = YES;

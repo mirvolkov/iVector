@@ -97,6 +97,7 @@ extension VectorConnection: Behavior {
     }
 
     /// set_screen_with_image_data expected 35328 bytes - (2 bytes each for 17664 pixels)
+    /// The screen is 184 x 96 color (RGB565) pixels.
     public func oled(with data: Data) async throws {
         var request = Anki_Vector_ExternalInterface_DisplayFaceImageRGBRequest()
         request.faceData = data

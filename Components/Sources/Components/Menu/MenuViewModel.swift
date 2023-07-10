@@ -41,24 +41,22 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
             .store(in: &bag)
 
         Task { @MainActor [self] in
-            await self.connection.battery
-                .receive(on: RunLoop.main)
-                .map {
-                    switch $0 {
-                    case .unknown:
-                        return nil
-                    case .charging:
-                        return .init(systemName: "battery.100.bolt")
-                    case .full:
-                        return .init(systemName: "battery.100")
-                    case .normal:
-                        return .init(systemName: "battery.50")
-                    case .low:
-                        return .init(systemName: "battery.25")
-                    }
+            while let battery = try await self.connection.battery {
+                switch battery {
+                case .unknown:
+                    batt = nil
+                case .charging:
+                    batt = .init(systemName: "battery.100.bolt")
+                case .full:
+                    batt = .init(systemName: "battery.100")
+                case .normal:
+                    batt = .init(systemName: "battery.50")
+                case .low:
+                    batt = .init(systemName: "battery.25")
                 }
-                .weakAssign(to: \.batt, on: self)
-                .store(in: &self.bag)
+                
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+            }
         }
     }
 

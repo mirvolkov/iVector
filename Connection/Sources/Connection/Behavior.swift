@@ -55,11 +55,13 @@ public protocol Behavior {
 
     /// Set out image into OLED
     /// - Parameter image
-    /// - Throws error set eye color failed
+    ///      expected 35328 bytes - (2 bytes each for 17664 pixels)
+    ///      screen is 184 x 96 color (RGB565) pixels.
+    /// - Throws draw OLED failed
     func oled(with data: Data) async throws
 
     /// Set head angle
-    /// - Parameter angle 22.000000..45.000000 range
+    /// - Parameter angle 22..45 range
     /// - Throws set angle error failed
     func setHeadAngle(_ angle: Float) async throws
 
