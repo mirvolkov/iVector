@@ -10,7 +10,7 @@ public typealias EventStream =
         Anki_Vector_ExternalInterface_EventResponse>
 
 /// Anki Vector's connection protocol
-public protocol Connection {
+public protocol Vector {
     /// Connection delegate
     var delegate: ConnectionDelegate? { get set }
 

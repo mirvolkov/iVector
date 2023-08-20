@@ -27,6 +27,8 @@
 		E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461D528DF460500A83CB0 /* ComposableArchitecture */; };
 		E6914ABA2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
 		E6914ABB2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
+		E6914AD12A5C83FD00FD64AB /* BLE in Frameworks */ = {isa = PBXBuildFile; productRef = E6914AD02A5C83FD00FD64AB /* BLE */; };
+		E6914AD32A5C840300FD64AB /* BLE in Frameworks */ = {isa = PBXBuildFile; productRef = E6914AD22A5C840300FD64AB /* BLE */; };
 		E697105828E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697105928E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106128EAC0DC00A0B2D0 /* Programmator */; };
@@ -49,6 +51,7 @@
 		E67160E928BCFF0B00F79DA2 /* Connection */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Connection; sourceTree = "<group>"; };
 		E68461A328DE25A700A83CB0 /* HomePhone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePhone.swift; sourceTree = "<group>"; };
 		E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iVectorAppDelegate.swift; sourceTree = "<group>"; };
+		E6914ACF2A5C82D100FD64AB /* BLE */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BLE; sourceTree = "<group>"; };
 		E697104A28E5A90900A0B2D0 /* Programmator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Programmator; sourceTree = "<group>"; };
 		E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Mock.xcconfig; sourceTree = "<group>"; };
 		E697105328E9AD0300A0B2D0 /* Live.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Live.xcconfig; sourceTree = "<group>"; };
@@ -63,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6914AD12A5C83FD00FD64AB /* BLE in Frameworks */,
 				E6C35C1E28BD0D090098F78A /* Connection in Frameworks */,
 				E6624C6928C0985200DE292F /* Features in Frameworks */,
 				E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */,
@@ -75,6 +79,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6914AD32A5C840300FD64AB /* BLE in Frameworks */,
 				E6C35C7428BF5E140098F78A /* Connection in Frameworks */,
 				E6624C6728C0984800DE292F /* Features in Frameworks */,
 				E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */,
@@ -140,6 +145,7 @@
 				E6C35C7A28BFDE220098F78A /* Features */,
 				E67160E928BCFF0B00F79DA2 /* Connection */,
 				E697104A28E5A90900A0B2D0 /* Programmator */,
+				E6914ACF2A5C82D100FD64AB /* BLE */,
 			);
 			name = Packages;
 			sourceTree = "<group>";
@@ -184,6 +190,7 @@
 				E60EBA1B28C89DB300B865E2 /* Components */,
 				E68461A828DF094700A83CB0 /* ComposableArchitecture */,
 				E697106128EAC0DC00A0B2D0 /* Programmator */,
+				E6914AD02A5C83FD00FD64AB /* BLE */,
 			);
 			productName = "iVector (iOS)";
 			productReference = E67160D228BCFE8200F79DA2 /* iVector.app */;
@@ -210,6 +217,7 @@
 				E60EBA1D28C89DB700B865E2 /* Components */,
 				E68461D528DF460500A83CB0 /* ComposableArchitecture */,
 				E697106328EAC20400A0B2D0 /* Programmator */,
+				E6914AD22A5C840300FD64AB /* BLE */,
 			);
 			productName = "iVector (macOS)";
 			productReference = E67160D828BCFE8200F79DA2 /* iVector.app */;
@@ -487,6 +495,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow vector to access your mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -529,6 +539,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow vector to access your mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -572,6 +584,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--macOS--Info.plist";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -608,6 +622,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--macOS--Info.plist";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -703,6 +719,8 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--iOS--Info.plist";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow vector to access your mic";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -745,6 +763,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "iVector--macOS--Info.plist";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Requesting BT permissions";
+				INFOPLIST_KEY_NSBluetoothPeripheralUsageDescription = "Requesting BT permissions";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Vector is listening!";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -845,6 +865,14 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
+		};
+		E6914AD02A5C83FD00FD64AB /* BLE */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BLE;
+		};
+		E6914AD22A5C840300FD64AB /* BLE */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BLE;
 		};
 		E697106128EAC0DC00A0B2D0 /* Programmator */ = {
 			isa = XCSwiftPackageProductDependency;

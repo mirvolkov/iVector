@@ -3,8 +3,8 @@ import Connection
 import Foundation
 import os.log
 
-public final actor ConnectionModel {
-    typealias VectorDevice = Connection & Behavior & Camera & Audio & Sendable
+public final actor VectorConnectionModel {
+    typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -155,7 +155,7 @@ public final actor ConnectionModel {
     }
 }
 
-extension ConnectionModel: ConnectionDelegate {
+extension VectorConnectionModel: ConnectionDelegate {
     public nonisolated func didGrantedControl() {
         Task.detached { await self.state.send(.online) }
     }
@@ -183,7 +183,7 @@ extension ConnectionModel: ConnectionDelegate {
     }
 }
 
-public extension ConnectionModel {
+public extension VectorConnectionModel {
     func dock() async throws {
         try await vectorDevice?.driveOnCharger()
     }
