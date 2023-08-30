@@ -18,7 +18,7 @@ public final class ExecutorModel: Executor {
     @Published public var pc: (Int, Int)?
 
     /// Connection instance
-    private let connection: ConnectionModel
+    public let connection: ConnectionModel
 
     /// Executor running task. Boolean value shows if task is still running (false = not completed, true = completed)
     private var task: Task<Void, Error>?
@@ -31,6 +31,17 @@ public final class ExecutorModel: Executor {
 
     public init(with connection: ConnectionModel) {
         self.connection = connection
+    }
+
+    public func cancel() {
+        task?.cancel()
+        conditions.removeAll()
+        running = nil
+        pc = nil
+    }
+
+    public func input(text: String) {
+        buffer.append(text.lowercased())
     }
 
     public func run(program: Program) async throws {
@@ -56,38 +67,27 @@ public final class ExecutorModel: Executor {
                 pc += 1
             }
         })
-        
+
         try await task?.value
-    }
-
-    public func cancel() {
-        task?.cancel()
-        conditions.removeAll()
-        running = nil
-        pc = nil
-    }
-
-    public func input(text: String) {
-        buffer.append(text.lowercased())
     }
 
     private func run(instruction: Instruction) async throws {
         switch instruction {
         case .dock:
-            try await connection.dock()
+            try await connection.behavior?.driveOnCharger()
         case .undock:
-            try await connection.undock()
+            try await connection.behavior?.driveOffCharger()
         case .liftUp:
             try await connection.behavior?.lift(1)
         case .liftDown:
             try await connection.behavior?.lift(0)
         case .say(let ext):
             if let value = ext.value {
-                try await connection.say(text: value)
+                try connection.say(text: value)
             }
         case .play(let ext):
             if let value = ext.value {
-                try await connection.play(name: value)
+                try connection.play(name: value)
             }
         case .forward(let ext):
             if let value = ext.value {

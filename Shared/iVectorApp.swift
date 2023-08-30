@@ -1,5 +1,8 @@
-import SwiftUI
+import Combine
 import Components
+import ComposableArchitecture
+import Features
+import SwiftUI
 
 @main
 struct iVectorApp: App {
@@ -9,28 +12,34 @@ struct iVectorApp: App {
     @NSApplicationDelegateAdaptor(iVectorAppDelegate.self) private var delegate: iVectorAppDelegate
 #endif
 
-    let app = AppState()
-    
+    let env: VectorAppEnvironment
+    let store: Store<VectorAppState, VectorAppAction>
+
     init() {
-        app.bind()
+        env = VectorAppEnvironment()
+        store = Store<VectorAppState, VectorAppAction>(
+            initialState: .offline,
+            reducer: reducer,
+            environment: env
+        )
     }
 
     var body: some Scene {
         WindowGroup {
+            WithViewStore(store) { viewStore in
 #if os(macOS)
-            HomeDesktop()
-                .withErrorHandler()
+                HomeDesktop()
+#elseif os(iOS)
+                if UIDevice.current.userInterfaceIdiom == .pad {
+                    HomeTablet()
+                } else {
+                    HomePhone()
+                }
 #endif
-
-#if os(iOS)
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                HomeTablet()
-                    .withErrorHandler()
-            } else {
-                HomePhone()
-                    .withErrorHandler()
             }
-#endif
+            .environmentObject(env)
+            .environmentObject(store)
+            .withErrorHandler()
         }
     }
 }

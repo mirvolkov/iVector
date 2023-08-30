@@ -4,52 +4,50 @@ import SwiftUI
 
 extension ControlPanelViewModel {
     func bind() {
-        Task { @MainActor [self] in
-            await self.connection.state
-                .receive(on: RunLoop.main)
-                .map { newState in if case .online = newState { return true } else { return false } }
-                .weakAssign(to: \.isConnected, on: self)
-                .store(in: &self.bag)
+        connection.state
+            .receive(on: RunLoop.main)
+            .map { newState in if case .online = newState { return true } else { return false } }
+            .weakAssign(to: \.isConnected, on: self)
+            .store(in: &self.bag)
+        
+        assembler.$current
+            .receive(on: RunLoop.main)
+            .map { [unowned self] current in
+                self.reactToCurrent(current)
+            }
+            .assign(to: \.mode, on: self)
+            .store(in: &bag)
 
-            assembler.$current
-                .receive(on: RunLoop.main)
-                .map { [unowned self] current in
-                    self.reactToCurrent(current)
-                }
-                .assign(to: \.mode, on: self)
-                .store(in: &bag)
+        esc.$onEsc
+            .filter { $0 }
+            .receive(on: RunLoop.main)
+            .sink { _ in
+                self.assembler.esc()
+            }
+            .store(in: &bag)
 
-            esc.$onEsc
-                .filter { $0 }
-                .receive(on: RunLoop.main)
-                .sink { _ in
-                    self.assembler.esc()
-                }
-                .store(in: &bag)
+        enter.$onEnter
+            .filter { $0 }
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.assembler.enter()
+            }
+            .store(in: &bag)
 
-            enter.$onEnter
-                .filter { $0 }
-                .receive(on: RunLoop.main)
-                .sink { [weak self] _ in
-                    self?.assembler.enter()
-                }
-                .store(in: &bag)
+        save.$saveError
+            .compactMap { $0 }
+            .sink { [weak self] error in
+                self?.saveError?.handle(error: error)
+            }
+            .store(in: &bag)
 
-            save.$saveError
-                .compactMap { $0 }
-                .sink { [weak self] error in
-                    self?.saveError?.handle(error: error)
-                }
-                .store(in: &bag)
-
-            bind(with: assembler.$current.map { $0?.description }, destination: \.command)
-            bind(with: play.$showAudioListPopover, destination: \.playPopover)
-            bind(with: tts.$ttsAlert, destination: \.ttsAlert)
-            bind(with: save.$showSavePopover, destination: \.showSavePopover)
-            bind(with: exec.$showPrograms, destination: \.showPrograms)
-            bind(with: btn7.$showVisionObjects, destination: \.showVisionObjects)
-            bind(with: btn9.$showTextRequest, destination: \.showTextRequest)
-        }
+        bind(with: assembler.$current.map { $0?.description }, destination: \.command)
+        bind(with: play.$showAudioListPopover, destination: \.playPopover)
+        bind(with: tts.$ttsAlert, destination: \.ttsAlert)
+        bind(with: save.$showSavePopover, destination: \.showSavePopover)
+        bind(with: exec.$showPrograms, destination: \.showPrograms)
+        bind(with: btn7.$showVisionObjects, destination: \.showVisionObjects)
+        bind(with: btn9.$showTextRequest, destination: \.showTextRequest)
     }
 
     func unbind() {

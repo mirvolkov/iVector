@@ -3,8 +3,9 @@ import Connection
 import Foundation
 import os.log
 
-public final actor VectorConnectionModel {
+public final class ConnectionModel {
     typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
+    typealias PathfinderDevice = Pathfinder & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -22,10 +23,8 @@ public final actor VectorConnectionModel {
     /// Vector camera feed access
     /// - Description grants camera feed
     /// - Returns optinal AsyncStream with camera feed
-    public var camera: AsyncStream<VectorCameraFrame>? {
-        get throws {
-            try vectorDevice?.requestCameraFeed()
-        }
+    public var camera: Camera? {
+        vectorDevice
     }
 
     /// Vector microphone feed access
@@ -52,14 +51,14 @@ public final actor VectorConnectionModel {
     public var robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
     private var vectorDevice: VectorDevice?
+    private var pathfinderDevice: PathfinderDevice?
+
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
 
     public init() {
-        Task {
-            await self.bind()
-        }
+        bind()
     }
 
     public func bind() {
@@ -69,41 +68,40 @@ public final actor VectorConnectionModel {
             .store(in: &bag)
     }
 
-    public nonisolated func connect(with ipAddress: String, port: Int = 443) async throws {
-        let connectTask: Task = .detached {
-            guard case .disconnected = await self.state.value else {
-                return
-            }
-
-            await self.setConnection(try VectorConnection(with: ipAddress, port: port))
-            await self.vectorDevice?.delegate = self
-            do {
-                await self.state.send(.connecting)
-                try await self.vectorDevice?.requestControl()
-            } catch {
-                self.logger.error("\(error.localizedDescription)")
-                await self.state.send(.disconnected)
-            }
+    public func connect(with ipAddress: String, port: Int = 443) async throws {
+        guard case .disconnected = state.value else {
+            return
         }
 
-        try await connectTask.result.get()
+        setConnection(try VectorConnection(with: ipAddress, port: port))
+        vectorDevice?.delegate = self
+
+        do {
+            state.send(.connecting)
+            try vectorDevice?.requestControl()
+        } catch {
+            logger.error("\(error.localizedDescription)")
+            state.send(.disconnected)
+        }
     }
 
-    public nonisolated func mock() async {
-        Task.detached {
-            guard case .disconnected = await self.state.value else {
-                return
-            }
+    public func connect() async throws {
+        pathfinderDevice = PathfinderConnection()
+    }
 
-            await self.setConnection(MockedConnection())
-            await self.vectorDevice?.delegate = self
-            do {
-                await self.state.send(.connecting)
-                try await self.vectorDevice?.requestControl()
-            } catch {
-                self.logger.error("\(error.localizedDescription)")
-                await self.state.send(.disconnected)
-            }
+    public func mock() async {
+        guard case .disconnected = state.value else {
+            return
+        }
+
+        setConnection(MockedConnection())
+        vectorDevice?.delegate = self
+        do {
+            state.send(.connecting)
+            try vectorDevice?.requestControl()
+        } catch {
+            logger.error("\(error.localizedDescription)")
+            state.send(.disconnected)
         }
     }
 
@@ -155,40 +153,26 @@ public final actor VectorConnectionModel {
     }
 }
 
-extension VectorConnectionModel: ConnectionDelegate {
-    public nonisolated func didGrantedControl() {
-        Task.detached { await self.state.send(.online) }
+extension ConnectionModel: ConnectionDelegate {
+    public func didGrantedControl() {
+        state.send(.online)
     }
 
-    public nonisolated func didFailedRequest() {
-        Task.detached { await self.state.send(.disconnected) }
+    public func didFailedRequest() {
+        state.send(.disconnected)
     }
 
-    public nonisolated func keepAlive() {
-        Task.detached {
-            if await self.state.value == .disconnected {
-                await self.state.send(.connecting)
-            }
+    public func keepAlive() {
+        if state.value == .disconnected {
+            state.send(.connecting)
         }
     }
 
-    public nonisolated func didClose() {
-        Task.detached {
-            await self.state.send(.disconnected)
-        }
+    public func didClose() {
+        state.send(.disconnected)
     }
 
-    public nonisolated func onRobot(state: Anki_Vector_ExternalInterface_RobotState) {
-        Task.detached { await self.robotState.send(state) }
-    }
-}
-
-public extension VectorConnectionModel {
-    func dock() async throws {
-        try await vectorDevice?.driveOnCharger()
-    }
-
-    func undock() async throws {
-        try await vectorDevice?.driveOffCharger()
+    public func onRobot(state: Anki_Vector_ExternalInterface_RobotState) {
+        robotState.send(state)
     }
 }

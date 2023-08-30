@@ -29,17 +29,17 @@ public protocol Pathfinder {
     func disconnect() async throws
 }
 
-class PathfinderConnection: Pathfinder {
+public final class PathfinderConnection: Pathfinder {
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "pathfinder")
     private let ble = BLE(["PF2"])
     private var bag = Set<AnyCancellable>()
     private var continuation: CheckedContinuation<Void, Error>?
 
-    var online: Bool = false
-    var sonar: PFSonar = .zero
-    var current: Int = 0
+    public var online: Bool = false
+    public var sonar: PFSonar = .zero
+    public var current: Int = 0
 
-    init() {
+    public init() {
         ble.$isOnline.sink { [weak self] online in
             self?.online = online
             if let continuation = self?.continuation, online {

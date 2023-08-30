@@ -5,14 +5,15 @@ import Features
 import SwiftUI
 
 struct DetailPanel: View {
-    let store = AppState.store
+    @EnvironmentObject private var store: VectorStore
+    @EnvironmentObject private var env: VectorAppEnvironment
 
     var body: some View {
         WithViewStore(store) { viewStore in
             switch viewStore.state {
             case .online(let vision, let executor):
                 VisionView(
-                    connection: AppState.env.connection,
+                    connection: env.connection,
                     vision: vision,
                     executor: executor
                 )

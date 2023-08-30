@@ -8,10 +8,6 @@ import Programmator
 enum VectorAppState: Equatable {
     case offline
     case online(VisionModel, ExecutorModel)
-
-    fileprivate static var initial: Self {
-        .offline
-    }
 }
 
 enum VectorAppAction {
@@ -19,21 +15,13 @@ enum VectorAppAction {
     case connected
     case disconnect
     case disconnected
-    case stt(String)
 }
 
-final class VectorAppEnvironment: Sendable {
+final class VectorAppEnvironment: ObservableObject, Sendable {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
-    let assembler: AssemblerModel = .init()
-    let settings: SettingsModel = .init()
-    var stt: SpeechRecognizer?
-
-    init() {
-#if os(iOS)
-        self.stt = STT.shared
-#endif
-    }
+    let settings = SettingsModel()
+    let assembler = AssemblerModel()
 }
 
 let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { state, action, env in
@@ -45,7 +33,9 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
             } else {
                 try await env.connection.connect(with: settings.ip, port: settings.port)
             }
-        }
+        }.concatenate(with: Effect.task(operation: {
+            VectorAppAction.connected
+        }))
 
     case .connected:
         state = .online(
@@ -58,63 +48,16 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
         return Effect.task {
             await env.connection.disconnect()
             return .disconnected
-        }
+        }.concatenate(with: Effect.task(operation: {
+            VectorAppAction.disconnected
+        }))
 
     case .disconnected:
         state = .offline
         return .none
-
-    case .stt(let text):
-        switch state {
-        case .offline:
-            break
-        case .online(_, let executorModel):
-            executorModel.input(text: text)
-        }
-        return .none
     }
 }
 
-final class AppState: Sendable {
-    static let env = VectorAppEnvironment()
-    static let store = Store<VectorAppState, VectorAppAction>(initialState: .initial, reducer: reducer, environment: env)
-    private var bag = Set<AnyCancellable>()
+typealias VectorStore = Store<VectorAppState, VectorAppAction>
 
-    func bind() {
-        let viewStore = ViewStore<VectorAppState, VectorAppAction>(Self.store)
-        
-        Task { @MainActor [self] in
-            await Self.env.connection
-                .state
-                .receive(on: RunLoop.main)
-                .sink { state in
-                    switch state {
-                    case .connecting:
-                        break
-
-                    case .disconnected:
-                        viewStore.send(.disconnected)
-
-                    case .online:
-                        viewStore.send(.connected)
-                    }
-                }
-                .store(in: &self.bag)
-        }
-
-        Task {
-            Self.env.stt?.stt
-                .map { VectorAppAction.stt($0) }
-                .receive(on: RunLoop.main)
-                .sink { [weak viewStore] action in
-                    viewStore?.send(action)
-                }
-                .store(in: &bag)
-
-            Self.env.stt?.start(
-                currentLocale: .init(identifier: Self.env.settings.locale),
-                onEdge:true
-            )
-        }
-    }
-}
+extension VectorStore: ObservableObject {}

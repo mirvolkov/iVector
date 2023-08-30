@@ -1,4 +1,4 @@
-public protocol Executor {
+public protocol Executor {    
     /// Running program
     var running: Program? { get }
     

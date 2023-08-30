@@ -21,53 +21,54 @@ extension VisionView {
         public init(with connection: ConnectionModel, vision: VisionModel) {
             self.connection = connection
             self.vision = vision
-            Task.detached { @MainActor in
-                self.vision.$frame
-                    .receive(on: RunLoop.main)
-                    .weakAssign(to: \.frame, on: self)
-                    .store(in: &self.bag)
-                
-                self.vision.$isStreaming
-                    .receive(on: RunLoop.main)
-                    .weakAssign(to: \.isStreaming, on: self)
-                    .store(in: &self.bag)
-                
-                self.$headAngle
-                    .dropFirst()
-                    .map { $0 }
-                    .debounce(for: 0.5, scheduler: RunLoop.main)
-                    .sink { [weak self] value in
-                        Task {
-                            if let angle = self?.normToDegree(value) {
-                                try await self?.connection.behavior?.setHeadAngle(angle)
-                            }
+        }
+
+        public func bind() {
+            vision.$frame
+                .receive(on: RunLoop.main)
+                .weakAssign(to: \.frame, on: self)
+                .store(in: &self.bag)
+            
+            vision.$isStreaming
+                .receive(on: RunLoop.main)
+                .weakAssign(to: \.isStreaming, on: self)
+                .store(in: &self.bag)
+            
+            $headAngle
+                .dropFirst()
+                .map { $0 }
+                .debounce(for: 0.5, scheduler: RunLoop.main)
+                .sink { [weak self] value in
+                    Task {
+                        if let angle = self?.normToDegree(value) {
+                            try await self?.connection.behavior?.setHeadAngle(angle)
                         }
                     }
-                    .store(in: &self.bag)
+                }
+                .store(in: &self.bag)
 
-                await self.connection
-                    .robotState
-                    .first()
-                    .map { $0.headAngleRad }
-                    .map { Angle(radians: Double($0)) }
-                    .map { self.degreeToNorm($0.degrees) }
-                    .receive(on: RunLoop.main)
+            connection
+                .robotState
+                .first()
+                .map { $0.headAngleRad }
+                .map { Angle(radians: Double($0)) }
+                .map { self.degreeToNorm($0.degrees) }
+                .receive(on: RunLoop.main)
 //                    .weakAssign(to: \.headAngle, on: self)
-                    .sink(receiveValue: { val in
-                        print(val)
-                        self.headAngle = val
-                    })
-                    .store(in: &self.bag)
-            }
+                .sink(receiveValue: { val in
+                    print(val)
+                    self.headAngle = val
+                })
+                .store(in: &self.bag)
         }
         
         /// Start video feed
-        @MainActor public func start() {
+        public func start() {
             vision.start()
         }
         
         /// Stop video feed
-        @MainActor public func stop() {
+        public func stop() {
             vision.stop()
             isStreaming = false
         }

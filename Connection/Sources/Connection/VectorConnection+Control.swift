@@ -34,7 +34,7 @@ public enum VectorConnectionError: Error, Equatable {
     case noCertificate
 }
 
-public final class VectorConnection: Connection {
+public final class VectorConnection: Vector {
     public weak var delegate: ConnectionDelegate?
 
     let prefixURI = "/Anki.Vector.external_interface.ExternalInterface/"

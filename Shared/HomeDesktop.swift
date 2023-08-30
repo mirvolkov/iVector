@@ -1,21 +1,24 @@
 import Components
 import ComposableArchitecture
+import Features
 import Programmator
 import SwiftUI
 
 #if os(macOS)
 struct HomeDesktop: View {
     @State private var preferences = false
+    @EnvironmentObject private var store: VectorStore
+    @EnvironmentObject private var env: VectorAppEnvironment
 
     var body: some View {
         NavigationSplitView {
-            WithViewStore(AppState.store) { viewStore in
+            WithViewStore(store) { viewStore in
                 ControlPanelsView(
-                    connection: AppState.env.connection,
-                    settings: AppState.env.settings,
-                    assembler: AppState.env.assembler,
+                    connection: env.connection,
+                    settings: env.settings,
+                    assembler: env.assembler,
                     onConnect: {
-                        viewStore.send(.connect(AppState.env.settings))
+                        viewStore.send(.connect(env.settings))
                     }, onDisconnect: {
                         viewStore.send(.disconnect)
                     })

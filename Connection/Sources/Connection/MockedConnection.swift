@@ -26,7 +26,7 @@ func image(url: URL) -> Data {
 
 #endif
 
-public final class MockedConnection: Connection {
+public final class MockedConnection: Vector {
     public var delegate: ConnectionDelegate?
     private var eventStream: Timer?
     private var visionStream: Timer?

@@ -43,6 +43,14 @@ public struct VisionView: View {
             }
             #endif
         }
+        .onAppear {
+            menuViewModel.bind()
+            camViewModel.bind()
+            camViewModel.start()
+        }
+        .onDisappear {
+            camViewModel.stop()
+        }
         .overlay {
             facet
         }
