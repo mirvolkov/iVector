@@ -28,10 +28,13 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
     switch action {
     case .connect(let settings):
         return Effect.run { _ in
-            if env.config.useMocked {
+            switch env.config.device {
+            case .mock:
                 await env.connection.mock()
-            } else {
+            case .vector:
                 try await env.connection.connect(with: settings.ip, port: settings.port)
+            case .pathfinder:
+                try await env.connection.connect()
             }
         }.concatenate(with: Effect.task(operation: {
             VectorAppAction.connected
@@ -46,7 +49,7 @@ let reducer = Reducer<VectorAppState, VectorAppAction, VectorAppEnvironment> { s
 
     case .disconnect:
         return Effect.task {
-            await env.connection.disconnect()
+            env.connection.disconnect()
             return .disconnected
         }.concatenate(with: Effect.task(operation: {
             VectorAppAction.disconnected

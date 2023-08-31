@@ -15,7 +15,7 @@
 			</array>
 		</dict>
 	</array>
-	<key>IsMocked</key>
-	<string>$(CONNECTION_MOCKED)</string>
+	<key>Device</key>
+	<string>$(DEVICE)</string>
 </dict>
 </plist>

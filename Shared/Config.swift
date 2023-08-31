@@ -1,8 +1,17 @@
 import Foundation
 
 struct Config {
-    var useMocked: Bool {
-        return infoForKey("IsMocked") == "True"
+    enum Device: String {
+        case mock
+        case vector
+        case pathfinder
+    }
+
+    var device: Device {
+        guard let value: String = infoForKey("Device") else {
+            return .mock
+        }
+        return .init(rawValue: value) ?? .mock
     }
 
     private func infoForKey<T>(_ key: String) -> T? {

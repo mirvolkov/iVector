@@ -1,8 +1,8 @@
 import Foundation
+import CoreImage
 
 public struct VectorCameraFrame {
-    public let data: Data
-    public let encoding: Anki_Vector_ExternalInterface_ImageChunk.ImageEncoding
+    public let image: CIImage
 }
 
 public protocol Camera {

@@ -3,9 +3,9 @@ import Connection
 import Foundation
 import os.log
 
-public final class ConnectionModel {
+public final class ConnectionModel: @unchecked Sendable {
     typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
-    typealias PathfinderDevice = Pathfinder & Sendable
+    typealias PathfinderDevice = Pathfinder & Camera & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -24,7 +24,7 @@ public final class ConnectionModel {
     /// - Description grants camera feed
     /// - Returns optinal AsyncStream with camera feed
     public var camera: Camera? {
-        vectorDevice
+        vectorDevice ?? pathfinderDevice
     }
 
     /// Vector microphone feed access
@@ -45,14 +45,13 @@ public final class ConnectionModel {
     }
 
     /// Vector's connection state reactive property
-    public var state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
+    public let state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
 
     /// Vector's robot state reactive property
-    public var robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
+    public let robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
     private var vectorDevice: VectorDevice?
     private var pathfinderDevice: PathfinderDevice?
-
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
@@ -73,7 +72,7 @@ public final class ConnectionModel {
             return
         }
 
-        setConnection(try VectorConnection(with: ipAddress, port: port))
+        vectorDevice = try VectorConnection(with: ipAddress, port: port)
         vectorDevice?.delegate = self
 
         do {
@@ -85,8 +84,18 @@ public final class ConnectionModel {
         }
     }
 
-    public func connect() async throws {
-        pathfinderDevice = PathfinderConnection()
+    public func connect(with bleID: String = "PF2") async throws {
+        guard case .disconnected = state.value else {
+            return
+        }
+
+        pathfinderDevice = PathfinderConnection(with: bleID)
+        pathfinderDevice?.online
+            .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
+            .sink(receiveValue: { self.state.value = $0 })
+            .store(in: &bag)
+        state.value = .connecting
+        try await pathfinderDevice?.connect()
     }
 
     public func mock() async {
@@ -94,7 +103,7 @@ public final class ConnectionModel {
             return
         }
 
-        setConnection(MockedConnection())
+        vectorDevice = MockedConnection()
         vectorDevice?.delegate = self
         do {
             state.send(.connecting)
@@ -108,6 +117,8 @@ public final class ConnectionModel {
     public func disconnect() {
         do {
             try vectorDevice?.release()
+            pathfinderDevice?.disconnect()
+            pathfinderDevice = nil
             vectorDevice = nil
         } catch {
             self.logger.error("\(error.localizedDescription)")
@@ -145,12 +156,7 @@ public final class ConnectionModel {
         try vectorDevice?.requestEventStream()
     }
 
-    private func onDisconnected() async throws {
-    }
-
-    private func setConnection(_ connection: VectorDevice?) {
-        self.vectorDevice = connection
-    }
+    private func onDisconnected() async throws {}
 }
 
 extension ConnectionModel: ConnectionDelegate {

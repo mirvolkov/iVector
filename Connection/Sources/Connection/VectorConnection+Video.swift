@@ -1,3 +1,4 @@
+import CoreImage
 import Foundation
 import GRPC
 import NIO
@@ -14,7 +15,9 @@ extension VectorConnection: Camera {
                 request: request,
                 callOptions: callOptions,
                 handler: { message in
-                    continuation.yield(.init(data: message.data, encoding: message.imageEncoding))
+                    if let image = CIImage(data: message.data) {
+                        continuation.yield(.init(image: image))
+                    }
                 }
             )
 

@@ -6,32 +6,12 @@ import GRPC
 import SwiftUI
 import OSLog
 
-#if os(macOS)
-import AppKit
-
-func image(url: URL) -> Data {
-    let image = NSImage(contentsOf: url)!
-    let cgImage = image.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-    let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
-    return bitmapRep.representation(using: NSBitmapImageRep.FileType.jpeg, properties: [:])!
-}
-
-#elseif os(iOS)
-import UIKit
-
-func image(url: URL) -> Data {
-    let image = UIImage(data: try! .init(contentsOf: url))!
-    return image.jpegData(compressionQuality: 0.75)!
-}
-
-#endif
-
 public final class MockedConnection: Vector {
     public var delegate: ConnectionDelegate?
     private var eventStream: Timer?
     private var visionStream: Timer?
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
-    
+
     public init() {}
 
     public func requestControl() throws {
@@ -74,11 +54,12 @@ extension MockedConnection: Camera {
     public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
         .init { continuation in
             let url = Bundle.module.url(forResource: "mock_vision", withExtension: "jpeg")!
-            let data: Data = image(url: url)
             Task {
                 await MainActor.run {
                     visionStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
-                        continuation.yield(.init(data: data, encoding: .jpegColor))
+                        if let image = CIImage(contentsOf: url) {
+                            continuation.yield(.init(image: image))
+                        }
                     })
                 }
             }

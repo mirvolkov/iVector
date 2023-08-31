@@ -10,38 +10,18 @@ public struct VisionView: View {
         self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection, vision: vision))
         self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection, executor: executor))
     }
-    
+
     public var body: some View {
         VStack {
-            #if os(macOS)
-            if let data = camViewModel.frame?.data, let image = NSImage(data: data), camViewModel.isStreaming {
-                ZStack(alignment: .trailing) {
-                    Image(nsImage: image)
-                        .resizable()
-                    headControl
-                        .frame(width: 80)
-                        .padding(.trailing, 10)
-                }.overlay(alignment: .top) {
-                    menu
-                        .frame(height: 80)
-                        .padding(.top, 10)
-                }
+#if os(macOS)
+            if let data = camViewModel.frame?.image, let image = NSImage(ciImage: data), camViewModel.isStreaming {
+                display(with: Image(nsImage: image))
             }
-            #elseif os(iOS)
-            if let data = camViewModel.frame?.data, let image = UIImage(data: data), camViewModel.isStreaming {
-                ZStack(alignment: .trailing) {
-                    Image(uiImage: image)
-                        .resizable()
-                    headControl
-                        .frame(width: 80)
-                        .padding(.trailing, 10)
-                }.overlay(alignment: .top) {
-                    menu
-                        .frame(height: 80)
-                        .padding(.top, 10)
-                }
+#elseif os(iOS)
+            if let data = camViewModel.frame?.image, let image = UIImage(ciImage: data), camViewModel.isStreaming {
+                display(with: Image(uiImage: image))
             }
-            #endif
+#endif
         }
         .onAppear {
             menuViewModel.bind()
@@ -56,12 +36,26 @@ public struct VisionView: View {
         }
         .clipped()
     }
-    
-    var menu: some View {
+
+    private func display(with image: Image) -> some View {
+        ZStack(alignment: .trailing) {
+            image
+                .resizable()
+            headControl
+                .frame(width: 80)
+                .padding(.trailing, 10)
+        }.overlay(alignment: .top) {
+            menu
+                .frame(height: 80)
+                .padding(.top, 10)
+        }
+    }
+
+    private var menu: some View {
         MenuView(viewModel: menuViewModel)
     }
     
-    var headControl: some View {
+    private var headControl: some View {
         VStack(alignment: .center) {
             VSliderView(value: $camViewModel.headAngle, gradientColors: [.clear, .clear], sliderColor: .white.opacity(0.3))
                 .padding(.vertical, 40)
@@ -76,7 +70,7 @@ public struct VisionView: View {
         }
     }
     
-    var facet: some View {
+    private var facet: some View {
         Image("facet")
             .resizable(capInsets: .init(), resizingMode: .tile)
             .allowsHitTesting(false)
