@@ -29,7 +29,7 @@ class ButtonSaveViewModel: ControlPanelButtonViewModel, TextFieldPopoverCallback
     private var bag = Set<AnyCancellable>()
 
     init(assembler: AssemblerModel) {
-        self.primaryIcon = .init(systemName: "externaldrive.badge.plus")
+        self.primaryIcon = .init(systemName: "memorychip")
         self.tintColor = .black
         self.enabled = false
         self.assembler = assembler

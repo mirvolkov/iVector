@@ -3,10 +3,6 @@ import Programmator
 
 extension ControlPanelViewModel {
     func tagInitial() {
-        dockBtn.tag = Instruction.dock
-        undockBtn.tag = Instruction.undock
-        lift.tag = Instruction.liftUp
-        down.tag = Instruction.liftDown
         tts.tag = Instruction.say(.init())
         play.tag = Instruction.play(.init())
         exec.tag = Instruction.exec(.init())

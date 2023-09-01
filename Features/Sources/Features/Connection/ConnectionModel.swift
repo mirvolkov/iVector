@@ -5,7 +5,7 @@ import os.log
 
 public final class ConnectionModel: @unchecked Sendable {
     typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
-    typealias PathfinderDevice = Pathfinder & Camera & Sendable
+    typealias PathfinderDevice = Pathfinder & Camera & Control & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -18,6 +18,13 @@ public final class ConnectionModel: @unchecked Sendable {
     /// - Returns Behavior optional type entity
     public var behavior: Behavior? {
         vectorDevice
+    }
+
+    /// Pathfinder peripheral API access
+    /// - Description nil means pathfinder is not connected
+    /// - Returns Control optional type entity
+    public var control: Control? {
+        pathfinderDevice
     }
 
     /// Vector camera feed access

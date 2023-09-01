@@ -37,7 +37,7 @@ extension ControlPanelViewModel {
     }
 
     private var behaviorButtons: [any ControlPanelButtonViewModel] {
-        [tts, play, exec, lift, down, dockBtn, undockBtn]
+        [tts, play, exec, liftBtn, laserBtn, dockBtn, lightBtn]
     }
 
     func onConnected() {

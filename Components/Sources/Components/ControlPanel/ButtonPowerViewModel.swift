@@ -14,8 +14,8 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     @Published var isLoading: Bool = false
     @Published var tag: CPViewModelTag?
 
-    public var onConnect: () -> Void = { }
-    public var onDisconnect: () -> Void = { }
+    public var onConnect: () -> Void = {}
+    public var onDisconnect: () -> Void = {}
 
     private let connection: ConnectionModel
     private var bag = Set<AnyCancellable>()
@@ -26,35 +26,31 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     }
 
     func onClick() {
-        Task { @MainActor [self] in
-            switch await self.connection.state.value {
-            case .disconnected:
-                onConnect()
-            case .online:
-                onDisconnect()
-            case .connecting:
-                break
-            }
+        switch connection.state.value {
+        case .disconnected:
+            onConnect()
+        case .online:
+            onDisconnect()
+        case .connecting:
+            break
         }
     }
 
     func bind() {
-        Task { @MainActor [self] in
-            await self.connection.state
-                .map {
-                    switch $0 {
-                    case .connecting:
-                        return .yellow
-                    case .disconnected:
-                        return .red
-                    case .online:
-                        return .green
-                    }
+        connection.state
+            .map {
+                switch $0 {
+                case .connecting:
+                    return .yellow
+                case .disconnected:
+                    return .red
+                case .online:
+                    return .green
                 }
-                .receive(on: RunLoop.main)
-                .assign(to: \.tintColor, on: self)
-                .store(in: &self.bag)
-        }
+            }
+            .receive(on: RunLoop.main)
+            .assign(to: \.tintColor, on: self)
+            .store(in: &self.bag)
     }
 
     func unbind() {

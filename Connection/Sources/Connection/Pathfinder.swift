@@ -2,6 +2,7 @@ import AVFoundation
 import BLE
 import Combine
 import CoreImage
+import CoreMotion
 import OSLog
 
 public struct PFSonar {
@@ -25,31 +26,49 @@ public enum PathfinderError: Error {
  */
 public protocol Pathfinder {
     var online: CurrentValueSubject<Bool, Never> { get }
-    var sonar: PassthroughSubject<PFSonar, Never> { get }
-    var current: PassthroughSubject<Int, Never> { get }
 
     func connect() async throws
     func disconnect()
 }
 
+let uuidLaser = "6E400003-B5A3-F393-E0A9-E50E24DCCA03" // Laser
+let uuidLight = "6E400003-B5A3-F393-E0A9-E50E24DCCA02" // Light
+let uuidEngineLF = "6E400003-B5A3-F393-E0A9-E50E24DCCA09" // engine left forward
+let uuidEngineRF = "6E400003-B5A3-F393-E0A9-E50E24DCCA0A" // engine right forward
+let uuidEngineLB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0B" // engine left backward
+let uuidEngineRB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0C" // engine right backward
+let uuidSonar0 = "6E400003-B5A3-F393-E0A9-E50E24DCCA04" // sonar 1
+let uuidSonar1 = "6E400003-B5A3-F393-E0A9-E50E24DCCA05" // sonar 2
+let uuidSonar2 = "6E400003-B5A3-F393-E0A9-E50E24DCCA06" // sonar 3
+let uuidSonar3 = "6E400003-B5A3-F393-E0A9-E50E24DCCA07" // sonar 4
+let uuidBattery = "6E400003-B5A3-F393-E0A9-E50E24DCCA08" // battery
+
 public final class PathfinderConnection: NSObject, Pathfinder {
-    private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "pathfinder")
-    private let ble: BLE
-    private var bag = Set<AnyCancellable>()
-    private var onlineContinuation: CheckedContinuation<Void, Error>?
-    private var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
-    private let captureSession = AVCaptureSession()
-    private let queue = DispatchQueue(label: "pathfinder.camera")
+    let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "pathfinder")
+    let captureSession = AVCaptureSession()
+    let queue = DispatchQueue(label: "pathfinder.camera")
+    let ble: BLE
+#if os(iOS)
+    let coreMotion = CMMotionManager()
+#endif
+
+    var bag = Set<AnyCancellable>()
+    var onlineContinuation: CheckedContinuation<Void, Error>?
+    var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
 
     public var online: CurrentValueSubject<Bool, Never> = .init(false)
     public var sonar: PassthroughSubject<PFSonar, Never> = .init()
-    public var current: PassthroughSubject<Int, Never> = .init()
+    public var battery: PassthroughSubject<Int, Never> = .init()
 
     public init(with bleID: String) {
         ble = BLE([bleID])
         super.init()
+
         ble.$isOnline.sink { [weak self] online in
             self?.online.value = online
+            if online {
+                self?.listenSensors()
+            }
             if let continuation = self?.onlineContinuation, online {
                 continuation.resume()
             }
@@ -72,107 +91,5 @@ public final class PathfinderConnection: NSObject, Pathfinder {
         online.value = false
         captureSession.stopRunning()
         onlineContinuation = nil
-    }
-}
-
-extension PathfinderConnection: Camera {
-    public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
-        try setUp()
-
-        return .init { continuation in
-            self.cameraFeedContinuation = continuation
-        }
-    }
-
-    func setUp() throws {
-        if captureSession.isRunning {
-            captureSession.stopRunning()
-        }
-
-        captureSession.inputs.forEach { input in
-            captureSession.removeInput(input)
-        }
-
-        captureSession.outputs.forEach { output in
-            captureSession.removeOutput(output)
-        }
-
-        captureSession.beginConfiguration()
-
-        defer {
-            captureSession.commitConfiguration()
-            if !captureSession.isRunning {
-                captureSession.startRunning()
-            }
-        }
-
-        try setUpCamera()
-    }
-
-    func setUpCamera(
-        sessionPreset: AVCaptureSession.Preset = .low,
-        deviceID: String? = AVCaptureDevice.default(for: AVMediaType.video)?.uniqueID
-    ) throws {
-        if captureSession.canSetSessionPreset(sessionPreset) {
-            captureSession.sessionPreset = sessionPreset
-        }
-
-        let discoverySession = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.builtInMicrophone, .builtInWideAngleCamera],
-            mediaType: .video,
-            position: .unspecified
-        )
-
-        guard let cameraDevice = discoverySession.devices.first(where: { $0.uniqueID == deviceID }) else {
-            throw PathfinderError.cameraFailed
-        }
-
-        guard let videoInput = try? AVCaptureDeviceInput(device: cameraDevice) else {
-            throw PathfinderError.cameraFailed
-        }
-
-        if captureSession.canAddInput(videoInput) {
-            captureSession.addInput(videoInput)
-        }
-
-        let settings: [String: Any] = [
-            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA)
-        ]
-
-        let videoOutput = AVCaptureVideoDataOutput()
-        videoOutput.videoSettings = settings
-        videoOutput.alwaysDiscardsLateVideoFrames = true
-#if os(iOS)
-        videoOutput.automaticallyConfiguresOutputBufferDimensions = true
-#endif
-        videoOutput.setSampleBufferDelegate(self, queue: queue)
-
-        if captureSession.canAddOutput(videoOutput) {
-            captureSession.addOutput(videoOutput)
-        }
-
-        videoOutput.connection(with: AVMediaType.video)?.videoOrientation = .portrait
-    }
-}
-
-extension PathfinderConnection: AVCaptureVideoDataOutputSampleBufferDelegate {
-    public func captureOutput(
-        _ output: AVCaptureOutput,
-        didOutput sampleBuffer: CMSampleBuffer,
-        from connection: AVCaptureConnection
-    ) {
-        if let videoFrame = CMSampleBufferGetImageBuffer(sampleBuffer) {
-            cameraFeedContinuation?.yield(.init(
-                image: .init(cvPixelBuffer: videoFrame)
-            ))
-        }
-    }
-
-    public func captureOutput(
-        _ output: AVCaptureOutput,
-        didDrop sampleBuffer: CMSampleBuffer,
-        from connection: AVCaptureConnection
-    ) {
-        logger.fault("frame dropped")
     }
 }

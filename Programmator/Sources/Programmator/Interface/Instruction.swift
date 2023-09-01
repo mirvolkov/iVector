@@ -11,14 +11,14 @@ public enum Instruction {
     case backward(Extension.Distance)
     case play(Extension.Sound)
     case say(Extension.Text)
-    case dock
-    case undock
-    case liftUp
-    case liftDown
+    case dock(Bool)
+    case lift(Bool)
     case rotate(Extension.Angle)
     case cmp(Extension.Condition, Extension.ProgramID)
     case exec(Extension.ProgramID)
     case pause(Extension.Time)
+    case light(Bool)
+    case laser(Bool)
 }
 
 extension Instruction: CustomStringConvertible {
@@ -26,10 +26,8 @@ extension Instruction: CustomStringConvertible {
         switch self {
         case .say(let ext):
             return "SAY \(ext.description)"
-        case .dock:
-            return "DOCK"
-        case .undock:
-            return "UNDOCK"
+        case .dock(let isOn):
+            return isOn ? "DOCK" : "UNDOCK"
         case .left(let ext):
             return "LEFT \(ext.description)"
         case .right(let ext):
@@ -40,10 +38,8 @@ extension Instruction: CustomStringConvertible {
             return "BWRD \(ext.description)"
         case .play(let ext):
             return "PLAY \(ext.description)"
-        case .liftUp:
-            return "UP"
-        case .liftDown:
-            return "DOWN"
+        case .lift(let isOn):
+            return isOn ? "LIFT" : "DOWN"
         case .rotate(let ext):
             return "ROT \(ext.description)"
         case .cmp(let ifExt, let thenExt):
@@ -52,6 +48,10 @@ extension Instruction: CustomStringConvertible {
             return "EXEC \(ext.description)"
         case .pause(let ext):
             return "PAUSE \(ext.description)"
+        case .light(let isOn):
+            return "LIGHT \(isOn ? 1 : 0)"
+        case .laser(let isOn):
+            return "LASER \(isOn ? 1 : 0)"
         }
     }
 }
@@ -63,8 +63,6 @@ extension Instruction: InstructionBox {
             return ext.isValid
         case .dock:
             return true
-        case .undock:
-            return true
         case .left(let ext):
             return ext.isValid
         case .right(let ext):
@@ -75,9 +73,7 @@ extension Instruction: InstructionBox {
             return ext.isValid
         case .play(let ext):
             return ext.isValid
-        case .liftUp:
-            return true
-        case .liftDown:
+        case .lift:
             return true
         case .rotate(let ext):
             return ext.isValid
@@ -87,6 +83,10 @@ extension Instruction: InstructionBox {
             return ext.isValid
         case .pause(let ext):
             return ext.isValid
+        case .light:
+            return true
+        case .laser:
+            return true
         }
     }
 }
@@ -142,7 +142,7 @@ public extension Instruction {
             return value
         case .say(let value):
             return value
-        case .dock, .undock, .liftUp, .liftDown:
+        case .dock, .lift, .light, .laser:
             return nil
         case .exec(let value):
             return value

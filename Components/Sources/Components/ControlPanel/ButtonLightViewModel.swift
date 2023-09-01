@@ -1,9 +1,9 @@
 import Combine
-import Features
 import Programmator
+import Features
 import SwiftUI
 
-class ButtonLiftViewModel: ControlPanelButtonViewModel {
+class ButtonLightViewModel: ControlPanelButtonViewModel {
     @Published var disableSecondary: Bool = false
     @Published var disableTitle: Bool = false
     @Published var disableIcon: Bool = false
@@ -16,8 +16,8 @@ class ButtonLiftViewModel: ControlPanelButtonViewModel {
 
     private var isPressed = false {
         didSet {
-            tag = isPressed ? Instruction.lift(true) : Instruction.lift(false)
-            primaryIcon = .init(systemName: isPressed ? "arrowtriangle.up" : "arrowtriangle.down")
+            tag = isPressed ? Instruction.light(true) : Instruction.light(false)
+            primaryIcon = .init(systemName: isPressed ? "flashlight.off.fill" : "flashlight.on.fill")
         }
     }
 

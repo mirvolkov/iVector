@@ -73,14 +73,10 @@ public final class ExecutorModel: Executor {
 
     private func run(instruction: Instruction) async throws {
         switch instruction {
-        case .dock:
-            try await connection.behavior?.driveOnCharger()
-        case .undock:
-            try await connection.behavior?.driveOffCharger()
-        case .liftUp:
-            try await connection.behavior?.lift(1)
-        case .liftDown:
-            try await connection.behavior?.lift(0)
+        case .dock(let isOn):
+            isOn ? try await connection.behavior?.driveOnCharger() : try await connection.behavior?.driveOffCharger()
+        case .lift(let isOn):
+            try await connection.behavior?.lift(isOn ? 1 : 0)
         case .say(let ext):
             if let value = ext.value {
                 try connection.say(text: value)
@@ -125,6 +121,10 @@ public final class ExecutorModel: Executor {
             {
                 try await run(program: prog)
             }
+        case .light(let isOn):
+            await connection.control?.light(isOn)
+        case .laser(let isOn):
+            await connection.control?.laser(isOn)
         }
     }
 }

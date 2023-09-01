@@ -155,7 +155,7 @@ public struct ControlPanelsView: View {
     private var behaviorPanel: some View {
         GridRow {
             build(viewModel.dockBtn)
-            build(viewModel.lift)
+            build(viewModel.liftBtn)
             build(viewModel.exec)
             Spacer()
                 .gridCellUnsizedAxes(.horizontal)
@@ -165,8 +165,8 @@ public struct ControlPanelsView: View {
 
     private var behaviorPanel1: some View {
         GridRow {
-            build(viewModel.undockBtn)
-            build(viewModel.down)
+            build(viewModel.lightBtn)
+            build(viewModel.laserBtn)
             placeholder
             Spacer()
                 .gridCellUnsizedAxes(.horizontal)
