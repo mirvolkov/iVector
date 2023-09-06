@@ -16,7 +16,12 @@ protocol CPButtonViewModel: ObservableObject, CPViewModelBindable {
     var primaryIcon: Image? { get set }
     var primaryTitle: String? { get set }
     var secondaryTitle: String? { get set }
-    var tintColor: Color { get set }
+    var tintColor: Color { get }
+    var borderColor: Color? { get }
+}
+
+extension CPButtonViewModel {
+    var borderColor: Color? { nil }
 }
 
 extension CPViewModelBindable {

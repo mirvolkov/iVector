@@ -28,6 +28,7 @@ struct ControlPanelButtonView<ViewModel: ControlPanelButtonViewModel>: View {
                     .frame(maxWidth: .infinity)
                     .frame(maxHeight: .infinity)
                     .foregroundColor(viewModel.enabled ? viewModel.tintColor : .gray)
+                    .shadow(color: viewModel.borderColor ?? .clear, radius: 0.5)
                     .opacity(viewModel.disableIcon ? 0.1 : 1.0)
             }
 

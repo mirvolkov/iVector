@@ -13,6 +13,7 @@ class ButtonLightViewModel: ControlPanelButtonViewModel {
     @Published var secondaryTitle: String?
     @Published var tintColor: Color = .green
     @Published var tag: CPViewModelTag?
+    @Published var borderColor: Color?
 
     private var isPressed = false {
         didSet {
@@ -23,7 +24,8 @@ class ButtonLightViewModel: ControlPanelButtonViewModel {
 
     init() {
         defer { self.isPressed = false }
-        self.tintColor = .black
+        self.tintColor = .white
+        self.borderColor = .black
     }
 
     func onClick() {
