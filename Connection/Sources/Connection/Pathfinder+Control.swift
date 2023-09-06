@@ -1,17 +1,17 @@
+// swiftlint:disable:next file_header
 import BLE
 import Combine
 import CoreMotion
 
 public protocol Control {
-    // gyroscope + compass
-
     var sonar: PassthroughSubject<PFSonar, Never> { get }
     var battery: PassthroughSubject<Int, Never> { get }
 
     /// Move
     /// - Parameter distance - distance in mm
     /// - Parameter speed (mm per sec) - default is 1.0 until PWM implemented
-    func move(_ distance: Float, speed: Float) async
+    /// - Parameter direction(bool) 1 - forward, 0 - backward
+    func move(_ distance: Float, speed: Float, direction: Bool) async
 
     /// Turn in place
     /// - Parameter angle (rad)
@@ -28,9 +28,27 @@ public protocol Control {
 }
 
 extension PathfinderConnection: Control {
-    func listenSensors() {
-        ble.listen(for: uuidSonar0) { _ in
+    // swiftlint:disable:next force_unwrapping
+    private static let zero: Data = "0".data(using: .ascii)!
+    // swiftlint:disable:next force_unwrapping
+    private static let one: Data = "1".data(using: .ascii)!
+
+    private func listenSonar(uuid: String) -> PassthroughSubject<UInt, Never> {
+        let listener = PassthroughSubject<UInt, Never>()
+        ble.listen(for: uuidSonar0) { message in
+            if let value = UInt(message) {
+                listener.send(value)
+            }
         }
+        return listener
+    }
+
+    func listenSensors() {
+        listenSonar(uuid: uuidSonar0)
+            .zip(listenSonar(uuid: uuidSonar1), listenSonar(uuid: uuidSonar2), listenSonar(uuid: uuidSonar3))
+            .map { PFSonar($0) }
+            .sink(receiveValue: { self.sonar.send($0) })
+            .store(in: &bag)
     }
 
     func listenGyro() {
@@ -38,34 +56,57 @@ extension PathfinderConnection: Control {
         if motion.isGyroAvailable {
             self.motion.gyroUpdateInterval = 1.0 / 50.0
             self.motion.startGyroUpdates()
-            self.timer = Timer(fire: Date(), interval: 1.0 / 50.0,
-                               repeats: true, block: { _ in
-                                   if let data = self.motion.gyroData {
-//                    let x = data.rotationRate.x
-//                    let y = data.rotationRate.y
-//                    let z = data.rotationRate.z
-                                   }
-                               })
-            RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
+//            self.timer = Timer(fire: Date(), interval: 1.0 / 50.0,
+//                               repeats: true, block: { _ in
+//                                   if let data = self.motion.gyroData {
+////                    let x = data.rotationRate.x
+////                    let y = data.rotationRate.y
+////                    let z = data.rotationRate.z
+//                                   }
+//                               })
+//            RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
         }
 #endif
     }
 
-    public func move(_ distance: Float, speed: Float = 1.0) async {}
+    func listenAccel() {
+#if os(iOS)
+        if motion.isAccelerometerAvailable {
 
-    public func turn(_ angle: Float, speed: Float = 1.0) async {}
+        }
+#endif
+    }
+
+    public func move(_ distance: Float, speed: Float = 1.0, direction: Bool = true) async {
+        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineLF)
+        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineRF)
+        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineLB)
+        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineRB)
+        try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(distance) / 100.0))
+        ble.write(data: Self.zero, charID: uuidEngineLF)
+        ble.write(data: Self.zero, charID: uuidEngineRF)
+        ble.write(data: Self.zero, charID: uuidEngineLB)
+        ble.write(data: Self.zero, charID: uuidEngineRB)
+    }
+
+    public func turn(_ angle: Float, speed: Float = 1.0) async {
+        let direction = angle > 0
+        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineLF)
+        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineRB)
+        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineLB)
+        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineRF)
+        try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(angle * 180 / Float.pi) / 100.0))
+        ble.write(data: Self.zero, charID: uuidEngineLF)
+        ble.write(data: Self.zero, charID: uuidEngineRF)
+        ble.write(data: Self.zero, charID: uuidEngineLB)
+        ble.write(data: Self.zero, charID: uuidEngineRB)
+    }
 
     public func laser(_ isOn: Bool) async {
-        let message = isOn ? "1" : "0"
-        if let data = message.data(using: .ascii) {
-            ble.write(data: data, charID: uuidLaser)
-        }
+        ble.write(data: isOn ? Self.one : Self.zero, charID: uuidLaser)
     }
 
     public func light(_ isOn: Bool) async {
-        let message = isOn ? "1" : "0"
-        if let data = message.data(using: .ascii) {
-            ble.write(data: data, charID: uuidLight)
-        }
+        ble.write(data: isOn ? Self.one : Self.zero, charID: uuidLight)
     }
 }

@@ -102,3 +102,60 @@ extension PathfinderConnection: AVCaptureVideoDataOutputSampleBufferDelegate {
         logger.fault("frame dropped")
     }
 }
+
+extension Pathfinder {
+    /// Returns all cameras on the device.
+    public static func getListOfCameras() -> [AVCaptureDevice] {
+        
+    #if os(iOS)
+        return AVCaptureDevice.DiscoverySession(
+            deviceTypes: [
+//                .external,
+                .builtInWideAngleCamera,
+                .builtInTelephotoCamera
+            ],
+            mediaType: .video,
+            position: .unspecified).devices
+    #elseif os(macOS)
+        return AVCaptureDevice.DiscoverySession(
+            deviceTypes: [
+                .builtInWideAngleCamera
+            ],
+            mediaType: .video,
+            position: .unspecified).devices
+    #endif
+    }
+
+    /// Returns all microphones on the device.
+    public static func getListOfMicrophones() -> [AVCaptureDevice] {
+        let session = AVCaptureDevice.DiscoverySession(
+            deviceTypes: [
+                .builtInMicrophone
+            ],
+            mediaType: .audio,
+            position: .unspecified)
+        
+        return session.devices
+    }
+
+    /// Converts giving AVCaptureDevice list to the String
+    public static func convertDeviceListToString(_ devices: [AVCaptureDevice]) -> [String] {
+        var names: [String] = []
+        
+        for device in devices {
+            names.append(device.localizedName)
+        }
+        
+        return names
+    }
+
+    public static func getListOfCamerasAsString() -> [String] {
+        let devices = getListOfCameras()
+        return convertDeviceListToString(devices)
+    }
+
+    public static  func getListOfMicrophonesAsString() -> [String] {
+        let devices = getListOfMicrophones()
+        return convertDeviceListToString(devices)
+    }
+}

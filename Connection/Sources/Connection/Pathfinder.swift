@@ -6,12 +6,19 @@ import CoreMotion
 import OSLog
 
 public struct PFSonar {
+    public var sonar0: UInt
     public var sonar1: UInt
     public var sonar2: UInt
     public var sonar3: UInt
-    public var sonar4: UInt
 
-    public static var zero: Self { .init(sonar1: 0, sonar2: 0, sonar3: 0, sonar4: 0) }
+    public static var zero: Self { .init((0, 0, 0, 0)) }
+
+    public init(_ sonars: (UInt, UInt, UInt, UInt)) {
+        self.sonar0 = sonars.0
+        self.sonar1 = sonars.1
+        self.sonar2 = sonars.2
+        self.sonar3 = sonars.3
+    }
 }
 
 public enum PathfinderError: Error {
@@ -49,7 +56,7 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     let queue = DispatchQueue(label: "pathfinder.camera")
     let ble: BLE
 #if os(iOS)
-    let coreMotion = CMMotionManager()
+    let motion = CMMotionManager()
 #endif
 
     var bag = Set<AnyCancellable>()
