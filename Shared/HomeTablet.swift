@@ -8,7 +8,6 @@ struct HomeTablet: View {
     @State private var preferences = false
     @EnvironmentObject private var store: VectorStore
     @EnvironmentObject private var env: VectorAppEnvironment
-
   
     var body: some View {
         WithViewStore(store) { viewStore in

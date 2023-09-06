@@ -7,9 +7,11 @@ public struct ControlPanelsView: View {
     @State var space: CGFloat = 8
     @State var divider: CGFloat = 4
 
-    @StateObject var viewModel: ControlPanelViewModel
-    @EnvironmentObject var errorHandling: ErrorHandlerViewModel
-
+    @StateObject private var viewModel: ControlPanelViewModel
+    @EnvironmentObject private var errorHandling: ErrorHandlerViewModel
+    @Environment(\.verticalSizeClass) private var verticalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
+    
     public var onConnect: () -> Void
     public var onDisconnect: () -> Void
 
@@ -26,27 +28,7 @@ public struct ControlPanelsView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 0) {
-            Grid(horizontalSpacing: 0, verticalSpacing: space) {
-                header
-                Spacer()
-                    .gridCellUnsizedAxes(.vertical)
-                    .frame(minHeight: divider)
-                digitalPanel1
-                digitalPanel2
-                digitalPanel3
-                digitalPanel4
-                Spacer()
-                    .gridCellUnsizedAxes(.vertical)
-                    .frame(minHeight: divider)
-                behaviorPanel
-                behaviorPanel1
-                pcPanel
-            }
-            .gridColumnAlignment(.leading)
-            Spacer()
-        }
-        .padding(space)
+        content
         .popover(isPresented: $viewModel.playPopover, content: {
             PickListPopover(
                 viewModel: viewModel.play
@@ -94,6 +76,99 @@ public struct ControlPanelsView: View {
         }
         .onAppear {
             self.viewModel.saveError = errorHandling
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        if horizontalSizeClass == .compact && verticalSizeClass == .regular {
+            portrait
+        } else {
+            landscape
+        }
+    }
+
+    @ViewBuilder
+    private var portrait: some View {
+        VStack(spacing: 0) {
+            Grid(horizontalSpacing: 0, verticalSpacing: space) {
+                header
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                    .frame(minHeight: divider)
+                digitalPanel1
+                digitalPanel2
+                digitalPanel3
+                digitalPanel4
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                    .frame(minHeight: divider)
+                behaviorPanel
+                behaviorPanel1
+                pcPanel
+            }
+            .gridColumnAlignment(.leading)
+            Spacer()
+        }
+        .padding(space)
+    }
+
+    @ViewBuilder
+    private var landscape: some View {
+        HStack {
+            Grid(alignment: .leading, horizontalSpacing: divider, verticalSpacing: space) {
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                GridRow {
+                    build(viewModel.save)
+                    Spacer()
+                        .gridCellUnsizedAxes(.horizontal)
+                    build(viewModel.esc)
+                    build(viewModel.enter)
+                }
+                Spacer()
+                    .gridCellUnsizedAxes(.vertical)
+                    .frame(minHeight: divider)
+                GridRow {
+                    build(viewModel.play)
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.btn1)
+                    build(viewModel.btn2)
+                    build(viewModel.btn3)
+                    build(viewModel.pause)
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.exec)
+                }
+                GridRow {
+                    build(viewModel.tts)
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.btn4)
+                    build(viewModel.btn5)
+                    build(viewModel.btn6)
+                    build(viewModel.btn0)
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.liftBtn)
+                    build(viewModel.laserBtn)
+                }
+                GridRow {
+                    build(viewModel.powerBtn)
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.btn7)
+                    build(viewModel.btn8)
+                    build(viewModel.btn9)
+                    placeholder
+                    Spacer()
+                        .gridCellUnsizedAxes(.vertical)
+                    build(viewModel.dockBtn)
+                    build(viewModel.lightBtn)
+                }
+            }
+            Spacer()
         }
     }
 

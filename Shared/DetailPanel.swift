@@ -18,11 +18,12 @@ struct DetailPanel: View {
                     executor: executor
                 )
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .edgesIgnoringSafeArea(.all)
 
             case .offline:
                 VisionOfflineView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-        }
+        }.edgesIgnoringSafeArea(.all)
     }
 }

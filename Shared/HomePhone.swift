@@ -8,7 +8,9 @@ struct HomePhone: View {
     @State private var preferences = false
     @EnvironmentObject private var store: VectorStore
     @EnvironmentObject private var env: VectorAppEnvironment
-
+    @Environment(\.verticalSizeClass) private var verticalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
+    
     var body: some View {
         WithViewStore(store) { viewStore in
             TabView {
@@ -40,10 +42,11 @@ struct HomePhone: View {
                 NavigationStack {
                     ZStack {
                         DetailPanel()
-                            .frame(height: 320)
+                            .frame(height: horizontalSizeClass == .compact && verticalSizeClass == .regular ? 320 : nil)
                             .clipped()
                             .navigationTitle(L10n.camera)
                             .navigationBarTitleDisplayMode(.inline)
+                            .edgesIgnoringSafeArea(horizontalSizeClass == .compact && verticalSizeClass == .regular ? .all : .horizontal)
                     }
                 }
                 .tabItem {
