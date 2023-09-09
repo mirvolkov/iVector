@@ -9,8 +9,8 @@ public struct ControlPanelsView: View {
 
     @StateObject private var viewModel: ControlPanelViewModel
     @EnvironmentObject private var errorHandling: ErrorHandlerViewModel
-    @Environment(\.verticalSizeClass) private var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     public var onConnect: () -> Void
     public var onDisconnect: () -> Void

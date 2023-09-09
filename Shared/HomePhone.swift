@@ -8,9 +8,9 @@ struct HomePhone: View {
     @State private var preferences = false
     @EnvironmentObject private var store: VectorStore
     @EnvironmentObject private var env: VectorAppEnvironment
-    @Environment(\.verticalSizeClass) private var verticalSizeClass: UserInterfaceSizeClass?
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass: UserInterfaceSizeClass?
-    
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     var body: some View {
         WithViewStore(store) { viewStore in
             TabView {

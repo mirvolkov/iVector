@@ -26,7 +26,7 @@ struct iVectorApp: App {
 
     var body: some Scene {
         WindowGroup {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { _ in
 #if os(macOS)
                 HomeDesktop()
 #elseif os(iOS)
@@ -40,6 +40,6 @@ struct iVectorApp: App {
             .environmentObject(env)
             .environmentObject(store)
             .withErrorHandler()
-        }
+        }.windowResizability(.contentSize)
     }
 }

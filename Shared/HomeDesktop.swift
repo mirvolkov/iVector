@@ -28,7 +28,7 @@ struct HomeDesktop: View {
         } detail: {
             DetailPanel()
                 .frame(height: 610, alignment: .top)
-                .padding(0)
+                .padding(.top, 10)
         }
         .toolbar {
             Button {
@@ -40,7 +40,7 @@ struct HomeDesktop: View {
         .sheet(isPresented: $preferences) {
             SettingsView(model: .init(), isPresented: $preferences)
         }
-        .frame(width: 940, height: 610)
+        .frame(width: 940, height: 620)
     }
 }
 #endif

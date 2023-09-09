@@ -29,10 +29,8 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
         switch connection.state.value {
         case .disconnected:
             onConnect()
-        case .online:
+        case .online, .connecting:
             onDisconnect()
-        case .connecting:
-            break
         }
     }
 
