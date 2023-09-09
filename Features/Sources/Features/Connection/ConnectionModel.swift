@@ -5,7 +5,7 @@ import os.log
 
 public final class ConnectionModel: @unchecked Sendable {
     typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
-    typealias PathfinderDevice = Pathfinder & Camera & Control & Sendable
+    typealias PathfinderDevice = Pathfinder & Camera & PathfinderControl & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -23,7 +23,7 @@ public final class ConnectionModel: @unchecked Sendable {
     /// Pathfinder peripheral API access
     /// - Description nil means pathfinder is not connected
     /// - Returns Control optional type entity
-    public var control: Control? {
+    public var pathfinder: PathfinderControl? {
         pathfinderDevice
     }
 
@@ -62,6 +62,7 @@ public final class ConnectionModel: @unchecked Sendable {
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
+    private lazy var stt = SpeechToText()
 
     public init() {
         bind()
@@ -96,7 +97,10 @@ public final class ConnectionModel: @unchecked Sendable {
             return
         }
 
-        pathfinderDevice = PathfinderConnection(with: bleID)
+        if pathfinderDevice == nil {
+            pathfinderDevice = PathfinderConnection(with: bleID)
+        }
+
         pathfinderDevice?.online
             .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
             .sink(receiveValue: { self.state.value = $0 })
@@ -125,7 +129,6 @@ public final class ConnectionModel: @unchecked Sendable {
         do {
             try vectorDevice?.release()
             pathfinderDevice?.disconnect()
-            pathfinderDevice = nil
             vectorDevice = nil
         } catch {
             self.logger.error("\(error.localizedDescription)")

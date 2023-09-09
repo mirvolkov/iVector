@@ -3,7 +3,7 @@ import BLE
 import Combine
 import CoreMotion
 
-public protocol Control {
+public protocol PathfinderControl {
     var sonar: PassthroughSubject<PFSonar, Never> { get }
     var battery: PassthroughSubject<Int, Never> { get }
 
@@ -27,7 +27,7 @@ public protocol Control {
     func laser(_ isOn: Bool) async
 }
 
-extension PathfinderConnection: Control {
+extension PathfinderConnection: PathfinderControl {
     // swiftlint:disable:next force_unwrapping
     private static let zero: Data = "0".data(using: .ascii)!
     // swiftlint:disable:next force_unwrapping

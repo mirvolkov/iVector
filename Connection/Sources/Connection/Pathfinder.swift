@@ -55,9 +55,9 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     let captureSession = AVCaptureSession()
     let queue = DispatchQueue(label: "pathfinder.camera")
     let ble: BLE
-#if os(iOS)
-    let motion = CMMotionManager()
-#endif
+    #if os(iOS)
+        let motion = CMMotionManager()
+    #endif
 
     var bag = Set<AnyCancellable>()
     var onlineContinuation: CheckedContinuation<Void, Error>?
@@ -70,6 +70,14 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     public init(with bleID: String) {
         ble = BLE([bleID])
         super.init()
+    }
+
+    public func connect() async throws {
+        guard !online.value else {
+            return
+        }
+
+        ble.scan()
 
         ble.$isOnline.sink { [weak self] online in
             self?.online.value = online
@@ -78,16 +86,9 @@ public final class PathfinderConnection: NSObject, Pathfinder {
             }
             if let continuation = self?.onlineContinuation, online {
                 continuation.resume()
+                self?.onlineContinuation = nil
             }
         }.store(in: &bag)
-    }
-
-    public func connect() async throws {
-        ble.scan()
-
-        guard !online.value else {
-            return
-        }
 
         try await withCheckedThrowingContinuation { continuation in
             self.onlineContinuation = continuation

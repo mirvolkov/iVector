@@ -68,9 +68,9 @@ extension PathfinderConnection: Camera {
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.videoSettings = settings
         videoOutput.alwaysDiscardsLateVideoFrames = true
-#if os(iOS)
-        videoOutput.automaticallyConfiguresOutputBufferDimensions = true
-#endif
+        #if os(iOS)
+            videoOutput.automaticallyConfiguresOutputBufferDimensions = true
+        #endif
         videoOutput.setSampleBufferDelegate(self, queue: queue)
 
         if captureSession.canAddOutput(videoOutput) {
@@ -103,59 +103,55 @@ extension PathfinderConnection: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
-extension Pathfinder {
+public extension Pathfinder {
     /// Returns all cameras on the device.
-    public static func getListOfCameras() -> [AVCaptureDevice] {
-        
-    #if os(iOS)
-        return AVCaptureDevice.DiscoverySession(
-            deviceTypes: [
-//                .external,
-                .builtInWideAngleCamera,
-                .builtInTelephotoCamera
-            ],
-            mediaType: .video,
-            position: .unspecified).devices
-    #elseif os(macOS)
-        return AVCaptureDevice.DiscoverySession(
-            deviceTypes: [
-                .builtInWideAngleCamera
-            ],
-            mediaType: .video,
-            position: .unspecified).devices
-    #endif
+    static func getListOfCameras() -> [AVCaptureDevice] {
+        #if os(iOS)
+            return AVCaptureDevice.DiscoverySession(
+                deviceTypes: [
+                    //                .external,
+                    .builtInWideAngleCamera,
+                    .builtInTelephotoCamera
+                ],
+                mediaType: .video,
+                position: .unspecified
+            )
+            .devices
+        #elseif os(macOS)
+            return AVCaptureDevice.DiscoverySession(
+                deviceTypes: [
+                    .builtInWideAngleCamera
+                ],
+                mediaType: .video,
+                position: .unspecified
+            )
+            .devices
+        #endif
     }
 
     /// Returns all microphones on the device.
-    public static func getListOfMicrophones() -> [AVCaptureDevice] {
+    static func getListOfMicrophones() -> [AVCaptureDevice] {
         let session = AVCaptureDevice.DiscoverySession(
             deviceTypes: [
                 .builtInMicrophone
             ],
             mediaType: .audio,
-            position: .unspecified)
-        
+            position: .unspecified
+        )
+
         return session.devices
     }
 
     /// Converts giving AVCaptureDevice list to the String
-    public static func convertDeviceListToString(_ devices: [AVCaptureDevice]) -> [String] {
-        var names: [String] = []
-        
-        for device in devices {
-            names.append(device.localizedName)
-        }
-        
-        return names
+    static func convertDeviceListToString(_ devices: [AVCaptureDevice]) -> [String] {
+        return devices.map { $0.localizedName }
     }
 
-    public static func getListOfCamerasAsString() -> [String] {
-        let devices = getListOfCameras()
-        return convertDeviceListToString(devices)
+    static func getListOfCamerasAsString() -> [String] {
+        return convertDeviceListToString(getListOfCameras())
     }
 
-    public static  func getListOfMicrophonesAsString() -> [String] {
-        let devices = getListOfMicrophones()
-        return convertDeviceListToString(devices)
+    static func getListOfMicrophonesAsString() -> [String] {
+        return convertDeviceListToString(getListOfMicrophones())
     }
 }

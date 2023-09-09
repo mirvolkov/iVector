@@ -4,7 +4,7 @@ import Foundation
 import OSLog
 import Speech
 
-public protocol SpeechRecognizer: Sendable {
+public protocol SpeechRecognizer {
     typealias Callback = (String) -> Void
 
     var available: PassthroughSubject<Bool, Never> { get }
@@ -13,19 +13,14 @@ public protocol SpeechRecognizer: Sendable {
     func start(currentLocale: Locale, onEdge: Bool)
 }
 
-#if os(iOS)
-public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
+public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer, @unchecked Sendable {
     public var available: PassthroughSubject<Bool, Never> = .init()
     public var stt: PassthroughSubject<String, Never> = .init()
-
-    public static var shared = STT()
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let audioEngine = AVAudioEngine()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
-
-    fileprivate override init() {}
 
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
         guard recognitionRequest == nil else {
@@ -53,6 +48,30 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
         }
     }
 
+    private func runloop(_ inputNode: AVAudioInputNode) {
+        do {
+            let recordingFormat = inputNode.inputFormat(forBus: 0)
+            guard recordingFormat.channelCount > 0 else {
+                self.available.send(false)
+                return
+            }
+            
+            inputNode.removeTap(onBus: 0)
+            inputNode.installTap(
+                onBus: 0,
+                bufferSize: 1_024,
+                format: recordingFormat
+            ) { buffer, _ in
+                self.recognitionRequest?.append(buffer)
+            }
+            
+            audioEngine.prepare()
+            try audioEngine.start()
+        } catch {
+            self.available.send(false)
+        }
+    }
+    
     private func startRecording(
         speechRecognizer: SFSpeechRecognizer,
         callback: @escaping SpeechRecognizer.Callback
@@ -61,7 +80,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
             recognitionTask?.cancel()
             recognitionTask = nil
         }
-
+#if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()
         do {
             try audioSession.setCategory(
@@ -74,7 +93,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
         } catch {
             logger.error("\(error)")
         }
-
+#endif
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
         let inputNode = audioEngine.inputNode
 
@@ -103,27 +122,7 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
             }
         )
 
-        do {
-            let recordingFormat = inputNode.inputFormat(forBus: 0)
-            guard recordingFormat.channelCount > 0 else {
-                self.available.send(false)
-                return
-            }
-
-            inputNode.removeTap(onBus: 0)
-            inputNode.installTap(
-                onBus: 0,
-                bufferSize: 1_024,
-                format: recordingFormat
-            ) { buffer, _ in
-                self.recognitionRequest?.append(buffer)
-            }
-
-            audioEngine.prepare()
-            try audioEngine.start()
-        } catch {
-            self.available.send(false)
-        }
+        runloop(inputNode)
     }
 
     private func stop() {
@@ -137,4 +136,3 @@ public final class STT: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer {
         self.available.send(available)
     }
 }
-#endif

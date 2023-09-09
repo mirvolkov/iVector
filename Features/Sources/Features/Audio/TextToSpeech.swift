@@ -44,7 +44,7 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
 
     public func run(_ stringToSpeak: String, locale: Locale = Locale.current) -> AsyncStream<VectorAudioFrame> {
         let utterance = AVSpeechUtterance(string: stringToSpeak)
-        utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
+        utterance.voice = AVSpeechSynthesisVoice(language: locale.identifier)
         utterance.volume = 1
         #if os(iOS)
         synth.usesApplicationAudioSession = false
@@ -67,16 +67,16 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
         }
     }
 
-    #if os(iOS)
     func say(_ string: String, locale: Locale = Locale.current) {
+#if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()
         try? audioSession.overrideOutputAudioPort(.speaker)
+#endif
         let utterance = AVSpeechUtterance(string: string)
-        utterance.voice = AVSpeechSynthesisVoice(language: locale.languageCode)
+        utterance.voice = AVSpeechSynthesisVoice(language: locale.identifier)
         utterance.volume = 1
         self.synth.speak(utterance)
     }
-    #endif
 
     public func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
         lastContinuation?.finish()
