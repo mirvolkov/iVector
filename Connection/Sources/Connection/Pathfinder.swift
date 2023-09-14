@@ -60,7 +60,6 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     #endif
 
     var bag = Set<AnyCancellable>()
-    var onlineContinuation: CheckedContinuation<Void, Error>?
     var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
 
     public var online: CurrentValueSubject<Bool, Never> = .init(false)
@@ -77,27 +76,21 @@ public final class PathfinderConnection: NSObject, Pathfinder {
             return
         }
 
-        ble.scan()
-
-        ble.$isOnline.sink { [weak self] online in
-            self?.online.value = online
-            if online {
-                self?.listenSensors()
-            }
-            if let continuation = self?.onlineContinuation, online {
-                continuation.resume()
-                self?.onlineContinuation = nil
-            }
-        }.store(in: &bag)
-
         try await withCheckedThrowingContinuation { continuation in
-            self.onlineContinuation = continuation
+            ble.scan()
+            ble.$isOnline
+                .sink { [weak self] online in
+                    self?.online.value = online
+                    if online {
+                        self?.listenSensors()
+                        continuation.resume()
+                    }
+                }.store(in: &bag)
         }
     }
 
     public func disconnect() {
         online.value = false
         captureSession.stopRunning()
-        onlineContinuation = nil
     }
 }

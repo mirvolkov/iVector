@@ -96,15 +96,13 @@ public final class ConnectionModel: @unchecked Sendable {
         guard case .disconnected = state.value else {
             return
         }
-
         if pathfinderDevice == nil {
             pathfinderDevice = PathfinderConnection(with: bleID)
+            pathfinderDevice?.online
+                .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
+                .sink(receiveValue: { self.state.value = $0 })
+                .store(in: &bag)
         }
-
-        pathfinderDevice?.online
-            .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
-            .sink(receiveValue: { self.state.value = $0 })
-            .store(in: &bag)
         state.value = .connecting
         try await pathfinderDevice?.connect()
     }
