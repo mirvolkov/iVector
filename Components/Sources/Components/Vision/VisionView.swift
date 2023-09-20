@@ -14,12 +14,12 @@ public struct VisionView: View {
     public var body: some View {
         VStack {
 #if os(macOS)
-            if let data = camViewModel.frame?.image, let image = NSImage(ciImage: data), camViewModel.isStreaming {
-                display(with: Image(nsImage: image))
+            if let data = camViewModel.frame?.image, camViewModel.isStreaming {
+                display(with: Image(nsImage: NSImage(ciImage: data)))
             }
 #elseif os(iOS)
-            if let data = camViewModel.frame?.image, let image = UIImage(ciImage: data), camViewModel.isStreaming {
-                display(with: Image(uiImage: image))
+            if let data = camViewModel.frame?.image, camViewModel.isStreaming {
+                display(with: Image(uiImage: UIImage(ciImage: data)))
             }
 #endif
         }

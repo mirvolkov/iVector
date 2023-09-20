@@ -40,6 +40,6 @@ struct iVectorApp: App {
             .environmentObject(env)
             .environmentObject(store)
             .withErrorHandler()
-        }.windowResizability(.contentSize)
+        }
     }
 }
