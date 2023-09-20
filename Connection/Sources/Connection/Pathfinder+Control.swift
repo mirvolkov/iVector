@@ -51,32 +51,6 @@ extension PathfinderConnection: PathfinderControl {
             .store(in: &bag)
     }
 
-    func listenGyro() {
-#if os(iOS)
-        if motion.isGyroAvailable {
-            self.motion.gyroUpdateInterval = 1.0 / 50.0
-            self.motion.startGyroUpdates()
-//            self.timer = Timer(fire: Date(), interval: 1.0 / 50.0,
-//                               repeats: true, block: { _ in
-//                                   if let data = self.motion.gyroData {
-////                    let x = data.rotationRate.x
-////                    let y = data.rotationRate.y
-////                    let z = data.rotationRate.z
-//                                   }
-//                               })
-//            RunLoop.current.add(self.timer!, forMode: .defaultRunLoopMode)
-        }
-#endif
-    }
-
-    func listenAccel() {
-#if os(iOS)
-        if motion.isAccelerometerAvailable {
-
-        }
-#endif
-    }
-
     public func move(_ distance: Float, speed: Float = 1.0, direction: Bool = true) async {
         ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineLF)
         ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineRF)

@@ -56,7 +56,7 @@ struct HomeTablet: View {
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             socketButton(online: viewStore.socket == .online) {
-                viewStore.send(.socket)
+                viewStore.send(.socketConnect)
             }
             settingsButton {
                 preferences = true

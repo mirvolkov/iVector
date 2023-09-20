@@ -2,7 +2,6 @@ import AVFoundation
 import BLE
 import Combine
 import CoreImage
-import CoreMotion
 import OSLog
 
 public struct PFSonar {
@@ -55,10 +54,6 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     let captureSession = AVCaptureSession()
     let queue = DispatchQueue(label: "pathfinder.camera")
     let ble: BLE
-    #if os(iOS)
-        let motion = CMMotionManager()
-    #endif
-
     var bag = Set<AnyCancellable>()
     var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
 

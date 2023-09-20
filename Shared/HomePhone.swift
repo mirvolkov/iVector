@@ -6,6 +6,7 @@ import UIKit
 
 struct HomePhone: View {
     @State private var preferences = false
+    @State private var recorder = false
     @EnvironmentObject private var store: StoreOf<VectorFeature>
     @EnvironmentObject private var env: VectorAppEnvironment
     @Environment(\.verticalSizeClass) private var verticalSizeClass
@@ -24,16 +25,22 @@ struct HomePhone: View {
                         }, onDisconnect: {
                             viewStore.send(.disconnect)
                         })
-                    .frame(width: 320)
-                    .navigationTitle(L10n.controlPanel)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        toolbar
-                    }
+                        .frame(width: 320)
+                        .navigationTitle(L10n.controlPanel)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            toolbar
+                            Button {
+                                recorder = true
+                            } label: {
+                                Image(systemName: "gyroscope")
+                                    .foregroundColor(.init(UIColor.link))
+                            }.buttonStyle(.plain)
+                        }
                 }.tabItem {
                     Label(L10n.control, systemImage: "keyboard.fill")
                 }
-                
+
                 NavigationStack {
                     ZStack {
                         DetailPanel()
@@ -52,6 +59,11 @@ struct HomePhone: View {
             .sheet(isPresented: $preferences) {
                 SettingsView(model: .init(), isPresented: $preferences)
             }
+            .sheet(isPresented: $recorder) {
+//                MotionRecView()
+//                    .environmentObject(env)
+//                    .environmentObject(store)
+            }
             .onAppear {
                 if #available(iOS 15.0, *) {
                     let navigationBarAppearance = UINavigationBarAppearance()
@@ -65,12 +77,12 @@ struct HomePhone: View {
             .ignoresSafeArea()
         }
     }
-    
+
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             socketButton(online: viewStore.socket == .online) {
-                viewStore.send(.socket)
+                viewStore.send(.socketConnect)
             }
             settingsButton {
                 preferences = true
