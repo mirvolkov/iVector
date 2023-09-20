@@ -18,7 +18,7 @@ let resources: [Resource] = [
 
 let package = Package(
     name: "Features",
-    platforms: [.macOS("11.0.0"), .iOS("16.0")],
+    platforms: [.macOS("13.0.0"), .iOS("16.0")],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
