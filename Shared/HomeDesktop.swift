@@ -7,12 +7,12 @@ import SwiftUI
 #if os(macOS)
 struct HomeDesktop: View {
     @State private var preferences = false
-    @EnvironmentObject private var store: VectorStore
+    @EnvironmentObject private var store: StoreOf<VectorFeature>
     @EnvironmentObject private var env: VectorAppEnvironment
 
     var body: some View {
         NavigationSplitView {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store, observe: { $0 }) { viewStore in
                 ControlPanelsView(
                     connection: env.connection,
                     settings: env.settings,
@@ -31,16 +31,24 @@ struct HomeDesktop: View {
                 .padding(.top, 10)
         }
         .toolbar {
-            Button {
-                preferences = true
-            } label: {
-                Image(systemName: "gear")
-            }.buttonStyle(.plain)
+            toolbar
         }
         .sheet(isPresented: $preferences) {
             SettingsView(model: .init(), isPresented: $preferences)
         }
         .frame(width: 940, height: 620)
+    }
+
+    @ViewBuilder
+    private var toolbar: some View {
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socketConnect)
+            }
+            settingsButton {
+                preferences = true
+            }
+        }
     }
 }
 #endif

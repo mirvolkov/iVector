@@ -13,20 +13,19 @@ struct iVectorApp: App {
 #endif
 
     let env: VectorAppEnvironment
-    let store: Store<VectorAppState, VectorAppAction>
+    let vectorStore: VectorFeature.FeatureStore
 
     init() {
         env = VectorAppEnvironment()
-        store = Store<VectorAppState, VectorAppAction>(
-            initialState: .offline,
-            reducer: reducer,
-            environment: env
+        vectorStore = VectorFeature.FeatureStore(
+            initialState: .init(),
+            reducer: VectorFeature(env: env)
         )
     }
 
     var body: some Scene {
         WindowGroup {
-            WithViewStore(store) { _ in
+            WithViewStore(vectorStore, observe: { $0 }) { _ in
 #if os(macOS)
                 HomeDesktop()
 #elseif os(iOS)
@@ -38,7 +37,7 @@ struct iVectorApp: App {
 #endif
             }
             .environmentObject(env)
-            .environmentObject(store)
+            .environmentObject(vectorStore)
             .withErrorHandler()
         }
     }

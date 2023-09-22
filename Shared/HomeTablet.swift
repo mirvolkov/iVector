@@ -6,11 +6,11 @@ import UIKit
 
 struct HomeTablet: View {
     @State private var preferences = false
-    @EnvironmentObject private var store: VectorStore
+    @EnvironmentObject private var store: StoreOf<VectorFeature>
     @EnvironmentObject private var env: VectorAppEnvironment
-  
+
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store, observe: { $0 }) { viewStore in
             NavigationSplitView {
                 ControlPanelsView(
                     connection: env.connection,
@@ -21,18 +21,13 @@ struct HomeTablet: View {
                     }, onDisconnect: {
                         viewStore.send(.disconnect)
                     })
-                .frame(width: 320)
-                .navigationTitle(L10n.controlPanel)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    Button {
-                        preferences = true
-                    } label: {
-                        Image(systemName: "gear")
-                            .foregroundColor(.init(UIColor.link))
-                    }.buttonStyle(.plain)
-                }
-                
+                    .frame(width: 320)
+                    .navigationTitle(L10n.controlPanel)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        toolbar
+                    }
+
             } detail: {
                 ZStack {
                     DetailPanel()
@@ -54,6 +49,18 @@ struct HomeTablet: View {
                 }
             }
             .ignoresSafeArea()
+        }
+    }
+
+    @ViewBuilder
+    private var toolbar: some View {
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socket)
+            }
+            settingsButton {
+                preferences = true
+            }
         }
     }
 }

@@ -6,13 +6,13 @@ import UIKit
 
 struct HomePhone: View {
     @State private var preferences = false
-    @EnvironmentObject private var store: VectorStore
+    @EnvironmentObject private var store: StoreOf<VectorFeature>
     @EnvironmentObject private var env: VectorAppEnvironment
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store, observe: { $0 }) { viewStore in
             TabView {
                 NavigationStack {
                     ControlPanelsView(
@@ -28,12 +28,7 @@ struct HomePhone: View {
                     .navigationTitle(L10n.controlPanel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        Button {
-                            preferences = true
-                        } label: {
-                            Image(systemName: "gear")
-                                .foregroundColor(.init(UIColor.link))
-                        }.buttonStyle(.plain)
+                        toolbar
                     }
                 }.tabItem {
                     Label(L10n.control, systemImage: "keyboard.fill")
@@ -68,6 +63,18 @@ struct HomePhone: View {
                 }
             }
             .ignoresSafeArea()
+        }
+    }
+    
+    @ViewBuilder
+    private var toolbar: some View {
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socket)
+            }
+            settingsButton {
+                preferences = true
+            }
         }
     }
 }

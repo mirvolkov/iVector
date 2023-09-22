@@ -8,6 +8,7 @@ let dependencies: [Target.Dependency] = [
     .product(name: "NIO", package: "swift-nio"),
     .product(name: "SwiftProtobuf", package: "swift-protobuf"),
     .product(name: "SwiftProtobufPluginLibrary", package: "swift-protobuf"),
+    .product(name: "SocketIO", package: "socket.io-client-swift"),
     .product(name: "BLE", package: "BLE"),
 ]
 
@@ -31,6 +32,7 @@ let package = Package(
          .package(url: "https://github.com/apple/swift-protobuf.git", exact: "1.19.0"),
          .package(url: "https://github.com/apple/swift-nio.git", exact: "2.40.0"),
          .package(url: "https://github.com/grpc/grpc-swift", exact: "1.0.0"),
+         .package(url: "https://github.com/socketio/socket.io-client-swift", exact: "15.2.0"),
          .package(path: "../BLE"),
     ],
     targets: [

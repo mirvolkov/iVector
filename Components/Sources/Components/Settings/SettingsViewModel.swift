@@ -1,10 +1,11 @@
 import Combine
-import SwiftUI
 import Features
+import SwiftUI
 
 extension SettingsView {
     class ViewModel: ObservableObject {
-        @Published public var ip: String = ""
+        @Published public var vectorIP: String = ""
+        @Published public var websocketIP: String = ""
         @Published public var eyeColor: Color = .white
         @Published public var isValid: Bool = false
         @Published public var locale: String = "en"
@@ -17,20 +18,22 @@ extension SettingsView {
         
         init(_ model: SettingsModel) {
             self.model = model
-            self.ip = model.ip
+            self.vectorIP = model.vectorIP
+            self.websocketIP = model.websocketIP
             self.eyeColor = model.eyeColor
             self.locale = model.locale
         }
         
         @MainActor func save() {
-            model.ip = ip
+            model.vectorIP = vectorIP
+            model.websocketIP = websocketIP
             model.eyeColor = eyeColor
             model.locale = locale
         }
         
         func validate() {
-            isValid = ip.range(of: regex, options: .regularExpression) != nil
+            isValid = vectorIP.range(of: regex, options: .regularExpression) != nil &&
+                websocketIP.range(of: regex, options: .regularExpression) != nil
         }
     }
-
 }

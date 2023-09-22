@@ -2,7 +2,8 @@
 "Control Panel" = "Control Panel";
 "Camera" = "Camera";
 "offline" = "offline";
-"connection" = "connection";
+"Vector connection" = "Vector";
+"Websocket connection" = "Websocket";
 "IP Address" = "IP Address";
 "Certificate" = "Certificate";
 "GUID" = "GUID";

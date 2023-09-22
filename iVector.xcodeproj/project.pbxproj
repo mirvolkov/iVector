@@ -206,6 +206,7 @@
 				E67160D528BCFE8200F79DA2 /* Frameworks */,
 				E67160D628BCFE8200F79DA2 /* Resources */,
 				E6624C6E28C0A72400DE292F /* ShellScript */,
+				E6F67A622ABB5DB6008DB8D2 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -322,6 +323,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:/opt/homebrew/bin\"\nif which swiftlint > /dev/null; then\n  swiftlint  --config swiftlint.yml .\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n\n";
+		};
+		E6F67A622ABB5DB6008DB8D2 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ -f \"${PODS_ROOT}/SwiftGen/bin/swiftgen\" ]]; then\n  \"cd Components/Sources/Components\"\n  \"swiftgen\"\nelse\n  echo \"warning: SwiftGen is not installed\"\nfi \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -834,8 +852,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pointfreeco/swift-composable-architecture";
 			requirement = {
-				branch = main;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.41.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

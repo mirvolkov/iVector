@@ -57,8 +57,12 @@ public final class ConnectionModel: @unchecked Sendable {
     /// Vector's robot state reactive property
     public let robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
+    /// Socket connection state reactive property
+    public let socketOnline: CurrentValueSubject<Bool, SocketConnection.SocketError> = .init(false)
+
     private var vectorDevice: VectorDevice?
     private var pathfinderDevice: PathfinderDevice?
+    private var socket: SocketConnection?
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
@@ -121,6 +125,17 @@ public final class ConnectionModel: @unchecked Sendable {
             logger.error("\(error.localizedDescription)")
             state.send(.disconnected)
         }
+    }
+
+    public func socket(with ipAddress: String, port: Int) async throws {
+        socket = try .init(with: ipAddress, websocketPort: port)
+        socket?.online
+            .sink(
+                receiveCompletion: { [weak self] completion in self?.socketOnline.send(completion: completion) },
+                receiveValue: { [weak self] online in self?.socketOnline.send(online) }
+            )
+            .store(in: &bag)
+        socket?.connect()
     }
 
     public func disconnect() {

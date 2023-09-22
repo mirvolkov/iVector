@@ -28,8 +28,6 @@ public enum L10n {
   public static let clock = L10n.tr("Localizable", "clock", fallback: "clock")
   /// Connect
   public static let connect = L10n.tr("Localizable", "Connect", fallback: "Connect")
-  /// connection
-  public static let connection = L10n.tr("Localizable", "connection", fallback: "connection")
   /// Control
   public static let control = L10n.tr("Localizable", "Control", fallback: "Control")
   /// Control Panel
@@ -82,12 +80,16 @@ public enum L10n {
   public static let typeInMessageToSay = L10n.tr("Localizable", "Type in message to say", fallback: "Type in message to say")
   /// Vector
   public static let vector = L10n.tr("Localizable", "Vector", fallback: "Vector")
+  /// Vector
+  public static let vectorConnection = L10n.tr("Localizable", "Vector connection", fallback: "Vector")
   /// View
   public static let view = L10n.tr("Localizable", "view", fallback: "View")
   /// vision
   public static let vision = L10n.tr("Localizable", "vision", fallback: "vision")
   /// Delete program?
   public static let warning = L10n.tr("Localizable", "warning", fallback: "Delete program?")
+  /// Websocket
+  public static let websocketConnection = L10n.tr("Localizable", "Websocket connection", fallback: "Websocket")
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
 // swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
