@@ -51,6 +51,13 @@ public final class ConnectionModel: @unchecked Sendable {
         }
     }
 
+    /// Socket connection
+    /// - Description return socket connection if there is any
+    /// - Returns optinal socket connection instance
+    public var socket: SocketConnection? {
+        socketConnection
+    }
+    
     /// Vector's connection state reactive property
     public let state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
 
@@ -62,7 +69,7 @@ public final class ConnectionModel: @unchecked Sendable {
 
     private var vectorDevice: VectorDevice?
     private var pathfinderDevice: PathfinderDevice?
-    private var socket: SocketConnection?
+    private var socketConnection: SocketConnection?
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
@@ -128,20 +135,21 @@ public final class ConnectionModel: @unchecked Sendable {
     }
 
     public func socket(with ipAddress: String, port: Int) async throws {
-        socket = try .init(with: ipAddress, websocketPort: port)
-        socket?.online
+        socketConnection = try .init(with: ipAddress, websocketPort: port)
+        socketConnection?.online
             .sink(
                 receiveCompletion: { [weak self] completion in self?.socketOnline.send(completion: completion) },
                 receiveValue: { [weak self] online in self?.socketOnline.send(online) }
             )
             .store(in: &bag)
-        socket?.connect()
+        socketConnection?.connect()
     }
 
     public func disconnect() {
         do {
             try vectorDevice?.release()
             pathfinderDevice?.disconnect()
+            socket?.disconnect()
             vectorDevice = nil
         } catch {
             self.logger.error("\(error.localizedDescription)")

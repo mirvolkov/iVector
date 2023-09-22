@@ -17,9 +17,9 @@ struct HomeTablet: View {
                     settings: env.settings,
                     assembler: env.assembler,
                     onConnect: {
-                        viewStore.send(.connect(env.settings))
+                        viewStore.send(.deviceConnect(env.settings))
                     }, onDisconnect: {
-                        viewStore.send(.disconnect)
+                        viewStore.send(.deviceDisconnect)
                     })
                     .frame(width: 320)
                     .navigationTitle(L10n.controlPanel)
@@ -56,7 +56,11 @@ struct HomeTablet: View {
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             socketButton(online: viewStore.socket == .online) {
-                viewStore.send(.socketConnect)
+                if viewStore.socket == .offline {
+                    viewStore.send(.socketConnect)
+                } else {
+                    viewStore.send(.socketDisconnect)
+                }
             }
             settingsButton {
                 preferences = true

@@ -1,9 +1,9 @@
 import SwiftUI
 
-extension View {
-    public typealias OnClick = () -> ()
+public extension View {
+    typealias OnClick = () -> ()
 
-    public func socketButton(online: Bool? = nil, onClick: @escaping OnClick) -> some View {
+    func socketButton(online: Bool? = nil, onClick: @escaping OnClick) -> some View {
         Button {
             onClick()
         } label: {
@@ -12,11 +12,28 @@ extension View {
         }.buttonStyle(.plain)
     }
 
-    public func settingsButton(onClick: @escaping OnClick) -> some View {
+    func settingsButton(onClick: @escaping OnClick) -> some View {
         Button {
             onClick()
         } label: {
             Image(systemName: "gear")
+        }.buttonStyle(.plain)
+    }
+
+    func motionButton(online: Bool? = nil, onClick: @escaping OnClick) -> some View {
+        Button {
+            onClick()
+        } label: {
+            Image(systemName: "gyroscope")
+                .foregroundColor(online == true ? .green : .black)
+        }.buttonStyle(.plain)
+    }
+
+    func tagButton(onClick: @escaping OnClick) -> some View {
+        Button {
+            onClick()
+        } label: {
+            Image(systemName: "tag.circle")
         }.buttonStyle(.plain)
     }
 }

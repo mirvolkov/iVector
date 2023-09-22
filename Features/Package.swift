@@ -5,6 +5,7 @@ import PackageDescription
 
 let resources: [Resource] = [
     .copy("Resources/MobileNetV2.mlmodelc"),
+    .copy("Resources/collisionDetector.mlmodel"),
     .copy("Resources/test_sample.jpeg"),
     .copy("Sounds/alarm.wav"),
     .copy("Sounds/cputer1.wav"),

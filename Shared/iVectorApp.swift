@@ -39,6 +39,9 @@ struct iVectorApp: App {
             .environmentObject(env)
             .environmentObject(vectorStore)
             .withErrorHandler()
+            .onAppear {
+                vectorStore.send(.socketConnect)
+            }
         }
     }
 }

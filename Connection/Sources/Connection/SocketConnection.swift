@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import SocketIO
 
-public final class SocketConnection {
+public final class SocketConnection: @unchecked Sendable  {
     public enum SocketError: Error {
         case connectionError
         case invalidURL
@@ -38,6 +38,7 @@ public final class SocketConnection {
         socket.on(clientEvent: .statusChange) { [weak self] _, _ in
             if self?.socket.status == .connected {
                 self?.online.send(true)
+                self?.online.send(completion: .finished)
             } else {
                 self?.online.send(false)
             }
@@ -49,6 +50,10 @@ public final class SocketConnection {
         }
 
         socket.connect()
+    }
+
+    public func disconnect() {
+        socket.disconnect()
     }
 
     public func send<Message: SocketData>(message: Message, with tag: String) async throws {

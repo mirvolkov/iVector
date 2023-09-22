@@ -120,3 +120,6 @@ extension MockedConnection: Behavior {
         }
     }
 }
+
+// swiftlint:enable force_try
+// swiftlint:enable force_unwrapping

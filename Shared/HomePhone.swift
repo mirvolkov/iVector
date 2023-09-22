@@ -21,21 +21,20 @@ struct HomePhone: View {
                         settings: env.settings,
                         assembler: env.assembler,
                         onConnect: {
-                            viewStore.send(.connect(env.settings))
+                            viewStore.send(.deviceConnect(env.settings))
                         }, onDisconnect: {
-                            viewStore.send(.disconnect)
+                            viewStore.send(.deviceDisconnect)
                         })
                         .frame(width: 320)
                         .navigationTitle(L10n.controlPanel)
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
-                            toolbar
-                            Button {
+                            settingsButton {
+                                preferences = true
+                            }
+                            tagButton {
                                 recorder = true
-                            } label: {
-                                Image(systemName: "gyroscope")
-                                    .foregroundColor(.init(UIColor.link))
-                            }.buttonStyle(.plain)
+                            }
                         }
                 }.tabItem {
                     Label(L10n.control, systemImage: "keyboard.fill")
@@ -49,6 +48,9 @@ struct HomePhone: View {
                             .navigationTitle(L10n.camera)
                             .navigationBarTitleDisplayMode(.inline)
                             .edgesIgnoringSafeArea(horizontalSizeClass == .compact && verticalSizeClass == .regular ? .all : .horizontal)
+                            .toolbar {
+                                toolbar
+                            }
                     }
                 }
                 .tabItem {
@@ -60,9 +62,7 @@ struct HomePhone: View {
                 SettingsView(model: .init(), isPresented: $preferences)
             }
             .sheet(isPresented: $recorder) {
-//                MotionRecView()
-//                    .environmentObject(env)
-//                    .environmentObject(store)
+                TaggerView(connection: env.connection)
             }
             .onAppear {
                 if #available(iOS 15.0, *) {
@@ -82,10 +82,10 @@ struct HomePhone: View {
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
             socketButton(online: viewStore.socket == .online) {
-                viewStore.send(.socketConnect)
+                viewStore.send(viewStore.socket == .offline ? .socketConnect : .socketDisconnect)
             }
-            settingsButton {
-                preferences = true
+            motionButton(online: viewStore.motion == .online) {
+                viewStore.send(viewStore.motion == .offline ? .motionConnect : .motionDisconnect)
             }
         }
     }

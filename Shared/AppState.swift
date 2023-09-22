@@ -10,6 +10,7 @@ final class VectorAppEnvironment: ObservableObject, Sendable {
     let config: Config = .init()
     let settings = SettingsModel()
     let assembler = AssemblerModel()
+    let motion = MotionModel()
 }
 
 struct VectorFeature: Reducer {
@@ -38,17 +39,25 @@ struct VectorFeature: Reducer {
     }
 
     enum Action {
-        case connect(SettingsModel)
-        case connected
-        case disconnect
-        case disconnected
+        case deviceConnect(SettingsModel)
+        case deviceGoesOnline
+        case deviceGoesOffline
+        case deviceDisconnect
+
         case socketConnect
-        case socketConnected
+        case socketDisconnect
+        case socketGoesOnline
+        case socketGoesOffline
+
+        case motionConnect
+        case motionDisconnect
+        case motionGoesOnline
+        case motionGoesOffline
     }
 
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
-        case .connect(let settings):
+        case .deviceConnect(let settings):
             return Effect.run { _ in
                 switch env.config.device {
                 case .mock:
@@ -59,42 +68,76 @@ struct VectorFeature: Reducer {
                     try await env.connection.connect()
                 }
             }
-            .concatenate(with: Effect.run(operation: { _ in
-                try await env.connection.socket(with: env.settings.websocketIP, port: env.settings.websocketPort)
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.socketConnect)
             }))
             .concatenate(with: Effect.run(operation: { send in
-                await send(.connected)
+                await send(.motionConnect)
+            }))
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.deviceGoesOnline)
             }))
 
-        case .connected:
+        case .deviceGoesOnline:
             state.device = .online(
                 VisionModel(with: env.connection),
                 ExecutorModel(with: env.connection)
             )
-            state.socket = .online
             return .none
 
-        case .disconnect:
-            return Effect.run { send in
-                env.connection.disconnect()
-                await send(.disconnected)
-            }.concatenate(with: Effect.run(operation: { send in
-                await send(.disconnected)
-            }))
-
-        case .disconnected:
+        case .deviceGoesOffline:
             state.device = .offline
             return .none
 
+        case .deviceDisconnect:
+            return Effect.run { _ in
+                env.connection.disconnect()
+            }
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.socketDisconnect)
+            }))
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.deviceGoesOffline)
+            }))
+
         case .socketConnect:
-            state.socket = .offline
             return Effect.run { send in
                 try await env.connection.socket(with: env.settings.websocketIP, port: env.settings.websocketPort)
-                await send(.socketConnected)
             }
+            .concatenate(with: Effect.publisher {
+                env.connection.socketOnline
+                    .replaceError(with: false)
+                    .map { online in
+                        online ? .socketGoesOnline : .socketGoesOffline
+                    }
+            })
 
-        case .socketConnected:
-            state.socket = env.connection.socketOnline.value ? .online : .offline
+        case .socketDisconnect:
+            env.connection.socket?.disconnect()
+            return Effect.send(.socketGoesOffline)
+
+        case .socketGoesOnline:
+            state.socket = .online
+            return Effect.send(.motionConnect)
+
+        case .socketGoesOffline:
+            state.socket = .offline
+            return .none
+
+        case .motionConnect:
+            env.motion.start(connection: env.connection)
+            return Effect.send(.motionGoesOnline)
+
+        case .motionGoesOffline:
+            return Effect.send(.motionGoesOffline)
+
+        case .motionGoesOnline:
+            state.motion = .online
+            return .none
+
+        case .motionDisconnect:
+            env.motion.stop()
+            state.motion = .offline
             return .none
         }
     }
