@@ -5,6 +5,8 @@ import Foundation
 
 #if os(iOS)
 public final class MotionModel: @unchecked Sendable {
+    public typealias Voxel = (Double, Double, Double)
+
     static let predictionWindowSize = 100
     let model = try? collisionDetector.init(configuration: .init())
     let motionManager = CMMotionManager()
@@ -17,6 +19,8 @@ public final class MotionModel: @unchecked Sendable {
     let rotZ = MotionModel.axelInit()
     let queue = OperationQueue()
     var currentIndexInPredictionWindow = 0
+    var axelerometer: [Voxel] = []
+    var gyroscope: [Voxel] = []
 
     public var online: Bool {
         motionManager.isDeviceMotionActive
@@ -33,24 +37,33 @@ public final class MotionModel: @unchecked Sendable {
 
         motionManager.startDeviceMotionUpdates(to: self.queue) { [socket] data, _ in
             guard let data = data else { return }
-            Task {
-                try await socket?.send(
-                    message: [
-                        data.userAcceleration.x,
-                        data.userAcceleration.y,
-                        data.userAcceleration.z
-                    ],
-                    with: "axelerometer"
-                )
 
-                try await socket?.send(
-                    message: [
-                        data.rotationRate.x,
-                        data.rotationRate.y,
-                        data.rotationRate.z
-                    ],
-                    with: "gyroscope"
-                )
+            self.axelerometer.append((data.userAcceleration.x,
+                                      data.userAcceleration.y,
+                                      data.userAcceleration.z))
+
+            self.gyroscope.append((data.rotationRate.x,
+                                   data.rotationRate.y,
+                                   data.rotationRate.z))
+
+            if self.axelerometer.count >= 100 {
+                Task {
+                    try await socket?.send(
+                        messages: self.axelerometer.map { [$0.0, $0.1, $0.2] },
+                        with: "axelerometer"
+                    )
+                    self.axelerometer.removeAll()
+                }
+            }
+
+            if self.gyroscope.count >= 100 {
+                Task {
+                    try await socket?.send(
+                        messages: self.gyroscope.map { [$0.0, $0.1, $0.2] },
+                        with: "gyroscope"
+                    )
+                    self.gyroscope.removeAll()
+                }
             }
 
             self.rotX[self.currentIndexInPredictionWindow] = data.rotationRate.x as NSNumber

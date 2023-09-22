@@ -63,4 +63,12 @@ public final class SocketConnection: @unchecked Sendable  {
             }
         }
     }
+
+    public func send<Message: SocketData>(messages: [Message], with tag: String) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            socket.emit(tag, with: messages) {
+                continuation.resume()
+            }
+        }
+    }
 }
