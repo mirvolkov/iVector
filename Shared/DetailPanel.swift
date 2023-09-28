@@ -5,22 +5,18 @@ import Features
 import SwiftUI
 
 struct DetailPanel: View {
-    @EnvironmentObject private var store: StoreOf<VectorFeature>
-    @EnvironmentObject private var env: VectorAppEnvironment
+    @EnvironmentObject private var store: StoreOf<AppFeature>
+    @EnvironmentObject private var env: AppEnvironment
 
     var body: some View {
-        WithViewStore(store, observe: { $0 }) { viewStore in
-            switch viewStore.state.device {
-            case .online(let vision, let executor):
-                VisionView(
-                    connection: env.connection,
-                    vision: vision,
-                    executor: executor
-                )
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .edgesIgnoringSafeArea(.all)
+        WithViewStore(store) { viewStore in
+            switch viewStore.state.connection {
+            case .online:
+                VisionView(connection: env.connection)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .edgesIgnoringSafeArea(.all)
 
-            case .offline:
+            case .offline, .connecting:
                 VisionOfflineView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             }

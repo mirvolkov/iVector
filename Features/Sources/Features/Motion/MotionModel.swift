@@ -3,20 +3,26 @@ import CoreML
 import CoreMotion
 import Foundation
 
+public protocol MotionModel: Sendable {
+    init()
+    func start(connection: ConnectionModel)
+    func stop()
+}
+
 #if os(iOS)
-public final class MotionModel: @unchecked Sendable {
+public final class MotionModelImpl: MotionModel {
     public typealias Voxel = (Double, Double, Double)
 
     static let predictionWindowSize = 100
     let model = try? collisionDetector.init(configuration: .init())
     let motionManager = CMMotionManager()
-    var currentState = MotionModel.stateInit()
-    let accX = MotionModel.axelInit()
-    let accY = MotionModel.axelInit()
-    let accZ = MotionModel.axelInit()
-    let rotX = MotionModel.axelInit()
-    let rotY = MotionModel.axelInit()
-    let rotZ = MotionModel.axelInit()
+    var currentState = MotionModelImpl.stateInit()
+    let accX = MotionModelImpl.axelInit()
+    let accY = MotionModelImpl.axelInit()
+    let accZ = MotionModelImpl.axelInit()
+    let rotX = MotionModelImpl.axelInit()
+    let rotY = MotionModelImpl.axelInit()
+    let rotZ = MotionModelImpl.axelInit()
     let queue = OperationQueue()
     var currentIndexInPredictionWindow = 0
     var axelerometer: [Voxel] = []
@@ -94,7 +100,7 @@ public final class MotionModel: @unchecked Sendable {
     }
 }
 
-extension MotionModel {
+extension MotionModelImpl {
     static func stateInit() -> MLMultiArray {
         // swiftlint:disable:next force_try
         try! MLMultiArray(
@@ -106,9 +112,15 @@ extension MotionModel {
     static func axelInit() -> MLMultiArray {
         // swiftlint:disable:next force_try
         try! MLMultiArray(
-            shape: [MotionModel.predictionWindowSize] as [NSNumber],
+            shape: [MotionModelImpl.predictionWindowSize] as [NSNumber],
             dataType: MLMultiArrayDataType.double
         )
     }
+}
+#else
+public final class MotionModelImpl: MotionModel {
+    public init() {}
+    public func start(connection: ConnectionModel) {}
+    public func stop() {}
 }
 #endif

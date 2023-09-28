@@ -6,9 +6,9 @@ public struct VisionView: View {
     @StateObject var camViewModel: ViewModel
     @StateObject var menuViewModel: MenuViewModel
     
-    public init(connection: ConnectionModel, vision: VisionModel, executor: ExecutorModel) {
-        self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection, vision: vision))
-        self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection, executor: executor))
+    public init(connection: ConnectionModel) {
+        self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection))
+        self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection))
     }
 
     public var body: some View {

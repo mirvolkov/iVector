@@ -1,13 +1,8 @@
 import Foundation
+import Features
 
 struct Config {
-    enum Device: String {
-        case mock
-        case vector
-        case pathfinder
-    }
-
-    var device: Device {
+    var device: EnvironmentDevice {
         guard let value: String = infoForKey("Device") else {
             return .mock
         }

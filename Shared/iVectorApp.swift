@@ -12,14 +12,14 @@ struct iVectorApp: App {
     @NSApplicationDelegateAdaptor(iVectorAppDelegate.self) private var delegate: iVectorAppDelegate
 #endif
 
-    let env: VectorAppEnvironment
-    let vectorStore: VectorFeature.FeatureStore
+    let env: AppEnvironment
+    let vectorStore: AppFeature.FeatureStore
 
     init() {
-        env = VectorAppEnvironment()
-        vectorStore = VectorFeature.FeatureStore(
-            initialState: .init(),
-            reducer: VectorFeature(env: env)
+        env = AppEnvironment()
+        vectorStore = AppFeature.FeatureStore(
+            initialState: .initial,
+            reducer: AppFeature(env: env)
         )
     }
 
@@ -39,9 +39,6 @@ struct iVectorApp: App {
             .environmentObject(env)
             .environmentObject(vectorStore)
             .withErrorHandler()
-            .onAppear {
-                vectorStore.send(.socketConnect)
-            }
         }
     }
 }

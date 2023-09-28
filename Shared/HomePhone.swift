@@ -7,8 +7,8 @@ import UIKit
 struct HomePhone: View {
     @State private var preferences = false
     @State private var recorder = false
-    @EnvironmentObject private var store: StoreOf<VectorFeature>
-    @EnvironmentObject private var env: VectorAppEnvironment
+    @EnvironmentObject private var store: StoreOf<AppFeature>
+    @EnvironmentObject private var env: AppEnvironment
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -21,9 +21,9 @@ struct HomePhone: View {
                         settings: env.settings,
                         assembler: env.assembler,
                         onConnect: {
-                            viewStore.send(.deviceConnect(env.settings))
+                            viewStore.send(.connect(.connect))
                         }, onDisconnect: {
-                            viewStore.send(.deviceDisconnect)
+                            viewStore.send(.connect(.disconnect))
                         })
                         .frame(width: 320)
                         .navigationTitle(L10n.controlPanel)
@@ -81,12 +81,8 @@ struct HomePhone: View {
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            socketButton(online: viewStore.socket == .online) {
-                viewStore.send(viewStore.socket == .offline ? .socketConnect : .socketDisconnect)
-            }
-            motionButton(online: viewStore.motion == .online) {
-                viewStore.send(viewStore.motion == .offline ? .motionConnect : .motionDisconnect)
-            }
+            socketButton(online: viewStore.socket == .online)
+            motionButton(online: viewStore.motion == .online)
         }
     }
 }

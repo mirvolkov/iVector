@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import SocketIO
 
-public final class SocketConnection: @unchecked Sendable  {
+public final class SocketConnection: @unchecked Sendable {
     public enum SocketError: Error {
         case connectionError
         case invalidURL
@@ -38,15 +38,9 @@ public final class SocketConnection: @unchecked Sendable  {
         socket.on(clientEvent: .statusChange) { [weak self] _, _ in
             if self?.socket.status == .connected {
                 self?.online.send(true)
-                self?.online.send(completion: .finished)
             } else {
                 self?.online.send(false)
             }
-        }
-
-        socket.on(clientEvent: .error) { [weak self] message, error in
-            print((message, error))
-            self?.online.send(completion: .failure(.connectionError))
         }
 
         socket.connect()

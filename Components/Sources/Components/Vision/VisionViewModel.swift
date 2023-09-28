@@ -18,9 +18,9 @@ extension VisionView {
         private var bag = Set<AnyCancellable>()
         private var cameraTask: Task<Void, Never>?
 
-        public init(with connection: ConnectionModel, vision: VisionModel) {
+        public init(with connection: ConnectionModel) {
             self.connection = connection
-            self.vision = vision
+            self.vision = VisionModel(with: connection)
         }
 
         public func bind() {

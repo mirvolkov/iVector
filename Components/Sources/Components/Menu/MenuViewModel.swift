@@ -1,8 +1,8 @@
 import Combine
 import Connection
 import Features
-import SwiftUI
 import Programmator
+import SwiftUI
 
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     @MainActor @Published var memory: Bool = false
@@ -16,9 +16,9 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     private let executor: ExecutorModel
     private var bag = Set<AnyCancellable>()
 
-    init(with connection: ConnectionModel, executor: ExecutorModel) {
+    init(with connection: ConnectionModel) {
         self.connection = connection
-        self.executor = executor
+        self.executor = ExecutorModel(with: connection)
     }
 
     func bind() {
@@ -54,7 +54,7 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
                 case .low:
                     batt = .init(systemName: "battery.25")
                 }
-                
+
                 try await Task.sleep(nanoseconds: 1_000_000_000)
             }
         }

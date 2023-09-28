@@ -27,8 +27,7 @@ let package = Package(
             targets: ["Features"]),
     ],
     dependencies: [
-        // Dependencies declare other packages that this package depends on.
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "0.41.0"),
         .package(path: "../Connection")
     ],
     targets: [
@@ -36,7 +35,10 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Features",
-            dependencies: [.product(name: "Connection", package: "Connection")],
+            dependencies: [
+                .product(name: "Connection", package: "Connection"),
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+            ],
             resources: resources),
         .testTarget(
             name: "FeatureTests",

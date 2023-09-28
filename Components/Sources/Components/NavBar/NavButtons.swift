@@ -3,37 +3,37 @@ import SwiftUI
 public extension View {
     typealias OnClick = () -> ()
 
-    func socketButton(online: Bool? = nil, onClick: @escaping OnClick) -> some View {
+    func socketButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
         Button {
-            onClick()
+            onClick?()
         } label: {
             Image(systemName: "antenna.radiowaves.left.and.right.circle")
                 .foregroundColor(online == true ? .green : .black)
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).disabled(onClick == nil)
     }
 
-    func settingsButton(onClick: @escaping OnClick) -> some View {
+    func settingsButton(onClick: OnClick? = nil) -> some View {
         Button {
-            onClick()
+            onClick?()
         } label: {
             Image(systemName: "gear")
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).disabled(onClick == nil)
     }
 
-    func motionButton(online: Bool? = nil, onClick: @escaping OnClick) -> some View {
+    func motionButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
         Button {
-            onClick()
+            onClick?()
         } label: {
             Image(systemName: "gyroscope")
                 .foregroundColor(online == true ? .green : .black)
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).disabled(onClick == nil)
     }
 
-    func tagButton(onClick: @escaping OnClick) -> some View {
+    func tagButton(onClick: OnClick? = nil) -> some View {
         Button {
-            onClick()
+            onClick?()
         } label: {
             Image(systemName: "tag.circle")
-        }.buttonStyle(.plain)
+        }.buttonStyle(.plain).disabled(onClick == nil)
     }
 }

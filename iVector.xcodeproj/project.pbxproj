@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		E60EBA1C28C89DB300B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1B28C89DB300B865E2 /* Components */; };
 		E60EBA1E28C89DB700B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1D28C89DB700B865E2 /* Components */; };
-		E63933A528C1F729007C1F79 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppState.swift */; };
-		E63933A628C1F729007C1F79 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppState.swift */; };
+		E63933A528C1F729007C1F79 /* AppFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppFeature.swift */; };
+		E63933A628C1F729007C1F79 /* AppFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppFeature.swift */; };
 		E64D7CFE28D0A56B00D99FA5 /* HomeTablet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */; };
 		E64D7CFF28D0A56B00D99FA5 /* HomeTablet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */; };
 		E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */; };
@@ -23,8 +23,6 @@
 		E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67160CD28BCFE8200F79DA2 /* Assets.xcassets */; };
 		E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68461A328DE25A700A83CB0 /* HomePhone.swift */; };
-		E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461A828DF094700A83CB0 /* ComposableArchitecture */; };
-		E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = E68461D528DF460500A83CB0 /* ComposableArchitecture */; };
 		E6914ABA2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
 		E6914ABB2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */; };
 		E6914AD12A5C83FD00FD64AB /* BLE in Frameworks */ = {isa = PBXBuildFile; productRef = E6914AD02A5C83FD00FD64AB /* BLE */; };
@@ -39,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		E6092F0228C7168800AEFF55 /* Components */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Components; sourceTree = "<group>"; };
-		E63933A428C1F729007C1F79 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		E63933A428C1F729007C1F79 /* AppFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFeature.swift; sourceTree = "<group>"; };
 		E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTablet.swift; sourceTree = "<group>"; };
 		E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailPanel.swift; sourceTree = "<group>"; };
 		E65921A028D0E216007518C8 /* HomeDesktop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDesktop.swift; sourceTree = "<group>"; };
@@ -70,7 +68,6 @@
 				E6914AD12A5C83FD00FD64AB /* BLE in Frameworks */,
 				E6C35C1E28BD0D090098F78A /* Connection in Frameworks */,
 				E6624C6928C0985200DE292F /* Features in Frameworks */,
-				E68461A928DF094700A83CB0 /* ComposableArchitecture in Frameworks */,
 				E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */,
 				E60EBA1C28C89DB300B865E2 /* Components in Frameworks */,
 			);
@@ -83,7 +80,6 @@
 				E6914AD32A5C840300FD64AB /* BLE in Frameworks */,
 				E6C35C7428BF5E140098F78A /* Connection in Frameworks */,
 				E6624C6728C0984800DE292F /* Features in Frameworks */,
-				E68461D628DF460500A83CB0 /* ComposableArchitecture in Frameworks */,
 				E697106428EAC20400A0B2D0 /* Programmator in Frameworks */,
 				E60EBA1E28C89DB700B865E2 /* Components in Frameworks */,
 			);
@@ -109,6 +105,7 @@
 		E67160CA28BCFE8000F79DA2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				E63933A428C1F729007C1F79 /* AppFeature.swift */,
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
 				E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */,
 				E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */,
@@ -116,7 +113,6 @@
 				E68461A328DE25A700A83CB0 /* HomePhone.swift */,
 				E65921A028D0E216007518C8 /* HomeDesktop.swift */,
 				E67160CD28BCFE8200F79DA2 /* Assets.xcassets */,
-				E63933A428C1F729007C1F79 /* AppState.swift */,
 				E697105728E9AD9300A0B2D0 /* Config.swift */,
 			);
 			path = Shared;
@@ -190,7 +186,6 @@
 				E6C35C1D28BD0D090098F78A /* Connection */,
 				E6624C6828C0985200DE292F /* Features */,
 				E60EBA1B28C89DB300B865E2 /* Components */,
-				E68461A828DF094700A83CB0 /* ComposableArchitecture */,
 				E697106128EAC0DC00A0B2D0 /* Programmator */,
 				E6914AD02A5C83FD00FD64AB /* BLE */,
 			);
@@ -218,7 +213,6 @@
 				E6C35C7328BF5E140098F78A /* Connection */,
 				E6624C6628C0984800DE292F /* Features */,
 				E60EBA1D28C89DB700B865E2 /* Components */,
-				E68461D528DF460500A83CB0 /* ComposableArchitecture */,
 				E697106328EAC20400A0B2D0 /* Programmator */,
 				E6914AD22A5C840300FD64AB /* BLE */,
 			);
@@ -257,7 +251,6 @@
 			);
 			mainGroup = E67160C528BCFE8000F79DA2;
 			packageReferences = (
-				E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
 			);
 			productRefGroup = E67160D328BCFE8200F79DA2 /* Products */;
 			projectDirPath = "";
@@ -351,7 +344,7 @@
 				E64D7CFE28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0428D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E6914ABA2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */,
-				E63933A528C1F729007C1F79 /* AppState.swift in Sources */,
+				E63933A528C1F729007C1F79 /* AppFeature.swift in Sources */,
 				E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 				E697105828E9AD9300A0B2D0 /* Config.swift in Sources */,
@@ -365,7 +358,7 @@
 				E64D7CFF28D0A56B00D99FA5 /* HomeTablet.swift in Sources */,
 				E64D7D0528D0A5BD00D99FA5 /* DetailPanel.swift in Sources */,
 				E6914ABB2A5C418100FD64AB /* iVectorAppDelegate.swift in Sources */,
-				E63933A628C1F729007C1F79 /* AppState.swift in Sources */,
+				E63933A628C1F729007C1F79 /* AppFeature.swift in Sources */,
 				E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 				E697105928E9AD9300A0B2D0 /* Config.swift in Sources */,
@@ -878,22 +871,12 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = Features;
 		};
-		E68461A828DF094700A83CB0 /* ComposableArchitecture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
-		};
 		E68461AA28DF129600A83CB0 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;
 		};
 		E68461AC28DF129A00A83CB0 /* ComposableArchitecture */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
-			productName = ComposableArchitecture;
-		};
-		E68461D528DF460500A83CB0 /* ComposableArchitecture */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E68461A728DF094700A83CB0 /* XCRemoteSwiftPackageReference "swift-composable-architecture" */;
 			productName = ComposableArchitecture;

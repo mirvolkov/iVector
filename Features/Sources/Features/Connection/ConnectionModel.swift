@@ -137,6 +137,7 @@ public final class ConnectionModel: @unchecked Sendable {
     public func socket(with ipAddress: String, port: Int) async throws {
         socketConnection = try .init(with: ipAddress, websocketPort: port)
         socketConnection?.online
+            .receive(on: RunLoop.main)
             .sink(
                 receiveCompletion: { [weak self] completion in self?.socketOnline.send(completion: completion) },
                 receiveValue: { [weak self] online in self?.socketOnline.send(online) }

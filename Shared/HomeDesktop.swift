@@ -7,8 +7,8 @@ import SwiftUI
 #if os(macOS)
 struct HomeDesktop: View {
     @State private var preferences = false
-    @EnvironmentObject private var store: StoreOf<VectorFeature>
-    @EnvironmentObject private var env: VectorAppEnvironment
+    @EnvironmentObject private var store: StoreOf<AppFeature>
+    @EnvironmentObject private var env: AppEnvironment
 
     var body: some View {
         NavigationSplitView {
@@ -18,9 +18,9 @@ struct HomeDesktop: View {
                     settings: env.settings,
                     assembler: env.assembler,
                     onConnect: {
-                        viewStore.send(.deviceConnect(env.settings))
+                        viewStore.send(.connect(.connect))
                     }, onDisconnect: {
-                        viewStore.send(.deviceDisconnect)
+                        viewStore.send(.connect(.disconnect))
                     })
                     .frame(width: 320, alignment: .top)
                     .padding(0)
@@ -42,13 +42,8 @@ struct HomeDesktop: View {
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            socketButton(online: viewStore.socket == .online) {
-                if viewStore.socket == .offline {
-                    viewStore.send(.socketConnect)
-                } else {
-                    viewStore.send(.socketDisconnect)
-                }
-            }
+            socketButton(online: viewStore.socket == .online)
+            motionButton(online: viewStore.motion == .online)
             settingsButton {
                 preferences = true
             }
