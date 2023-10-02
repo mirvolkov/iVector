@@ -81,8 +81,15 @@ struct HomePhone: View {
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            socketButton(online: viewStore.socket == .online)
-            motionButton(online: viewStore.motion == .online)
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socket(.connect))
+            }
+            motionButton(online: viewStore.motion == .online) {
+                viewStore.send(.motion(.connect))
+            }
+            camButton(online: viewStore.camera.isOnline) {
+                viewStore.send(.camera(.connect))
+            }
         }
     }
 }

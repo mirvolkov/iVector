@@ -29,11 +29,21 @@ public extension View {
         }.buttonStyle(.plain).disabled(onClick == nil)
     }
 
-    func tagButton(onClick: OnClick? = nil) -> some View {
+    func tagButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
         Button {
             onClick?()
         } label: {
             Image(systemName: "tag.circle")
+                .foregroundColor(online == true ? .green : .black)
+        }.buttonStyle(.plain).disabled(onClick == nil)
+    }
+
+    func camButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
+        Button {
+            onClick?()
+        } label: {
+            Image(systemName: "camera.circle")
+                .foregroundColor(online == true ? .green : .black)
         }.buttonStyle(.plain).disabled(onClick == nil)
     }
 }

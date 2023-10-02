@@ -6,6 +6,11 @@ struct MenuView: View {
 
     var body: some View {
         HStack {
+            Text("AI")
+                .font(vectorBold(22))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+            
             Text("MEM")
                 .font(vectorBold(22))
                 .foregroundColor(.white)

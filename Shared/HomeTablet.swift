@@ -25,7 +25,9 @@ struct HomeTablet: View {
                     .navigationTitle(L10n.controlPanel)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
-                        toolbar
+                        settingsButton {
+                            preferences = true
+                        }
                     }
 
             } detail: {
@@ -33,6 +35,9 @@ struct HomeTablet: View {
                     DetailPanel()
                         .navigationTitle(L10n.camera)
                         .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            toolbar
+                        }
                 }
             }
             .sheet(isPresented: $preferences) {
@@ -55,9 +60,14 @@ struct HomeTablet: View {
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            socketButton(online: viewStore.socket == .online)
-            settingsButton {
-                preferences = true
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socket(.connect))
+            }
+            motionButton(online: viewStore.motion == .online) {
+                viewStore.send(.motion(.connect))
+            }
+            camButton(online: viewStore.camera.isOnline) {
+                viewStore.send(.camera(.connect))
             }
         }
     }

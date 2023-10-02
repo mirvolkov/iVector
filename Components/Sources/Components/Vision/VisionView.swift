@@ -1,13 +1,14 @@
 import Features
-import SwiftUI
 import Programmator
+import SwiftUI
 
 public struct VisionView: View {
     @StateObject var camViewModel: ViewModel
     @StateObject var menuViewModel: MenuViewModel
-    
-    public init(connection: ConnectionModel) {
-        self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection))
+    private let context = CIContext()
+
+    public init(connection: ConnectionModel, vision: VisionModel) {
+        self._camViewModel = StateObject(wrappedValue: ViewModel(with: connection, vision: vision))
         self._menuViewModel = StateObject(wrappedValue: MenuViewModel(with: connection))
     }
 
@@ -18,8 +19,10 @@ public struct VisionView: View {
                 display(with: Image(nsImage: NSImage(ciImage: data)))
             }
 #elseif os(iOS)
-            if let data = camViewModel.frame?.image, camViewModel.isStreaming {
-                display(with: Image(uiImage: UIImage(ciImage: data)))
+            if let data = camViewModel.frame?.image, camViewModel.isStreaming,
+               let cgimg = context.createCGImage(data, from: data.extent)
+            {
+                display(with: Image(uiImage: UIImage(cgImage: cgimg)))
             }
 #endif
         }
@@ -44,23 +47,24 @@ public struct VisionView: View {
             headControl
                 .frame(width: 80)
                 .padding(.trailing, 10)
+                .padding(.top, 80)
         }.overlay(alignment: .top) {
             menu
                 .frame(height: 80)
-                .padding(.top, 10)
+                .padding(.top, 80)
         }
     }
 
     private var menu: some View {
         MenuView(viewModel: menuViewModel)
     }
-    
-    private var headControl: some View {
+
+    private var headControl: some View { 
         VStack(alignment: .center) {
             VSliderView(value: $camViewModel.headAngle, gradientColors: [.clear, .clear], sliderColor: .white.opacity(0.3))
                 .padding(.vertical, 40)
                 .padding(.trailing, 20)
-            
+
             Text("\(Int(camViewModel.normToDegree(camViewModel.headAngle)))")
                 .font(vectorBold(28))
                 .foregroundColor(.white.opacity(0.75))
@@ -69,7 +73,7 @@ public struct VisionView: View {
                 .frame(alignment: .center)
         }
     }
-    
+
     private var facet: some View {
         Image("facet")
             .resizable(capInsets: .init(), resizingMode: .tile)

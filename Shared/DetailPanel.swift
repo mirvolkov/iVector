@@ -9,10 +9,10 @@ struct DetailPanel: View {
     @EnvironmentObject private var env: AppEnvironment
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            switch viewStore.state.connection {
-            case .online:
-                VisionView(connection: env.connection)
+        WithViewStore(store, observe: { $0.camera }) { viewStore in
+            switch viewStore.state {
+            case .online(let vision):
+                VisionView(connection: env.connection, vision: vision)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .edgesIgnoringSafeArea(.all)
 

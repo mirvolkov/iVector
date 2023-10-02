@@ -30,6 +30,36 @@ public struct SettingsView: View {
                         Text(L10n.websocketConnection)
                     }
             }
+#if os(iOS)
+        .navigationBarTitle(L10n.settings)
+        .toolbar {
+            Button {
+                viewModel.save()
+                isPresented = false
+            } label: {
+                Image(systemName: "checkmark")
+                    .foregroundColor(.green)
+            }
+            .buttonStyle(.plain)
+            .disabled(!viewModel.isValid)
+        }
+        .sheet(isPresented: $showCertPicker) {
+            DocumentPicker(filePath: $viewModel.certPath)
+        }
+#elseif os(macOS)
+        .frame(maxWidth: .infinity)
+        .onChange(of: showCertPicker) { show in
+            if show {
+                openDocPicker { url in
+                    viewModel.certPath = url
+                }
+            }
+            do {
+                showCertPicker = false
+            }
+        }
+        .padding(10)
+#endif
         }
 #if os(macOS)
         .frame(width: 320)
@@ -116,36 +146,6 @@ public struct SettingsView: View {
         .onChange(of: viewModel.certPath) { newValue in
             self.certPath = newValue?.lastPathComponent ?? ".cert"
         }
-#if os(iOS)
-        .navigationBarTitle(L10n.settings)
-        .toolbar {
-            Button {
-                viewModel.save()
-                isPresented = false
-            } label: {
-                Image(systemName: "checkmark")
-                    .foregroundColor(.green)
-            }
-            .buttonStyle(.plain)
-            .disabled(!viewModel.isValid)
-        }
-        .sheet(isPresented: $showCertPicker) {
-            DocumentPicker(filePath: $viewModel.certPath)
-        }
-#elseif os(macOS)
-        .frame(maxWidth: .infinity)
-        .onChange(of: showCertPicker) { show in
-            if show {
-                openDocPicker { url in
-                    viewModel.certPath = url
-                }
-            }
-            do {
-                showCertPicker = false
-            }
-        }
-        .padding(10)
-#endif
     }
 
     @ViewBuilder
