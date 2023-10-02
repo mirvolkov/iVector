@@ -29,6 +29,10 @@ public struct ConnectionFeature: ReducerProtocol {
         Reduce { state, action in
             switch action {
             case .connect:
+                guard state != .online else {
+                    return .none
+                }
+        
                 return Effect.run { send in
                     await send(.goesOnline)
                 }
@@ -40,6 +44,7 @@ public struct ConnectionFeature: ReducerProtocol {
                 }))
 
             case .goesOnline:
+                state = .connecting
                 return .none
 
             case .connected:
@@ -51,6 +56,10 @@ public struct ConnectionFeature: ReducerProtocol {
                 return .none
 
             case .disconnect:
+                guard state == .online else {
+                    return .none
+                }
+
                 return Effect.run { _ in
                     connection.disconnect()
                 }

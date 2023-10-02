@@ -6,6 +6,7 @@ public enum VectorBatteryState: CustomStringConvertible {
     case normal
     case full
     case unknown
+    case percent(UInt)
 
     init(with entity: Anki_Vector_ExternalInterface_BatteryLevel) {
         switch entity {
@@ -38,6 +39,8 @@ public enum VectorBatteryState: CustomStringConvertible {
             return "low"
         case .unknown:
             return "unknown"
+        case .percent(let value):
+            return "\(value) %"
         }
     }
 }

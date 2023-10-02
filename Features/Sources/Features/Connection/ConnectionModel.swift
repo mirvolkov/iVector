@@ -47,7 +47,20 @@ public final class ConnectionModel: @unchecked Sendable {
     /// - Description returns current battery state
     public var battery: VectorBatteryState? {
         get async throws {
-            try await vectorDevice?.battery
+            if let vectorDevice {
+                return try await vectorDevice.battery
+            } else if let pathfinderDevice {
+                return await withCheckedContinuation { continuation in
+                    pathfinderDevice
+                        .battery
+                        .sink { value in
+                            continuation.resume(returning: VectorBatteryState.percent(value))
+                        }
+                        .store(in: &bag)
+                }
+            } else {
+                return nil
+            }
         }
     }
 
@@ -57,7 +70,7 @@ public final class ConnectionModel: @unchecked Sendable {
     public var socket: SocketConnection? {
         socketConnection
     }
-    
+
     /// Vector's connection state reactive property
     public let state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
 
@@ -107,15 +120,15 @@ public final class ConnectionModel: @unchecked Sendable {
         guard case .disconnected = state.value else {
             return
         }
-        if pathfinderDevice == nil {
-            pathfinderDevice = PathfinderConnection(with: bleID)
-            pathfinderDevice?.online
-                .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
-                .sink(receiveValue: { self.state.value = $0 })
-                .store(in: &bag)
-        }
+
+        pathfinderDevice = PathfinderConnection(with: bleID)
         state.value = .connecting
         try await pathfinderDevice?.connect()
+        state.value = .online
+        pathfinderDevice?.online
+            .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
+            .sink(receiveValue: { self.state.value = $0 })
+            .store(in: &bag)
     }
 
     public func mock() async {

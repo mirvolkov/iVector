@@ -53,6 +53,17 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
                     batt = .init(systemName: "battery.50")
                 case .low:
                     batt = .init(systemName: "battery.25")
+                case .percent(let value):
+                    switch value {
+                    case 0...25:
+                        batt = .init(systemName: "battery.25")
+                    case 25...50:
+                        batt = .init(systemName: "battery.50")
+                    case 50...100:
+                        batt = .init(systemName: "battery.100")
+                    default:
+                        batt = .init(systemName: "battery.100.bolt")
+                    }
                 }
 
                 try await Task.sleep(nanoseconds: 1_000_000_000)

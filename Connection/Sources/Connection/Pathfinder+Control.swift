@@ -5,7 +5,7 @@ import CoreMotion
 
 public protocol PathfinderControl {
     var sonar: PassthroughSubject<PFSonar, Never> { get }
-    var battery: PassthroughSubject<Int, Never> { get }
+    var battery: PassthroughSubject<UInt, Never> { get }
 
     /// Move
     /// - Parameter distance - distance in mm
@@ -49,6 +49,12 @@ extension PathfinderConnection: PathfinderControl {
             .map { PFSonar($0) }
             .sink(receiveValue: { self.sonar.send($0) })
             .store(in: &bag)
+        
+        ble.listen(for: uuidBattery) { [self] message in
+            if let value = UInt(message) {
+                battery.send(value)
+            }
+        }
     }
 
     public func move(_ distance: Float, speed: Float = 1.0, direction: Bool = true) async {

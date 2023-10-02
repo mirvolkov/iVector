@@ -41,21 +41,15 @@ struct AppFeature: ReducerProtocol {
                 case .connected:
                     return Effect.run { send in
                         await send(.motion(.connect))
-                    }.concatenate(with: Effect.run(operation: { send in
                         await send(.socket(.connect))
-                    }))
-                    .concatenate(with: Effect.run(operation: { send in
                         await send(.camera(.connect))
-                    }))
+                    }
                 case .disconnect:
                     return Effect.run { send in
                         await send(.motion(.disconnect))
-                    }.concatenate(with: Effect.run(operation: { send in
                         await send(.socket(.disconnect))
-                    }))
-                    .concatenate(with: Effect.run(operation: { send in
                         await send(.camera(.disconnect))
-                    }))
+                    }
                 default:
                     return .none
                 }

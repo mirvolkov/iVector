@@ -55,11 +55,12 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     let queue = DispatchQueue(label: "pathfinder.camera")
     let ble: BLE
     var bag = Set<AnyCancellable>()
+    var onlineContinuation: UnsafeContinuation<Void, Error>?
     var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
 
     public var online: CurrentValueSubject<Bool, Never> = .init(false)
     public var sonar: PassthroughSubject<PFSonar, Never> = .init()
-    public var battery: PassthroughSubject<Int, Never> = .init()
+    public var battery: PassthroughSubject<UInt, Never> = .init()
 
     public init(with bleID: String) {
         ble = BLE([bleID])
@@ -71,14 +72,16 @@ public final class PathfinderConnection: NSObject, Pathfinder {
             return
         }
 
-        try await withCheckedThrowingContinuation { continuation in
+        try await withUnsafeThrowingContinuation { continuation in
+            onlineContinuation = continuation
             ble.scan()
             ble.$isOnline
                 .sink { [weak self] online in
                     self?.online.value = online
                     if online {
                         self?.listenSensors()
-                        continuation.resume()
+                        self?.onlineContinuation?.resume()
+                        self?.onlineContinuation = nil
                     }
                 }.store(in: &bag)
         }
