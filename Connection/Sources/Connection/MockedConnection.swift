@@ -3,8 +3,35 @@
 
 import Foundation
 import GRPC
-import SwiftUI
 import OSLog
+import SwiftUI
+
+#if os(iOS)
+fileprivate extension CIImage {
+    convenience init?(url: URL) {
+        guard let data = try? Data(contentsOf: url),
+              let image = UIImage(data: data),
+              let ciImage = CIImage(image: image)
+        else {
+            return nil
+        }
+        self.init(image: image)
+    }
+}
+
+#elseif os(macOS)
+import AppKit
+fileprivate extension CIImage {
+    convenience init?(url: URL) {
+        guard let data = try? Data(contentsOf: url),
+              let image = NSImage(data: data)
+        else {
+            return nil
+        }
+        self.init(data: data, options: [:])
+    }
+}
+#endif
 
 public final class MockedConnection: Vector {
     public var delegate: ConnectionDelegate?
@@ -57,7 +84,7 @@ extension MockedConnection: Camera {
             Task {
                 await MainActor.run {
                     visionStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
-                        if let image = CIImage(contentsOf: url) {
+                        if let image = CIImage(url: url) {
                             continuation.yield(.init(image: image))
                         }
                     })
@@ -101,12 +128,12 @@ extension MockedConnection: Behavior {
 
     public func driveOffCharger() async throws {
         logger.debug("driveOffCharger")
-        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0...1)))
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0 ... 1)))
     }
 
     public func driveOnCharger() async throws {
         logger.debug("driveOnCharger")
-        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0...1)))
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * Float.random(in: 0 ... 1)))
     }
 
     public var battery: VectorBatteryState {

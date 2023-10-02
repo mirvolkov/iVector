@@ -35,25 +35,25 @@ extension PathfinderConnection: Camera {
         try setUpCamera()
     }
 
-    func setUpCamera(
-        sessionPreset: AVCaptureSession.Preset = .low,
-        deviceID: String? = AVCaptureDevice.default(for: AVMediaType.video)?.uniqueID
-    ) throws {
-        if captureSession.canSetSessionPreset(sessionPreset) {
-            captureSession.sessionPreset = sessionPreset
+    func setUpCamera() throws {
+        var types: [AVCaptureDevice.DeviceType] = []
+        if #available(iOS 17.0, macOS 14.0, *) {
+            types.append(.external)
+        } else {
+            types.append(.builtInWideAngleCamera)
         }
 
         let discoverySession = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [.builtInMicrophone, .builtInWideAngleCamera],
+            deviceTypes: types,
             mediaType: .video,
             position: .unspecified
         )
 
-        guard let cameraDevice = discoverySession.devices.first(where: { $0.uniqueID == deviceID }) else {
+        guard let externalCameraDevice = discoverySession.devices.first else {
             throw PathfinderError.cameraFailed
         }
 
-        guard let videoInput = try? AVCaptureDeviceInput(device: cameraDevice) else {
+        guard let videoInput = try? AVCaptureDeviceInput(device: externalCameraDevice) else {
             throw PathfinderError.cameraFailed
         }
 
@@ -77,7 +77,10 @@ extension PathfinderConnection: Camera {
             captureSession.addOutput(videoOutput)
         }
 
-        videoOutput.connection(with: AVMediaType.video)?.videoOrientation = .portrait
+        logger.info("EXTERNAL CAMERA INIT COMPLETED")
+        if #available(iOS 17.0, macOS 14.0, *) {
+            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 90
+        }
     }
 }
 
@@ -100,58 +103,5 @@ extension PathfinderConnection: AVCaptureVideoDataOutputSampleBufferDelegate {
         from connection: AVCaptureConnection
     ) {
         logger.fault("frame dropped")
-    }
-}
-
-public extension Pathfinder {
-    /// Returns all cameras on the device.
-    static func getListOfCameras() -> [AVCaptureDevice] {
-        #if os(iOS)
-            return AVCaptureDevice.DiscoverySession(
-                deviceTypes: [
-                    //                .external,
-                    .builtInWideAngleCamera,
-                    .builtInTelephotoCamera
-                ],
-                mediaType: .video,
-                position: .unspecified
-            )
-            .devices
-        #elseif os(macOS)
-            return AVCaptureDevice.DiscoverySession(
-                deviceTypes: [
-                    .builtInWideAngleCamera
-                ],
-                mediaType: .video,
-                position: .unspecified
-            )
-            .devices
-        #endif
-    }
-
-    /// Returns all microphones on the device.
-    static func getListOfMicrophones() -> [AVCaptureDevice] {
-        let session = AVCaptureDevice.DiscoverySession(
-            deviceTypes: [
-                .builtInMicrophone
-            ],
-            mediaType: .audio,
-            position: .unspecified
-        )
-
-        return session.devices
-    }
-
-    /// Converts giving AVCaptureDevice list to the String
-    static func convertDeviceListToString(_ devices: [AVCaptureDevice]) -> [String] {
-        return devices.map { $0.localizedName }
-    }
-
-    static func getListOfCamerasAsString() -> [String] {
-        return convertDeviceListToString(getListOfCameras())
-    }
-
-    static func getListOfMicrophonesAsString() -> [String] {
-        return convertDeviceListToString(getListOfMicrophones())
     }
 }

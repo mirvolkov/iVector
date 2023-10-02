@@ -22,17 +22,19 @@ struct AppFeature: ReducerProtocol {
         var connection: ConnectionFeature.State
         var motion: MotionFeature.State
         var socket: SocketFeature.State
-        static let initial: Self = .init(connection: .offline, motion: .offline, socket: .offline)
+        var camera: VisionFeature.State
+        static let initial: Self = .init(connection: .offline, motion: .offline, socket: .offline, camera: .offline)
     }
 
-    enum Action : Sendable{
+    enum Action: Sendable {
         case motion(MotionFeature.Action)
         case connect(ConnectionFeature.Action)
         case socket(SocketFeature.Action)
+        case camera(VisionFeature.Action)
     }
 
     var body: some ReducerProtocolOf<AppFeature> {
-        Reduce { state, action in
+        Reduce { _, action in
             switch action {
             case .connect(let action):
                 switch action {
@@ -42,18 +44,22 @@ struct AppFeature: ReducerProtocol {
                     }.concatenate(with: Effect.run(operation: { send in
                         await send(.socket(.connect))
                     }))
+                    .concatenate(with: Effect.run(operation: { send in
+                        await send(.camera(.connect))
+                    }))
                 case .disconnect:
                     return Effect.run { send in
                         await send(.motion(.disconnect))
                     }.concatenate(with: Effect.run(operation: { send in
                         await send(.socket(.disconnect))
                     }))
+                    .concatenate(with: Effect.run(operation: { send in
+                        await send(.camera(.disconnect))
+                    }))
                 default:
                     return .none
                 }
-            case .motion:
-                return .none
-            case .socket:
+            default:
                 return .none
             }
         }
@@ -86,6 +92,14 @@ struct AppFeature: ReducerProtocol {
                 settings: env.settings,
                 connection: env.connection
             )
+        }
+
+        Scope<AppFeature.State, AppFeature.Action, VisionFeature>(
+            state: \.camera,
+            action: /AppFeature.Action.camera
+        ) {
+            VisionFeature(settings: env.settings,
+                          connection: env.connection)
         }
     }
 }

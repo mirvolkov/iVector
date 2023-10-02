@@ -8,20 +8,31 @@ import ComposableArchitecture
 
 public struct VisionFeature: ReducerProtocol {
     let settings: SettingsModel
+    let connection: ConnectionModel
 
-    public init(settings: SettingsModel) {
+    public init(settings: SettingsModel, connection: ConnectionModel) {
         self.settings = settings
+        self.connection = connection
     }
 
     public enum State: Equatable {
         case offline
         case connecting
-        case online
+        case online(VisionModel)
+
+        public var isOnline: Bool {
+            switch self {
+            case .online:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
-    public enum Action {
+    public enum Action: Sendable {
         case connect
-        case goesOnline
+        case goesOnline(VisionModel)
         case goesOffline
         case disconnect
     }
@@ -31,10 +42,16 @@ public struct VisionFeature: ReducerProtocol {
             switch action {
             case .connect:
                 return Effect.run(operation: { send in
-                    await send(Action.goesOnline)
+                    if let stream = try connection.camera?.requestCameraFeed() {
+                        let model = VisionModel(with: stream)
+                        await send(Action.goesOnline(model))
+                    } else {
+                        await send(Action.goesOffline)
+                    }
                 })
 
-            case .goesOnline:
+            case .goesOnline(let model):
+                state = .online(model)
                 return .none
 
             case .goesOffline:
@@ -42,7 +59,9 @@ public struct VisionFeature: ReducerProtocol {
                 return .none
 
             case .disconnect:
-                return .none
+                return Effect.run { send in
+                    await send(.goesOffline)
+                }
             }
         }
     }

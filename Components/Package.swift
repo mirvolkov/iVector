@@ -15,7 +15,7 @@ let resources: [Resource] = [
 let package = Package(
     name: "Components",
     defaultLocalization: "en",
-    platforms: [.macOS("13.0.0"), .iOS("16.0")],
+    platforms: [.macOS("13.0.0"), .iOS("17.0")],
     products: [
         .library(
             name: "Components",

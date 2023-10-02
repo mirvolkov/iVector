@@ -1,3 +1,4 @@
+import Combine
 import Connection
 import CoreML
 import CoreMotion
@@ -10,79 +11,84 @@ public protocol MotionModel: Sendable {
 }
 
 #if os(iOS)
-public final class MotionModelImpl: MotionModel {
+public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     public typealias Voxel = (Double, Double, Double)
 
-    static let predictionWindowSize = 100
-    let model = try? collisionDetector.init(configuration: .init())
-    let motionManager = CMMotionManager()
-    var currentState = MotionModelImpl.stateInit()
-    let accX = MotionModelImpl.axelInit()
-    let accY = MotionModelImpl.axelInit()
-    let accZ = MotionModelImpl.axelInit()
-    let rotX = MotionModelImpl.axelInit()
-    let rotY = MotionModelImpl.axelInit()
-    let rotZ = MotionModelImpl.axelInit()
-    let queue = OperationQueue()
-    var currentIndexInPredictionWindow = 0
-    var axelerometer: [Voxel] = []
-    var gyroscope: [Voxel] = []
-
-    public var online: Bool {
-        motionManager.isDeviceMotionActive
-    }
+    private static let predictionWindowSize = 100
+    private let model = try? collisionDetector.init(configuration: .init())
+    private let motionManager = CMMotionManager()
+    private var currentState = MotionModelImpl.stateInit()
+    private let accX = MotionModelImpl.axelInit()
+    private let accY = MotionModelImpl.axelInit()
+    private let accZ = MotionModelImpl.axelInit()
+    private let rotX = MotionModelImpl.axelInit()
+    private let rotY = MotionModelImpl.axelInit()
+    private let rotZ = MotionModelImpl.axelInit()
+    private let queue = OperationQueue()
+    private var currentIndexInPredictionWindow = 0
+    private var cancellable: AnyCancellable?
+    public var online: Bool { motionManager.isDeviceMotionActive }
 
     public init() {}
 
     public func start(connection: ConnectionModel) {
         let socket = connection.socket
-
+        queue.maxConcurrentOperationCount = 1
+    
         guard !online else {
             return
         }
 
-        motionManager.startDeviceMotionUpdates(to: self.queue) { [socket] data, _ in
+        cancellable = Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink(receiveValue: { _ in
+                self.recognize()
+            })
+
+        motionManager.startDeviceMotionUpdates(to: self.queue) { [socket, self] data, error in
             guard let data = data else { return }
+            if let error {
+                print(error)
+                return
+            }
 
-            self.axelerometer.append((data.userAcceleration.x,
-                                      data.userAcceleration.y,
-                                      data.userAcceleration.z))
-
-            self.gyroscope.append((data.rotationRate.x,
-                                   data.rotationRate.y,
-                                   data.rotationRate.z))
-
-            if self.axelerometer.count >= 100 {
+            rotX[currentIndexInPredictionWindow] = data.rotationRate.x as NSNumber
+            rotY[currentIndexInPredictionWindow] = data.rotationRate.y as NSNumber
+            rotZ[currentIndexInPredictionWindow] = data.rotationRate.z as NSNumber
+            accX[currentIndexInPredictionWindow] = data.userAcceleration.x as NSNumber
+            accY[currentIndexInPredictionWindow] = data.userAcceleration.y as NSNumber
+            accZ[currentIndexInPredictionWindow] = data.userAcceleration.z as NSNumber
+            currentIndexInPredictionWindow += 1
+            if currentIndexInPredictionWindow == Self.predictionWindowSize - 1 {
+                currentIndexInPredictionWindow = 0
                 Task {
                     try await socket?.send(
-                        messages: self.axelerometer.map { [$0.0, $0.1, $0.2] },
+                        messages: (0..<99).map { index in [accX[index], accY[index], accZ[index]] },
                         with: "axelerometer"
                     )
-                    self.axelerometer.removeAll()
-                }
-            }
-
-            if self.gyroscope.count >= 100 {
-                Task {
                     try await socket?.send(
-                        messages: self.gyroscope.map { [$0.0, $0.1, $0.2] },
+                        messages: (0..<99).map { index in [rotX[index], rotY[index], rotZ[index]] },
                         with: "gyroscope"
                     )
-                    self.gyroscope.removeAll()
                 }
             }
+        }
+    }
 
-            self.rotX[self.currentIndexInPredictionWindow] = data.rotationRate.x as NSNumber
-            self.rotY[self.currentIndexInPredictionWindow] = data.rotationRate.y as NSNumber
-            self.rotZ[self.currentIndexInPredictionWindow] = data.rotationRate.z as NSNumber
-            self.accX[self.currentIndexInPredictionWindow] = data.userAcceleration.x as NSNumber
-            self.accY[self.currentIndexInPredictionWindow] = data.userAcceleration.y as NSNumber
-            self.accZ[self.currentIndexInPredictionWindow] = data.userAcceleration.z as NSNumber
-            self.currentIndexInPredictionWindow += 1
-            if self.currentIndexInPredictionWindow == Self.predictionWindowSize {
-                self.currentIndexInPredictionWindow = 0
-            }
+    public func stop() {
+        defer { cancellable?.cancel() }
 
+        guard online else {
+            return
+        }
+
+        motionManager.stopDeviceMotionUpdates()
+    }
+}
+
+extension MotionModelImpl {
+    func recognize() {
+        autoreleasepool {
             if let modelPrediction = try? self.model?.prediction(
                 x: self.accX,
                 y: self.accY,
@@ -93,10 +99,6 @@ public final class MotionModelImpl: MotionModel {
                 print(modelPrediction.label)
             }
         }
-    }
-
-    public func stop() {
-        motionManager.stopDeviceMotionUpdates()
     }
 }
 
