@@ -5,15 +5,13 @@ import CoreMotion
 import Foundation
 
 public protocol MotionModel: Sendable {
-    init()
-    func start(connection: ConnectionModel)
+    init(connection: ConnectionModel)
+    func start()
     func stop()
 }
 
 #if os(iOS)
 public final class MotionModelImpl: @unchecked Sendable, MotionModel {
-    public typealias Voxel = (Double, Double, Double)
-
     private static let predictionWindowSize = 100
     private let model = try? collisionDetector.init(configuration: .init())
     private let motionManager = CMMotionManager()
@@ -25,14 +23,18 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private let rotY = MotionModelImpl.axelInit()
     private let rotZ = MotionModelImpl.axelInit()
     private let queue = OperationQueue()
+    private let connection: ConnectionModel
     private var currentIndexInPredictionWindow = 0
     private var cancellable: AnyCancellable?
+    private var socket: SocketConnection? { connection.socket }
+
     public var online: Bool { motionManager.isDeviceMotionActive }
 
-    public init() {}
+    public init(connection: ConnectionModel) {
+        self.connection = connection
+    }
 
-    public func start(connection: ConnectionModel) {
-        let socket = connection.socket
+    public func start() {
         queue.maxConcurrentOperationCount = 1
     
         guard !online else {
@@ -45,7 +47,7 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
                 self.recognize()
             })
 
-        motionManager.startDeviceMotionUpdates(to: self.queue) { [socket, self] data, error in
+        motionManager.startDeviceMotionUpdates(to: self.queue) { [self] data, error in
             guard let data = data else { return }
             if let error {
                 print(error)

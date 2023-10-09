@@ -6,10 +6,10 @@ public struct MotionFeature: ReducerProtocol {
     let connection: ConnectionModel
     let motionModel: MotionModel
 
-    public init(settings: SettingsModel, connection: ConnectionModel, motionModel: MotionModel) {
+    public init(settings: SettingsModel, connection: ConnectionModel) {
         self.settings = settings
         self.connection = connection
-        self.motionModel = motionModel
+        self.motionModel = MotionModelImpl(connection: connection)
     }
 
     public enum State: Equatable {
@@ -30,7 +30,7 @@ public struct MotionFeature: ReducerProtocol {
             switch action {
             case .connect:
                 return Effect.run(operation: { _ in
-                    motionModel.start(connection: connection)
+                    motionModel.start()
                 })
                 .concatenate(with: Effect.run(operation: { send in
                     await send(.goesOnline)

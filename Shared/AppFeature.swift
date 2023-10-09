@@ -11,7 +11,6 @@ final class AppEnvironment: ObservableObject, Sendable {
     let config: Config = .init()
     let settings = SettingsModel()
     let assembler = AssemblerModel()
-    let motion: MotionModel = MotionModelImpl()
 }
 
 struct AppFeature: ReducerProtocol {
@@ -73,8 +72,7 @@ struct AppFeature: ReducerProtocol {
         ) {
             MotionFeature(
                 settings: env.settings,
-                connection: env.connection,
-                motionModel: env.motion
+                connection: env.connection
             )
         }
 
