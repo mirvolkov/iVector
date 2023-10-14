@@ -1,10 +1,6 @@
-import Foundation
-
-// TODOs
-// Vision can use external camera as a source, internal camera or vision stream from vector
-// Source can be interrupted, in this case we may need to reconnect (for external camera especially)
-
+// swiftlint:disable:next file_header
 import ComposableArchitecture
+import Foundation
 
 public struct VisionFeature: ReducerProtocol {
     let settings: SettingsModel
@@ -35,6 +31,8 @@ public struct VisionFeature: ReducerProtocol {
         case goesOnline(VisionModel)
         case goesOffline
         case disconnect
+        case objectDetectionStart
+        case objectDetectionStop
     }
 
     public var body: some ReducerProtocolOf<Self> {
@@ -50,7 +48,7 @@ public struct VisionFeature: ReducerProtocol {
                     }
                 })
 
-            case .goesOnline(let model):
+            case let .goesOnline(model):
                 state = .online(model)
                 return .none
 
@@ -62,6 +60,18 @@ public struct VisionFeature: ReducerProtocol {
                 return Effect.run { send in
                     await send(.goesOffline)
                 }
+
+            case .objectDetectionStart:
+                if case let .online(model) = state {
+                    model.objectDetectionStart()
+                }
+                return .none
+
+            case .objectDetectionStop:
+                if case let .online(model) = state {
+                    model.objectDetectionStop()
+                }
+                return .none
             }
         }
     }

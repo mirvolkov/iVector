@@ -1,4 +1,6 @@
+// swiftlint:disable:next file_header
 import Combine
+import CoreImage
 import CoreML
 import os.log
 import Vision
@@ -44,6 +46,15 @@ public final class ObjectDetection {
     public func process(_ data: Data) {
         do {
             let imageRequestHandler = VNImageRequestHandler(data: data, options: requestOptions)
+            try imageRequestHandler.perform(requests)
+        } catch {
+            logger.error("OD \(error.localizedDescription)")
+        }
+    }
+
+    public func process(_ image: CIImage) {
+        do {
+            let imageRequestHandler = VNImageRequestHandler(ciImage: image, options: requestOptions)
             try imageRequestHandler.perform(requests)
         } catch {
             logger.error("OD \(error.localizedDescription)")

@@ -101,11 +101,11 @@ private extension ExecutorModel {
             throw ExecutorError.notSupported
         case .say(let ext):
             if let value = ext.value {
-                try connection.say(text: value)
+                try await connection.say(text: value)
             }
         case .play(let ext):
             if let value = ext.value {
-                try connection.play(name: value)
+                try await connection.play(name: value)
             }
         case .forward(let ext):
             if let value = ext.value {
@@ -160,11 +160,11 @@ private extension ExecutorModel {
             try await driver.lift(isOn ? 1 : 0)
         case .say(let ext):
             if let value = ext.value {
-                try connection.say(text: value)
+                try await connection.say(text: value)
             }
         case .play(let ext):
             if let value = ext.value {
-                try connection.play(name: value)
+                try await connection.play(name: value)
             }
         case .forward(let ext):
             if let value = ext.value {

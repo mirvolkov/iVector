@@ -1,9 +1,10 @@
+// swiftlint:disable:next file_header
 import Combine
 import Connection
 import Foundation
 import SwiftUI
 
-public class VisionModel {
+public final class VisionModel {
     /// is vector streaming video feed
     @Published public var isStreaming = false
     /// is vector connected and online
@@ -14,6 +15,8 @@ public class VisionModel {
     private var bag = Set<AnyCancellable>()
     private var cameraTask: Task<Void, Never>?
     private var stream: AsyncStream<VectorCameraFrame>
+    private var detector = ObjectDetection()
+    private var isDetectorOn = false
 
     public init(with stream: AsyncStream<VectorCameraFrame>) {
         self.stream = stream
@@ -31,6 +34,10 @@ public class VisionModel {
                     break
                 }
 
+                if isDetectorOn {
+                    detector.process(frame.image)
+                }
+
                 await MainActor.run {
                     self.frame = frame
                 }
@@ -45,6 +52,14 @@ public class VisionModel {
         cameraTask?.cancel()
         isStreaming = false
     }
+
+    public func objectDetectionStart() {
+        isDetectorOn = true
+    }
+
+    public func objectDetectionStop() {
+        isDetectorOn = false
+    }
 }
 
 extension VisionModel: Equatable {
@@ -53,4 +68,4 @@ extension VisionModel: Equatable {
     }
 }
 
-extension VisionModel: Sendable { }
+extension VisionModel: Sendable {}

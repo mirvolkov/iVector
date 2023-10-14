@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import Combine
 import Connection
 import Foundation
@@ -41,6 +42,13 @@ public final class ConnectionModel: @unchecked Sendable {
         get throws {
             try vectorDevice?.requestMicFeed()
         }
+    }
+
+    /// Vector speaker access
+    /// - Description returns speaker access for vector device only
+    /// - Returns optinal  audio protocol impl object
+    public var audio: Audio? {
+        vectorDevice
     }
 
     /// Vector battery state
@@ -172,16 +180,16 @@ public final class ConnectionModel: @unchecked Sendable {
     }
 
     /// Says text with vector speaker hardware
-    public func say(text: String, locale: Locale = .current) throws {
+    public func say(text: String, locale: Locale = .current) async throws {
         let stream = tts.run(text, locale: locale)
-        try vectorDevice?.playAudio(stream: stream)
+        try await vectorDevice?.playAudio(stream: stream)
     }
 
     /// Plays wav file
-    public func play(name: SoundPlayer.SoundName) throws {
+    public func play(name: SoundPlayer.SoundName) async throws {
         let player = SoundPlayer()
         let stream = player.play(name: name)
-        try vectorDevice?.playAudio(stream: stream)
+        try await vectorDevice?.playAudio(stream: stream)
     }
 
     private func process(state: ConnectionModelState) {

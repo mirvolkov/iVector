@@ -8,6 +8,10 @@ public protocol MotionModel: Sendable {
     init(connection: ConnectionModel)
     func start()
     func stop()
+    func motionRecognitionStart()
+    func motionRecognitionStop()
+    func motionLoggingStart()
+    func motionLoggingStop()
 }
 
 #if os(iOS)
@@ -27,6 +31,7 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private var currentIndexInPredictionWindow = 0
     private var cancellable: AnyCancellable?
     private var socket: SocketConnection? { connection.socket }
+    private var isLogging: Bool = false
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
@@ -36,16 +41,10 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
 
     public func start() {
         queue.maxConcurrentOperationCount = 1
-    
-        guard !online else {
+
+        guard !online, EnvironmentDevice.isSimulator else {
             return
         }
-
-        cancellable = Timer.publish(every: 0.1, on: .main, in: .common)
-            .autoconnect()
-            .sink(receiveValue: { _ in
-                self.recognize()
-            })
 
         motionManager.startDeviceMotionUpdates(to: self.queue) { [self] data, error in
             guard let data = data else { return }
@@ -63,16 +62,7 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
             currentIndexInPredictionWindow += 1
             if currentIndexInPredictionWindow == Self.predictionWindowSize - 1 {
                 currentIndexInPredictionWindow = 0
-                Task {
-                    try await socket?.send(
-                        messages: (0..<99).map { index in [accX[index], accY[index], accZ[index]] },
-                        with: "axelerometer"
-                    )
-                    try await socket?.send(
-                        messages: (0..<99).map { index in [rotX[index], rotY[index], rotZ[index]] },
-                        with: "gyroscope"
-                    )
-                }
+                if isLogging { log() }
             }
         }
     }
@@ -86,9 +76,42 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
 
         motionManager.stopDeviceMotionUpdates()
     }
+
+    public func motionRecognitionStart() {
+        cancellable = Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink(receiveValue: { _ in
+                self.recognize()
+            })
+    }
+
+    public func motionRecognitionStop() {
+        cancellable?.cancel()
+    }
+
+    public func motionLoggingStart() {
+        isLogging = true
+    }
+
+    public func motionLoggingStop() {
+        isLogging = false
+    }
 }
 
 extension MotionModelImpl {
+    func log() {
+        Task {
+            try await socket?.send(
+                messages: (0..<99).map { index in [accX[index], accY[index], accZ[index]] },
+                with: "axelerometer"
+            )
+            try await socket?.send(
+                messages: (0..<99).map { index in [rotX[index], rotY[index], rotZ[index]] },
+                with: "gyroscope"
+            )
+        }
+    }
+
     func recognize() {
         autoreleasepool {
             if let modelPrediction = try? self.model?.prediction(
@@ -123,8 +146,12 @@ extension MotionModelImpl {
 }
 #else
 public final class MotionModelImpl: MotionModel {
-    public init() {}
-    public func start(connection: ConnectionModel) {}
+    public init(connection: ConnectionModel) {}
+    public func start() {}
     public func stop() {}
+    public func motionRecognitionStart() {}
+    public func motionRecognitionStop() {}
+    public func motionLoggingStart() {}
+    public func motionLoggingStop() {}
 }
 #endif
