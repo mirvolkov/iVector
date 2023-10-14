@@ -22,7 +22,14 @@ struct AppFeature: ReducerProtocol {
         var motion: MotionFeature.State
         var socket: SocketFeature.State
         var camera: VisionFeature.State
-        static let initial: Self = .init(connection: .offline, motion: .offline, socket: .offline, camera: .offline)
+        var audio: AudioFeature.State
+        static let initial: Self = .init(
+            connection: .offline,
+            motion: .offline,
+            socket: .offline,
+            camera: .offline, 
+            audio: .offline
+        )
     }
 
     enum Action: Sendable {
@@ -30,6 +37,7 @@ struct AppFeature: ReducerProtocol {
         case connect(ConnectionFeature.Action)
         case socket(SocketFeature.Action)
         case camera(VisionFeature.Action)
+        case audio(AudioFeature.Action)
     }
 
     var body: some ReducerProtocolOf<AppFeature> {
@@ -91,6 +99,14 @@ struct AppFeature: ReducerProtocol {
             action: /AppFeature.Action.camera
         ) {
             VisionFeature(settings: env.settings,
+                          connection: env.connection)
+        }
+
+        Scope<AppFeature.State, AppFeature.Action, AudioFeature>(
+            state: \.audio,
+            action: /AppFeature.Action.audio
+        ) {
+            AudioFeature(settings: env.settings,
                           connection: env.connection)
         }
     }

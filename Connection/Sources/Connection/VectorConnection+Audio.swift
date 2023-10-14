@@ -31,19 +31,17 @@ extension VectorConnection: Audio {
         }
     }
 
-    public func playAudio(stream: AsyncStream<VectorAudioFrame>) throws {
+    public func playAudio(stream: AsyncStream<VectorAudioFrame>) async throws {
         let accumulator = DataAccumulator()
         let audioCall = prepareAudioCall()
-        Task {
-            for await chunk in stream {
-                await accumulator.push(chunk.data)
-                while await !accumulator.get().isEmpty {
-                    let data = await accumulator.pop(1_024)
-                    pushAudioChunk(for: audioCall, data)
-                }
+        for await chunk in stream {
+            await accumulator.push(chunk.data)
+            while await !accumulator.get().isEmpty {
+                let data = await accumulator.pop(1_024)
+                pushAudioChunk(for: audioCall, data)
             }
-            complete(for: audioCall)
         }
+        complete(for: audioCall)
     }
 
     func prepareAudioCall() -> AudioCall {

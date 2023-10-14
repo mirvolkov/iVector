@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import AVKit
 import Combine
 import Foundation
@@ -55,7 +56,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
                 self.available.send(false)
                 return
             }
-            
+
             inputNode.removeTap(onBus: 0)
             inputNode.installTap(
                 onBus: 0,
@@ -64,14 +65,14 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
             ) { buffer, _ in
                 self.recognitionRequest?.append(buffer)
             }
-            
+
             audioEngine.prepare()
             try audioEngine.start()
         } catch {
             self.available.send(false)
         }
     }
-    
+
     private func startRecording(
         speechRecognizer: SFSpeechRecognizer,
         callback: @escaping SpeechRecognizer.Callback
@@ -125,7 +126,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
         runloop(inputNode)
     }
 
-    private func stop() {
+    public func stop() {
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
         recognitionRequest?.endAudio()

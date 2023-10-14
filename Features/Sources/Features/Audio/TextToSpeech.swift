@@ -68,10 +68,10 @@ public final class TextToSpeech: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     func say(_ string: String, locale: Locale = Locale.current) {
-#if os(iOS)
+        #if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()
         try? audioSession.overrideOutputAudioPort(.speaker)
-#endif
+        #endif
         let utterance = AVSpeechUtterance(string: string)
         utterance.voice = AVSpeechSynthesisVoice(language: locale.identifier)
         utterance.volume = 1

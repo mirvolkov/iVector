@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import AVFoundation
 import Connection
 import Foundation
@@ -8,7 +9,7 @@ public final class SoundPlayer {
         case mp3
     }
 
-    public enum SoundName: String, CaseIterable, Codable {
+    public enum SoundName: String, CaseIterable, Codable, Sendable {
         case alarm
         case cputer1
         case cputer2

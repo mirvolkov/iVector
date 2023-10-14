@@ -24,5 +24,5 @@ public protocol Audio {
     func requestMicFeed() throws -> AsyncStream<VectorAudioFrame>
 
     /// Play audio stream
-    func playAudio(stream: AsyncStream<VectorAudioFrame>) throws
+    func playAudio(stream: AsyncStream<VectorAudioFrame>) async throws
 }
