@@ -10,6 +10,7 @@ let dependencies: [Target.Dependency] = [
     .product(name: "SwiftProtobufPluginLibrary", package: "swift-protobuf"),
     .product(name: "SocketIO", package: "socket.io-client-swift"),
     .product(name: "BLE", package: "BLE"),
+    .product(name: "SwiftBus", package: "SwiftBus")
 ]
 
 let resources: [Resource] = [
@@ -33,6 +34,7 @@ let package = Package(
          .package(url: "https://github.com/apple/swift-nio.git", exact: "2.40.0"),
          .package(url: "https://github.com/grpc/grpc-swift", exact: "1.0.0"),
          .package(url: "https://github.com/socketio/socket.io-client-swift", exact: "15.2.0"),
+         .package(url: "https://github.com/mtynior/SwiftBus.git", .upToNextMajor(from: "1.0.0")),
          .package(path: "../BLE"),
     ],
     targets: [
