@@ -1,6 +1,6 @@
+import AVFAudio
 // swiftlint:disable force_try
 // swiftlint:disable force_unwrapping
-
 import Foundation
 import GRPC
 import OSLog
@@ -23,8 +23,7 @@ fileprivate extension CIImage {
 import AppKit
 fileprivate extension CIImage {
     convenience init?(url: URL) {
-        guard let data = try? Data(contentsOf: url),
-              let image = NSImage(data: data)
+        guard let data = try? Data(contentsOf: url)
         else {
             return nil
         }
@@ -72,8 +71,8 @@ extension MockedConnection: Audio {
         }
     }
 
-    public func playAudio(stream: AsyncStream<VectorAudioFrame>) throws {
-        print("TTS mocked method. Please note, this doesn't use AVPlayer and produce nothing more than silence")
+    public func playAudio(stream: AsyncStream<VectorAudioFrame>) async throws {
+        try await self.playStream(stream)
     }
 }
 

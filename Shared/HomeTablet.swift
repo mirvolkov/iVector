@@ -66,8 +66,15 @@ struct HomeTablet: View {
             motionButton(online: viewStore.motion == .online) {
                 viewStore.send(.motion(.connect))
             }
-            camButton(online: viewStore.camera.isOnline) {
-                viewStore.send(.camera(.connect))
+        }
+        WithViewStore(store, observe: { $0.camera }) { viewStore in
+            camButton(online: viewStore.isOnline) {
+                viewStore.send(.camera(viewStore.isOnline ? .disconnect : .connect))
+            }
+        }
+        WithViewStore(store, observe: { $0.audio }) { viewStore in
+            micButton(online: viewStore.isOnline) {
+                viewStore.send(.audio(viewStore.isOnline ? .speechToTextStop : .speechToTextStart))
             }
         }
     }

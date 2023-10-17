@@ -23,6 +23,8 @@ public struct PFSonar {
 public enum PathfinderError: Error {
     case notConnected
     case cameraFailed
+    case micFailed
+    case speakerFailed
 }
 
 /**

@@ -25,20 +25,29 @@ struct iVectorApp: App {
 
     var body: some Scene {
         WindowGroup {
-            WithViewStore(vectorStore, observe: { $0 }) { _ in
-#if os(macOS)
-                HomeDesktop()
-#elseif os(iOS)
-                if UIDevice.current.userInterfaceIdiom == .pad {
-                    HomeTablet()
-                } else {
-                    HomePhone()
-                }
-#endif
+            WithViewStore(vectorStore, observe: { $0 }) { viewStore in
+                home
+                    .environmentObject(env)
+                    .environmentObject(vectorStore)
+                    .withErrorHandler()
+                    .onAppear {
+                        viewStore.send(.audio(.speechToTextStart))
+                        viewStore.send(.connect(.connect))
+                    }
             }
-            .environmentObject(env)
-            .environmentObject(vectorStore)
-            .withErrorHandler()
         }
+    }
+
+    @ViewBuilder
+    var home: some View {
+#if os(macOS)
+            HomeDesktop()
+#elseif os(iOS)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                HomeTablet()
+            } else {
+                HomePhone()
+            }
+#endif
     }
 }

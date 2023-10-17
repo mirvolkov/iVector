@@ -46,4 +46,13 @@ public extension View {
                 .foregroundColor(online == true ? .green : .black)
         }.buttonStyle(.plain).disabled(onClick == nil)
     }
+
+    func micButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
+        Button {
+            onClick?()
+        } label: {
+            Image(systemName: "mic.circle")
+                .foregroundColor(online == true ? .green : .black)
+        }.buttonStyle(.plain).disabled(onClick == nil)
+    }
 }

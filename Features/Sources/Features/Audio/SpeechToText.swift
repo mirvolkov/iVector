@@ -9,14 +9,14 @@ public protocol SpeechRecognizer {
     typealias Callback = (String) -> Void
 
     var available: PassthroughSubject<Bool, Never> { get }
-    var stt: PassthroughSubject<String, Never> { get }
+    var text: PassthroughSubject<String, Never> { get }
 
     func start(currentLocale: Locale, onEdge: Bool)
 }
 
 public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRecognizer, @unchecked Sendable {
-    public var available: PassthroughSubject<Bool, Never> = .init()
-    public var stt: PassthroughSubject<String, Never> = .init()
+    public let available: PassthroughSubject<Bool, Never> = .init()
+    public let text: PassthroughSubject<String, Never> = .init()
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
@@ -37,7 +37,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
                 case .authorized:
                     self.available.send(true)
                     self.startRecording(speechRecognizer: speechRecognizer) { [weak self] text in
-                        self?.stt.send(text)
+                        self?.text.send(text)
                     }
 
                 default:
@@ -81,6 +81,15 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
             recognitionTask?.cancel()
             recognitionTask = nil
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+            self.text.send("FUCK")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
+            self.text.send("FUCK")
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
+            self.text.send("FUCK")
+        }
 #if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()
         do {
@@ -107,18 +116,14 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
         recognitionTask = speechRecognizer.recognitionTask(
             with: recognitionRequest,
             resultHandler: { result, error in
-                guard error == nil else {
+                guard error == nil && result?.isFinal == false else {
                     self.stop()
                     self.startRecording(speechRecognizer: speechRecognizer, callback: callback)
                     return
                 }
 
-                if let result = result, let substring = result.bestTranscription.segments.last?.substring {
-                    self.stt.send(substring)
-                    if result.isFinal {
-                        self.stop()
-                        self.startRecording(speechRecognizer: speechRecognizer, callback: callback)
-                    }
+                if let result = result?.bestTranscription.segments.map({ $0.substring }).last {
+                    self.text.send(result)
                 }
             }
         )
@@ -130,7 +135,6 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
         audioEngine.inputNode.removeTap(onBus: 0)
         audioEngine.stop()
         recognitionRequest?.endAudio()
-        available.send(false)
     }
 
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {

@@ -2,6 +2,7 @@
 import AVFoundation
 import Connection
 import Foundation
+import SwiftBus
 
 public final class SoundPlayer {
     public enum SoundType: String {
@@ -39,6 +40,7 @@ public final class SoundPlayer {
                     data.append(withUnsafeBytes(of: buf) { Data($0) })
                 }
                 continuation.yield(.init(data: data))
+                continuation.finish()
             }
         }
     }
@@ -63,3 +65,5 @@ public final class SoundPlayer {
         return buffer
     }
 }
+
+extension SoundPlayer.SoundName: EventRepresentable { }

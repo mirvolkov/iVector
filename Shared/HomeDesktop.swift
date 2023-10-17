@@ -41,11 +41,26 @@ struct HomeDesktop: View {
     @ViewBuilder
     private var toolbar: some View {
         WithViewStore(store, observe: { $0 }) { viewStore in
-            socketButton(online: viewStore.socket == .online)
-            motionButton(online: viewStore.motion == .online)
-            settingsButton {
-                preferences = true
+            socketButton(online: viewStore.socket == .online) {
+                viewStore.send(.socket(.connect))
             }
+            motionButton(online: viewStore.motion == .online) {
+                viewStore.send(.motion(.connect))
+            }
+        }
+        WithViewStore(store, observe: { $0.camera }) { viewStore in
+            camButton(online: viewStore.isOnline) {
+                viewStore.send(.camera(viewStore.isOnline ? .disconnect : .connect))
+            }
+        }
+        WithViewStore(store, observe: { $0.audio }) { viewStore in
+            micButton(online: viewStore.isOnline) {
+                viewStore.send(.audio(viewStore.isOnline ? .speechToTextStop : .speechToTextStart))
+            }
+        }
+
+        settingsButton {
+            preferences = true
         }
     }
 }

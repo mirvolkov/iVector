@@ -6,7 +6,7 @@ import os.log
 
 public final class ConnectionModel: @unchecked Sendable {
     typealias VectorDevice = Vector & Behavior & Camera & Audio & Sendable
-    typealias PathfinderDevice = Pathfinder & Camera & PathfinderControl & Sendable
+    typealias PathfinderDevice = Pathfinder & Camera & Audio & PathfinderControl & Sendable
 
     public enum ConnectionModelState {
         case disconnected
@@ -48,7 +48,7 @@ public final class ConnectionModel: @unchecked Sendable {
     /// - Description returns speaker access for vector device only
     /// - Returns optinal  audio protocol impl object
     public var audio: Audio? {
-        vectorDevice
+        vectorDevice ?? pathfinderDevice
     }
 
     /// Vector battery state
@@ -182,14 +182,14 @@ public final class ConnectionModel: @unchecked Sendable {
     /// Says text with vector speaker hardware
     public func say(text: String, locale: Locale = .current) async throws {
         let stream = tts.run(text, locale: locale)
-        try await vectorDevice?.playAudio(stream: stream)
+        try await audio?.playAudio(stream: stream)
     }
 
     /// Plays wav file
     public func play(name: SoundPlayer.SoundName) async throws {
         let player = SoundPlayer()
         let stream = player.play(name: name)
-        try await vectorDevice?.playAudio(stream: stream)
+        try await audio?.playAudio(stream: stream)
     }
 
     private func process(state: ConnectionModelState) {

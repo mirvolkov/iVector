@@ -11,6 +11,7 @@ final class AppEnvironment: ObservableObject, Sendable {
     let config: Config = .init()
     let settings = SettingsModel()
     let assembler = AssemblerModel()
+    let stt = SpeechToText()
 }
 
 struct AppFeature: ReducerProtocol {
@@ -106,8 +107,11 @@ struct AppFeature: ReducerProtocol {
             state: \.audio,
             action: /AppFeature.Action.audio
         ) {
-            AudioFeature(settings: env.settings,
-                          connection: env.connection)
+            AudioFeature(
+                settings: env.settings,
+                connection: env.connection,
+                stt: env.stt
+            )
         }
     }
 }
