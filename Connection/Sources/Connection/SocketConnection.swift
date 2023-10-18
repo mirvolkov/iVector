@@ -19,6 +19,7 @@ public final class SocketConnection: @unchecked Sendable {
 
     public let online: CurrentValueSubject<Bool, SocketError> = .init(false)
 
+    private var manager: SocketManager?
     private var socket: SocketIOClient?
     private var subscriptions: Set<AnyCancellable> = []
     private let eventBus: EventTransmittable = EventBus()
@@ -30,7 +31,7 @@ public final class SocketConnection: @unchecked Sendable {
             throw SocketError.invalidURL
         }
 
-        let manager = SocketManager(
+        manager = SocketManager(
             socketURL: url,
             config: [
                 .log(false),
@@ -42,7 +43,7 @@ public final class SocketConnection: @unchecked Sendable {
             ]
         )
 
-        socket = manager.defaultSocket
+        socket = manager?.defaultSocket
         socket?.on(clientEvent: .statusChange) { [weak self] _, _ in
             if self?.socket?.status == .connected {
                 self?.online.send(true)
@@ -88,11 +89,11 @@ public extension SocketConnection {
 
 // event bus API
 public extension SocketConnection {
-    func send<Event: EventRepresentable>(event: Event, with tag: String) {
+    func send<Event: EventRepresentable>(event: Event) {
         eventBus.send(event)
     }
 
-    func listen<Event: EventRepresentable>(_ tag: String, onRecieve: @escaping (Event) -> Void) {
+    func listen<Event: EventRepresentable>(onRecieve: @escaping (Event) -> Void) {
         eventBus
             .onReceive(Event.self, perform: { event in
                 onRecieve(event)
@@ -100,5 +101,3 @@ public extension SocketConnection {
             .store(in: &subscriptions)
     }
 }
-
-extension String: EventRepresentable {}
