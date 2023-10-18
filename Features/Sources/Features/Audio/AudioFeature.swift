@@ -2,8 +2,13 @@
 import ComposableArchitecture
 import Connection
 import Foundation
+import SwiftBus
 
 public struct AudioFeature: ReducerProtocol {
+    public struct STTData: EventRepresentable {
+        let text: String
+    }
+
     private let settings: SettingsModel
     private let connection: ConnectionModel
     private let stt: SpeechToText
@@ -88,7 +93,7 @@ public struct AudioFeature: ReducerProtocol {
             return .none
 
         case .speech(let text):
-            socket?.send(event: text, with: SocketConnection.EventIDs.say.rawValue)
+            socket?.send(event: STTData(text: text))
             return .none
         }
     }

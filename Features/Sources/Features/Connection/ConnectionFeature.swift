@@ -1,6 +1,6 @@
 import ComposableArchitecture
 
-public struct ConnectionFeature: ReducerProtocol {
+public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
     let settings: SettingsModel
     let env: EnvironmentDevice
     let connection: ConnectionModel
@@ -14,7 +14,7 @@ public struct ConnectionFeature: ReducerProtocol {
     public enum State: Equatable {
         case offline
         case connecting
-        case online
+        case online(Executor)
     }
 
     public enum Action: Sendable {
@@ -25,48 +25,45 @@ public struct ConnectionFeature: ReducerProtocol {
         case disconnect
     }
 
-    public var body: some ReducerProtocolOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .connect:
-                guard state != .online else {
-                    return .none
-                }
-        
-                return Effect.run { send in
-                    await send(.goesOnline)
-                }
-                .concatenate(with: Effect.run { _ in
-                    try await connect()
-                })
-                .concatenate(with: Effect.run(operation: { send in
-                    await send(.connected)
-                }))
-
-            case .goesOnline:
-                state = .connecting
+    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+        switch action {
+        case .connect:
+            if case .online = state {
                 return .none
-
-            case .connected:
-                state = .online 
-                return .none
-
-            case .goesOffline:
-                state = .offline
-                return .none
-
-            case .disconnect:
-                guard state == .online else {
-                    return .none
-                }
-
-                return Effect.run { _ in
-                    connection.disconnect()
-                }
-                .concatenate(with: Effect.run(operation: { send in
-                    await send(.goesOffline)
-                }))
             }
+
+            return Effect.run { send in
+                await send(.goesOnline)
+            }
+            .concatenate(with: Effect.run { _ in
+                try await connect()
+            })
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.connected)
+            }))
+
+        case .goesOnline:
+            state = .connecting
+            return .none
+
+        case .connected:
+            return .none
+
+        case .goesOffline:
+            state = .offline
+            return .none
+
+        case .disconnect:
+            guard case .online = state else {
+                return .none
+            }
+
+            return Effect.run { _ in
+                connection.disconnect()
+            }
+            .concatenate(with: Effect.run(operation: { send in
+                await send(.goesOffline)
+            }))
         }
     }
 

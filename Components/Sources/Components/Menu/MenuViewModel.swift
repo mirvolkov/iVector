@@ -16,9 +16,9 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     private let executor: ExecutorModel
     private var bag = Set<AnyCancellable>()
 
-    init(with connection: ConnectionModel) {
+    init(with connection: ConnectionModel, executor: ExecutorModel) {
         self.connection = connection
-        self.executor = ExecutorModel(with: connection)
+        self.executor = executor
     }
 
     func bind() {

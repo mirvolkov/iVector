@@ -19,7 +19,7 @@ struct AppFeature: ReducerProtocol {
     let env: AppEnvironment
 
     struct State: Equatable {
-        var connection: ConnectionFeature.State
+        var connection: ConnectionFeature<ExecutorModel>.State
         var motion: MotionFeature.State
         var socket: SocketFeature.State
         var camera: VisionFeature.State
@@ -28,25 +28,26 @@ struct AppFeature: ReducerProtocol {
             connection: .offline,
             motion: .offline,
             socket: .offline,
-            camera: .offline, 
+            camera: .offline,
             audio: .offline
         )
     }
 
     enum Action: Sendable {
         case motion(MotionFeature.Action)
-        case connect(ConnectionFeature.Action)
+        case connect(ConnectionFeature<ExecutorModel>.Action)
         case socket(SocketFeature.Action)
         case camera(VisionFeature.Action)
         case audio(AudioFeature.Action)
     }
 
     var body: some ReducerProtocolOf<AppFeature> {
-        Reduce { _, action in
+        Reduce { state, action in
             switch action {
             case .connect(let action):
                 switch action {
                 case .connected:
+                    state.connection = .online(ExecutorModel(with: env.connection))
                     return Effect.run { send in
                         await send(.motion(.connect))
                         await send(.socket(.connect))
