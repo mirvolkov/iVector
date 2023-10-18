@@ -19,12 +19,8 @@ public struct TaggerView: View {
 
     private let viewModel: ViewModel
     
-    public init?(connection: ConnectionModel) {
-        guard let socket = connection.socket else {
-            return nil
-        }
-        
-        self.viewModel = .init(socket: socket)
+    public init(connection: ConnectionModel) {
+        self.viewModel = .init(socket: connection.socket)
     }
     
     public var body: some View {

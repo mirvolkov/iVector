@@ -9,12 +9,10 @@ import SwiftUI
 #if os(iOS)
 fileprivate extension CIImage {
     convenience init?(url: URL) {
-        guard let data = try? Data(contentsOf: url),
-              let image = UIImage(data: data),
-              let ciImage = CIImage(image: image)
-        else {
+        guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
             return nil
         }
+
         self.init(image: image)
     }
 }

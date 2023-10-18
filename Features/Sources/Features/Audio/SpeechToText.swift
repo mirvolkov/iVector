@@ -4,6 +4,7 @@ import Combine
 import Foundation
 import OSLog
 import Speech
+import Connection
 
 public protocol SpeechRecognizer {
     typealias Callback = (String) -> Void
@@ -20,7 +21,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
+    private let audioEngine = AudioEngine.shared
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
 
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
@@ -80,15 +81,6 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
         if recognitionTask != nil {
             recognitionTask?.cancel()
             recognitionTask = nil
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
-            self.text.send("FUCK")
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [self] in
-            self.text.send("FUCK")
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [self] in
-            self.text.send("FUCK")
         }
 #if os(iOS)
         let audioSession = AVAudioSession.sharedInstance()

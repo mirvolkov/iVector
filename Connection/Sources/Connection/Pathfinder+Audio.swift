@@ -31,7 +31,7 @@ public extension Audio {
         }
 
         // initiate audio engine
-        let audioEngine = AVAudioEngine()
+        let audioEngine = AudioEngine.shared
         let audioFilePlayer = AVAudioPlayerNode()
 
         // attach player into mixer
@@ -113,4 +113,8 @@ public extension Data {
 
         return buffer
     }
+}
+
+public struct AudioEngine {
+    public static let shared = AVAudioEngine()
 }

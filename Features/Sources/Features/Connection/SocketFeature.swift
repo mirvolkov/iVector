@@ -32,16 +32,12 @@ public struct SocketFeature: ReducerProtocol {
                 try await connection.socket(with: settings.websocketIP, port: settings.websocketPort)
             })
             .concatenate(with:
-                connection.socketOnline
+                connection
+                    .socketOnline
                     .receive(on: RunLoop.main)
                     .replaceError(with: false)
-                    .catchToEffect()
-                    .map { output in
-                        guard let online = try? output.get() else {
-                            return .goesOffline
-                        }
-                        return online ? Self.Action.goesOnline : Self.Action.goesOffline
-                    }
+                    .map { $0 ? Self.Action.goesOnline : Self.Action.goesOffline }
+                    .eraseToEffect()
                     // swiftlint:disable:next identifier_constant
                     .cancellable(id: "SOCKET_ONLINE"))
             .concatenate(with: Effect.run(operation: { send in

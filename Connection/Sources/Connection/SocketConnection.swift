@@ -5,6 +5,13 @@ import SocketIO
 import SwiftBus
 
 public final class SocketConnection: @unchecked Sendable {
+    public enum EventIDs: String {
+        case say
+        case play
+        case stt
+        case objDetected
+    }
+
     public enum SocketError: Error {
         case connectionError
         case invalidURL
@@ -12,19 +19,18 @@ public final class SocketConnection: @unchecked Sendable {
 
     public let online: CurrentValueSubject<Bool, SocketError> = .init(false)
 
-    private let manager: SocketManager
-    private let socket: SocketIOClient
-    private let url: URL
+    private var socket: SocketIOClient?
     private var subscriptions: Set<AnyCancellable> = []
     private let eventBus: EventTransmittable = EventBus()
 
-    public init(with websocketIP: String, websocketPort: Int) throws {
+    public init() {}
+
+    public func connect(with websocketIP: String, websocketPort: Int) throws {
         guard let url = URL(string: "http://\(websocketIP):\(websocketPort)/") else {
             throw SocketError.invalidURL
         }
 
-        self.url = url
-        self.manager = SocketManager(
+        let manager = SocketManager(
             socketURL: url,
             config: [
                 .log(false),
@@ -35,23 +41,21 @@ public final class SocketConnection: @unchecked Sendable {
                 .reconnectWait(3)
             ]
         )
-        self.socket = manager.defaultSocket
-    }
 
-    public func connect() {
-        socket.on(clientEvent: .statusChange) { [weak self] _, _ in
-            if self?.socket.status == .connected {
+        socket = manager.defaultSocket
+        socket?.on(clientEvent: .statusChange) { [weak self] _, _ in
+            if self?.socket?.status == .connected {
                 self?.online.send(true)
             } else {
                 self?.online.send(false)
             }
         }
 
-        socket.connect()
+        socket?.connect()
     }
 
     public func disconnect() {
-        socket.disconnect()
+        socket?.disconnect()
     }
 }
 
@@ -59,7 +63,7 @@ public final class SocketConnection: @unchecked Sendable {
 public extension SocketConnection {
     func send<Message: SocketData>(message: Message, with tag: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            socket.emit(tag, with: [message]) {
+            socket?.emit(tag, with: [message]) {
                 continuation.resume()
             }
         }
@@ -67,14 +71,14 @@ public extension SocketConnection {
 
     func send<Message: SocketData>(messages: [Message], with tag: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            socket.emit(tag, with: messages) {
+            socket?.emit(tag, with: messages) {
                 continuation.resume()
             }
         }
     }
 
     func listen<Message: SocketData>(_ tag: String, onRecieve: @escaping (Message) -> Void) {
-        socket.on(tag) { data, _ in
+        socket?.on(tag) { data, _ in
             if let message = data.first as? Message {
                 onRecieve(message)
             }
@@ -96,3 +100,5 @@ public extension SocketConnection {
             .store(in: &subscriptions)
     }
 }
+
+extension String: EventRepresentable {}
