@@ -6,10 +6,6 @@ import PackageDescription
 let resources: [Resource] = [
     .process("Fonts/RobotoMono-Bold.ttf"),
     .process("Fonts/RobotoMono-Regular.ttf"),
-    .copy("Animation/loading.json"),
-    .copy("Animation/mic.json"),
-    .copy("Animation/cam.json"),
-    .copy("Animation/offline.json"),
     .process("Animation/Noise.metal"),
 ]
 
@@ -29,18 +25,18 @@ let package = Package(
         .package(path: "../Programmator"),
         .package(url: "https://github.com/Quick/Quick", branch: "main"),
         .package(url: "https://github.com/Quick/Nimble", branch: "main"),
-        .package(url: "https://github.com/airbnb/lottie-ios", exact: "4.1.3"),
-        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0")
+        .package(url: "https://github.com/SwiftGen/SwiftGenPlugin", from: "6.6.0"),
     ],
     targets: [
         .target(
             name: "Components",
-            dependencies: [.product(name: "Connection", package: "Connection"),
-                           .product(name: "Features", package: "Features"),
-                           .product(name: "Programmator", package: "Programmator"),
-                           .product(name: "Lottie", package: "lottie-ios")],
+            dependencies: [
+                .product(name: "Connection", package: "Connection"),
+                .product(name: "Features", package: "Features"),
+                .product(name: "Programmator", package: "Programmator"),
+            ],
             resources: resources,
-            plugins: [ .plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")]
+            plugins: [.plugin(name: "SwiftGenPlugin", package: "SwiftGenPlugin")]
         ),
         .testTarget(
             name: "ComponentsTests",
