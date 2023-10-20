@@ -10,12 +10,13 @@ let resources: [Resource] = [
     .copy("Animation/mic.json"),
     .copy("Animation/cam.json"),
     .copy("Animation/offline.json"),
+    .process("Animation/Noise.metal"),
 ]
 
 let package = Package(
     name: "Components",
     defaultLocalization: "en",
-    platforms: [.macOS("13.0.0"), .iOS("17.0")],
+    platforms: [.macOS("14.0.0"), .iOS("17.0")],
     products: [
         .library(
             name: "Components",

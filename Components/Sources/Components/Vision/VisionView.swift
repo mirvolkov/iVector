@@ -81,16 +81,3 @@ public struct VisionView: View {
             .scaledToFill()
     }
 }
-
-public struct VisionOfflineView: View {
-    public init() {}
-
-    public var body: some View {
-        ZStack(alignment: .center) {
-            LottieView(name: "offline")
-            Text(L10n.offline)
-                .font(vectorBold(64))
-                .foregroundColor(.white)
-        }
-    }
-}
