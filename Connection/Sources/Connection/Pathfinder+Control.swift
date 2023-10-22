@@ -43,13 +43,13 @@ extension PathfinderConnection: PathfinderControl {
         return listener
     }
 
-    func listenSensors() {
+    private func listenSensors() {
         listenSonar(uuid: uuidSonar0)
             .zip(listenSonar(uuid: uuidSonar1), listenSonar(uuid: uuidSonar2), listenSonar(uuid: uuidSonar3))
             .map { PFSonar($0) }
             .sink(receiveValue: { self.sonar.send($0) })
             .store(in: &bag)
-        
+
         ble.listen(for: uuidBattery) { [self] message in
             if let value = UInt(message) {
                 battery.send(value)

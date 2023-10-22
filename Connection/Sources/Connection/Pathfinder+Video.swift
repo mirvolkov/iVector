@@ -3,17 +3,19 @@ import CoreImage
 
 extension PathfinderConnection: Camera {
     public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
-        try setUp()
+        addObservers()
+        setUpSession()
+        setUpCamera()
+        startSession()
 
         return .init { continuation in
             self.cameraFeedContinuation = continuation
         }
     }
 
-    func setUp() throws {
-        if captureSession.isRunning {
-            captureSession.stopRunning()
-        }
+    func setUpSession() {
+        logger.info("setting up session...")
+        stopSession()
 
         captureSession.inputs.forEach { input in
             captureSession.removeInput(input)
@@ -22,20 +24,18 @@ extension PathfinderConnection: Camera {
         captureSession.outputs.forEach { output in
             captureSession.removeOutput(output)
         }
-
-        captureSession.beginConfiguration()
-
-        defer {
-            captureSession.commitConfiguration()
-            if !captureSession.isRunning {
-                captureSession.startRunning()
-            }
-        }
-
-        try setUpCamera()
     }
 
-    func setUpCamera() throws {
+    private func startSession() {
+        queue.async { [self] in
+            if !captureSession.isRunning {
+                captureSession.startRunning()
+                logger.info("session did start")
+            }
+        }
+    }
+
+    private func setUpCamera() {
         var types: [AVCaptureDevice.DeviceType] = []
         if #available(iOS 17.0, macOS 14.0, *) {
             types.append(.external)
@@ -49,12 +49,21 @@ extension PathfinderConnection: Camera {
             position: .unspecified
         )
 
-        guard let externalCameraDevice = discoverySession.devices.first else {
-            throw PathfinderError.cameraFailed
+        logger.info("cameras: \(discoverySession.devices)")
+        
+        guard let camera = discoverySession.devices.first else {
+            return
         }
 
+        startCamera(camera)
+    }
+
+    private func startCamera(_ externalCameraDevice: AVCaptureDevice) {
+        logger.info("starting camera...")
+        captureSession.beginConfiguration()
+
         guard let videoInput = try? AVCaptureDeviceInput(device: externalCameraDevice) else {
-            throw PathfinderError.cameraFailed
+            return
         }
 
         if captureSession.canAddInput(videoInput) {
@@ -68,19 +77,57 @@ extension PathfinderConnection: Camera {
         let videoOutput = AVCaptureVideoDataOutput()
         videoOutput.videoSettings = settings
         videoOutput.alwaysDiscardsLateVideoFrames = true
-        #if os(iOS)
-            videoOutput.automaticallyConfiguresOutputBufferDimensions = true
-        #endif
+#if os(iOS)
+        videoOutput.automaticallyConfiguresOutputBufferDimensions = true
+#endif
         videoOutput.setSampleBufferDelegate(self, queue: queue)
 
         if captureSession.canAddOutput(videoOutput) {
             captureSession.addOutput(videoOutput)
         }
 
-        logger.info("EXTERNAL CAMERA INIT COMPLETED")
         if #available(iOS 17.0, macOS 14.0, *) {
             videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 90
         }
+
+        captureSession.commitConfiguration()
+        logger.info("camera did start!")
+    }
+
+    private func stopSession() {
+        if captureSession.isRunning {
+            captureSession.stopRunning()
+        }
+    }
+
+    private func addObservers() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(sessionRuntimeError),
+                                               name: .AVCaptureSessionRuntimeError,
+                                               object: captureSession)
+
+        AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
+    }
+
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "systemPreferredCamera" {
+            if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice, systemPreferredCamera.deviceType == .external {
+                logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
+                setUpSession()
+                startCamera(systemPreferredCamera)
+                startSession()
+            } else {
+                logger.info("external systemPreferredCamera dropped")
+                stopSession()
+            }
+        }
+    }
+
+    /// - Tag: HandleRuntimeError
+    @objc
+    func sessionRuntimeError(notification: NSNotification) {
+        guard let error = notification.userInfo?[AVCaptureSessionErrorKey] as? AVError else { return }
+        logger.fault("Capture session runtime error: \(error)")
     }
 }
 
