@@ -2,6 +2,8 @@ import SwiftUI
 
 struct MenuView: View {
     @ObservedObject var viewModel: MenuViewModel
+
+    @EnvironmentObject private var errorHandling: ErrorHandlerViewModel
     @State private var loadProgramPopover = false
 
     var body: some View {
@@ -10,45 +12,31 @@ struct MenuView: View {
                 .font(vectorBold(22))
                 .foregroundColor(.white)
                 .padding(.horizontal, 8)
-            
-            Text("MEM")
+                .background {
+                    viewModel.isAIRunning ? Color.blue : Color.clear
+                }
+                .onTapGesture {
+                    viewModel.onAITap()
+                }
+
+            Text("\(viewModel.prog?.uppercased() ?? "PROG")")
                 .font(vectorBold(22))
                 .foregroundColor(.white)
                 .padding(.horizontal, 8)
                 .background {
-                    Color.blue
+                    viewModel.isProgRunning ? Color.blue : Color.clear
                 }
-
-            if let batt = viewModel.batt {
-                batt
-                    .resizable()
-                    .frame(width: 32, height: 22)
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 8)
-            }
-
-            Text("\(viewModel.prog.uppercased())")
-                .font(vectorBold(22))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
                 .onTapGesture {
-                    loadProgramPopover = true
-                    viewModel.onProgTap()
+                    if viewModel.isProgRunning {
+                        viewModel.onCancelTap()
+                    } else {
+                        loadProgramPopover = true
+                        viewModel.onProgTap()
+                    }
                 }
-
-            if viewModel.isRunning {
-                Button {
-                    viewModel.onCancelTap()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .resizable()
-                        .foregroundColor(.white)
-                        .frame(width: 18, height: 18)
-                }
-                .buttonStyle(.plain)
-            }
         }
         .onAppear {
+            viewModel.execError = errorHandling
             viewModel.bind()
         }
         .popover(isPresented: $loadProgramPopover, content: {

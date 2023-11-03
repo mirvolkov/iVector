@@ -6,6 +6,7 @@ import CoreMotion
 public protocol PathfinderControl {
     var sonar: PassthroughSubject<PFSonar, Never> { get }
     var battery: PassthroughSubject<UInt, Never> { get }
+    var headAngle: PassthroughSubject<Float, Never> { get }
 
     /// Move
     /// - Parameter distance - distance in mm
@@ -25,6 +26,11 @@ public protocol PathfinderControl {
     /// Turn on/off the laser
     /// - Parameter isOn (boolean)
     func laser(_ isOn: Bool) async
+
+    /// Set head angle
+    /// - Parameter angle 22..45 range
+    /// - Throws set angle error failed
+    func setHeadAngle(_ angle: Float) async
 }
 
 extension PathfinderConnection: PathfinderControl {
@@ -33,17 +39,7 @@ extension PathfinderConnection: PathfinderControl {
     // swiftlint:disable:next force_unwrapping
     private static let one: Data = "1".data(using: .ascii)!
 
-    private func listenSonar(uuid: String) -> PassthroughSubject<UInt, Never> {
-        let listener = PassthroughSubject<UInt, Never>()
-        ble.listen(for: uuidSonar0) { message in
-            if let value = UInt(message) {
-                listener.send(value)
-            }
-        }
-        return listener
-    }
-
-    private func listenSensors() {
+    internal func listenSensors() {
         listenSonar(uuid: uuidSonar0)
             .zip(listenSonar(uuid: uuidSonar1), listenSonar(uuid: uuidSonar2), listenSonar(uuid: uuidSonar3))
             .map { PFSonar($0) }
@@ -53,6 +49,12 @@ extension PathfinderConnection: PathfinderControl {
         ble.listen(for: uuidBattery) { [self] message in
             if let value = UInt(message) {
                 battery.send(value)
+            }
+        }
+
+        ble.listen(for: uuidHeadAngle) { [self] message in
+            if let value = Float(message) {
+                headAngle.send(value)
             }
         }
     }
@@ -88,5 +90,25 @@ extension PathfinderConnection: PathfinderControl {
 
     public func light(_ isOn: Bool) async {
         ble.write(data: isOn ? Self.one : Self.zero, charID: uuidLight)
+    }
+
+    public func setHeadAngle(_ angle: Float) async {
+        await write(angle, uuid: uuidHeadAngle)
+    }
+
+    private func listenSonar(uuid: String) -> PassthroughSubject<UInt, Never> {
+        let listener = PassthroughSubject<UInt, Never>()
+        ble.listen(for: uuidSonar0) { message in
+            if let value = UInt(message) {
+                listener.send(value)
+            }
+        }
+        return listener
+    }
+
+    private func write<T: CustomStringConvertible>(_ value: T, uuid: String) async {
+        if let data = value.description.data(using: .ascii) {
+            ble.write(data: data, charID: uuid)
+        }
     }
 }

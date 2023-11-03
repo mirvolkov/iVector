@@ -76,13 +76,17 @@ public final class ExecutorModel: Executor {
                 try await self.run(instruction: instruction)
                 pc += 1
             }
+
+            self.conditions.removeAll()
+            self.running = nil
+            self.pc = nil
         })
 
-        try await task?.value
+        try await task?.value // to get error if there is
     }
 
     private func run(instruction: Instruction) async throws {
-        if let behavior = connection.behavior {
+        if let behavior = connection.vector {
             try await run(instruction: instruction, with: behavior)
         }
         if let pathfinder = connection.pathfinder {
@@ -207,9 +211,9 @@ private extension ExecutorModel {
             {
                 try await run(program: prog)
             }
-        case .light(let isOn):
+        case .light(_):
             throw ExecutorError.notSupported
-        case .laser(let isOn):
+        case .laser(_):
             throw ExecutorError.notSupported
         }
     }

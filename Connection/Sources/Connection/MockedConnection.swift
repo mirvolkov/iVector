@@ -35,6 +35,8 @@ public final class MockedConnection: Vector {
     private var eventStream: Timer?
     private var visionStream: Timer?
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
+    @AppStorage("headAngle")
+    private var headAngle: Double = 0.0
 
     public init() {}
 
@@ -54,11 +56,18 @@ public final class MockedConnection: Vector {
     }
 
     public func requestEventStream() throws {
-        let url = Bundle.module.url(forResource: "mock_robot_state", withExtension: "json")!
-        let data: Data = try! Data(contentsOf: url)
-        eventStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
-            self.delegate?.onRobot(state: try! .init(jsonUTF8Data: data))
-        })
+        Task {
+            let url = Bundle.module.url(forResource: "mock_robot_state", withExtension: "json")!
+            let data: Data = try! Data(contentsOf: url)
+            await MainActor.run {
+                eventStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
+                    var state: Anki_Vector_ExternalInterface_RobotState = try! .init(jsonUTF8Data: data)
+                    state.headAngleRad = Float(self.headAngle)
+                    print(state.headAngleRad, Angle(radians: self.headAngle).degrees, 0)
+                    self.delegate?.onRobot(state: state)
+                })
+            }
+        }
     }
 }
 
@@ -105,6 +114,7 @@ extension MockedConnection: Behavior {
 
     public func setHeadAngle(_ angle: Float) async throws {
         logger.debug("setHeadAngle \(angle)")
+        headAngle = Angle(degrees: Double(angle)).radians
         try await Task.sleep(nanoseconds: 100_000_000)
     }
 

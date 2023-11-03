@@ -43,7 +43,7 @@ extension ControlPanelViewModel {
     func onConnected() {
         if isConnected {
             Task {
-                try await connection.behavior?.setEyeColor(
+                try await connection.vector?.setEyeColor(
                     settings.eyeColor.hsv.hueComponent,
                     settings.eyeColor.hsv.satComponent
                 )

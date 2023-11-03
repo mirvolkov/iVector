@@ -4,7 +4,7 @@ import SwiftUI
 
 extension ControlPanelViewModel {
     func bind() {
-        connection.state
+        connection.connectionState
             .receive(on: RunLoop.main)
             .map { newState in if case .online = newState { return true } else { return false } }
             .weakAssign(to: \.isConnected, on: self)

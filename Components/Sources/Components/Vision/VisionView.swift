@@ -48,6 +48,10 @@ public struct VisionView: View {
                 .frame(width: 80)
                 .padding(.trailing, 10)
                 .padding(.top, 80)
+            telemetry
+                .frame(width: 150)
+                .padding(.leading, 10)
+                .padding(.top, 80)
         }.overlay(alignment: .top) {
             menu
                 .frame(height: 80)
@@ -61,10 +65,10 @@ public struct VisionView: View {
 
     private var headControl: some View { 
         VStack(alignment: .center) {
-            VSliderView(value: $camViewModel.headAngle, gradientColors: [.clear, .clear], sliderColor: .white.opacity(0.3))
+            VSliderView(value: $camViewModel.headAngle, gradientColors: [.white.opacity(0.3), .white.opacity(0.3)], sliderColor: .white.opacity(0.3))
                 .padding(.vertical, 40)
                 .padding(.trailing, 20)
-
+            
             Text("\(Int(camViewModel.normToDegree(camViewModel.headAngle)))")
                 .font(vectorBold(28))
                 .foregroundColor(.white.opacity(0.75))
@@ -72,6 +76,10 @@ public struct VisionView: View {
                 .padding(.trailing, 20)
                 .frame(alignment: .center)
         }
+    }
+
+    private var telemetry: some View {
+        EmptyView()
     }
 
     private var facet: some View {

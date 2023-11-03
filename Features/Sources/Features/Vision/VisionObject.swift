@@ -1,5 +1,3 @@
-// swiftlint:disable:next file_header
-
 public enum VisionObject: CaseIterable, Codable {
     case cat
     case person

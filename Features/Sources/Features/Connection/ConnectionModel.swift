@@ -17,7 +17,7 @@ public final class ConnectionModel: @unchecked Sendable {
     /// Vector behavior API access
     /// - Description nil means vector is not connected
     /// - Returns Behavior optional type entity
-    public var behavior: Behavior? {
+    public var vector: Behavior? {
         vectorDevice
     }
 
@@ -80,13 +80,13 @@ public final class ConnectionModel: @unchecked Sendable {
     }
 
     /// Vector's connection state reactive property
-    public let state: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
+    public let connectionState: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
 
     /// Vector's robot state reactive property
-    public let robotState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
+    public let vectorState: PassthroughSubject<Anki_Vector_ExternalInterface_RobotState, Never> = .init()
 
     /// Socket connection state reactive property
-    public let socketOnline: CurrentValueSubject<Bool, SocketConnection.SocketError> = .init(false)
+    public let socketState: CurrentValueSubject<ConnectionModelState, Never> = .init(.disconnected)
 
     private var vectorDevice: VectorDevice?
     private var pathfinderDevice: PathfinderDevice?
@@ -100,14 +100,14 @@ public final class ConnectionModel: @unchecked Sendable {
     }
 
     public func bind() {
-        state
+        connectionState
             .removeDuplicates(by: { $0 == $1 })
             .sink(receiveValue: { state in self.process(state: state) })
             .store(in: &bag)
     }
 
     public func connect(with ipAddress: String, port: Int = 443) async throws {
-        guard case .disconnected = state.value else {
+        guard case .disconnected = connectionState.value else {
             return
         }
 
@@ -115,52 +115,50 @@ public final class ConnectionModel: @unchecked Sendable {
         vectorDevice?.delegate = self
 
         do {
-            state.send(.connecting)
+            connectionState.send(.connecting)
             try vectorDevice?.requestControl()
         } catch {
             logger.error("\(error.localizedDescription)")
-            state.send(.disconnected)
+            connectionState.send(.disconnected)
         }
     }
 
     public func connect(with bleID: String = "PF2") async throws {
-        guard case .disconnected = state.value else {
+        guard case .disconnected = connectionState.value else {
             return
         }
 
         pathfinderDevice = PathfinderConnection(with: bleID)
-        state.value = .connecting
+        connectionState.value = .connecting
         try await pathfinderDevice?.connect()
-        state.value = .online
+        connectionState.value = .online
         pathfinderDevice?.online
             .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
-            .sink(receiveValue: { self.state.value = $0 })
+            .sink(receiveValue: { self.connectionState.value = $0 })
             .store(in: &bag)
     }
 
     public func mock() async {
-        guard case .disconnected = state.value else {
+        guard case .disconnected = connectionState.value else {
             return
         }
 
         vectorDevice = MockedConnection()
         vectorDevice?.delegate = self
         do {
-            state.send(.connecting)
+            connectionState.send(.connecting)
             try vectorDevice?.requestControl()
         } catch {
             logger.error("\(error.localizedDescription)")
-            state.send(.disconnected)
+            connectionState.send(.disconnected)
         }
     }
 
     public func socket(with ipAddress: String, port: Int) async throws {
         socketConnection.online
             .receive(on: RunLoop.main)
-            .sink(
-                receiveCompletion: { [weak self] completion in self?.socketOnline.send(completion: completion) },
-                receiveValue: { [weak self] online in self?.socketOnline.send(online) }
-            )
+            .replaceError(with: false)
+            .sink { [weak self] online in self?.socketState.send(online ? .online : .disconnected) }
             .store(in: &bag)
         try socketConnection.connect(with: ipAddress, websocketPort: port)
     }
@@ -173,7 +171,7 @@ public final class ConnectionModel: @unchecked Sendable {
             vectorDevice = nil
         } catch {
             self.logger.error("\(error.localizedDescription)")
-            state.send(.disconnected)
+            connectionState.send(.disconnected)
         }
     }
 
@@ -212,24 +210,24 @@ public final class ConnectionModel: @unchecked Sendable {
 
 extension ConnectionModel: ConnectionDelegate {
     public func didGrantedControl() {
-        state.send(.online)
+        connectionState.send(.online)
     }
 
     public func didFailedRequest() {
-        state.send(.disconnected)
+        connectionState.send(.disconnected)
     }
 
     public func keepAlive() {
-        if state.value == .disconnected {
-            state.send(.connecting)
+        if connectionState.value == .disconnected {
+            connectionState.send(.connecting)
         }
     }
 
     public func didClose() {
-        state.send(.disconnected)
+        connectionState.send(.disconnected)
     }
 
     public func onRobot(state: Anki_Vector_ExternalInterface_RobotState) {
-        robotState.send(state)
+        vectorState.send(state)
     }
 }

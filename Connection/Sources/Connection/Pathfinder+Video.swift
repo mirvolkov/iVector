@@ -50,7 +50,7 @@ extension PathfinderConnection: Camera {
         )
 
         logger.info("cameras: \(discoverySession.devices)")
-        
+
         guard let camera = discoverySession.devices.first else {
             return
         }
@@ -101,17 +101,25 @@ extension PathfinderConnection: Camera {
     }
 
     private func addObservers() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(sessionRuntimeError),
-                                               name: .AVCaptureSessionRuntimeError,
-                                               object: captureSession)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(sessionRuntimeError),
+            name: .AVCaptureSessionRuntimeError,
+            object: captureSession
+        )
 
         AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
     }
 
-    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
+    public override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
         if keyPath == "systemPreferredCamera" {
-            if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice, systemPreferredCamera.deviceType == .external {
+            if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice,
+               systemPreferredCamera.deviceType == .external {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
                 setUpSession()
                 startCamera(systemPreferredCamera)
@@ -126,7 +134,10 @@ extension PathfinderConnection: Camera {
     /// - Tag: HandleRuntimeError
     @objc
     func sessionRuntimeError(notification: NSNotification) {
-        guard let error = notification.userInfo?[AVCaptureSessionErrorKey] as? AVError else { return }
+        guard let error = notification.userInfo?[AVCaptureSessionErrorKey] as? AVError else {
+            return
+        }
+
         logger.fault("Capture session runtime error: \(error)")
     }
 }

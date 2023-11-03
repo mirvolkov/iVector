@@ -6,11 +6,17 @@ import SwiftUI
 
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     @MainActor @Published var memory: Bool = false
-    @MainActor @Published var batt: Image? = .init(systemName: "battery.0")
-    @MainActor @Published var prog: String = .init()
+    @MainActor @Published var batt: String?
+    @MainActor @Published var prog: String?
     @MainActor @Published var items: [Program] = []
-    @MainActor @Published var isRunning = false
-    @MainActor @Published var execError: Error? = nil
+    @MainActor @Published var isProgRunning = false {
+        didSet {
+            isAIRunning = false // TODO: git rid when AIExecutor runs
+        }
+    }
+
+    @MainActor @Published var isAIRunning = false
+    @MainActor @Published var execError: ErrorHandlerViewModel? = nil
 
     private let connection: ConnectionModel
     private let executor: ExecutorModel
@@ -25,7 +31,7 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
         executor.$running
             .map { $0 != nil }
             .receive(on: RunLoop.main)
-            .weakAssign(to: \.isRunning, on: self)
+            .weakAssign(to: \.isProgRunning, on: self)
             .store(in: &bag)
 
         executor.$pc.combineLatest(executor.$running)
@@ -36,44 +42,19 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
                 }
                 return "\(prog.name.prefix(8)) [\(pc.0)/\(pc.1)]"
             }
-            .replaceNil(with: "PROG")
             .weakAssign(to: \.prog, on: self)
             .store(in: &bag)
-
-        Task { @MainActor [self] in
-            while let battery = try await self.connection.battery {
-                switch battery {
-                case .unknown:
-                    batt = nil
-                case .charging:
-                    batt = .init(systemName: "battery.100.bolt")
-                case .full:
-                    batt = .init(systemName: "battery.100")
-                case .normal:
-                    batt = .init(systemName: "battery.50")
-                case .low:
-                    batt = .init(systemName: "battery.25")
-                case .percent(let value):
-                    switch value {
-                    case 0...25:
-                        batt = .init(systemName: "battery.25")
-                    case 25...50:
-                        batt = .init(systemName: "battery.50")
-                    case 50...100:
-                        batt = .init(systemName: "battery.100")
-                    default:
-                        batt = .init(systemName: "battery.100.bolt")
-                    }
-                }
-
-                try await Task.sleep(nanoseconds: 1_000_000_000)
-            }
-        }
     }
 
     func onProgTap() {
         Task { @MainActor [self] in
             items = try await AssemblerModel.programs
+        }
+    }
+
+    func onAITap() {
+        Task { @MainActor [self] in
+            isAIRunning.toggle()
         }
     }
 
@@ -86,9 +67,8 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
             do {
                 try await executor.run(program: item)
             } catch {
-                await MainActor.run {
-                    self.execError = error
-                }
+                await execError?.handle(error: error)
+                executor.cancel()
             }
         }
     }

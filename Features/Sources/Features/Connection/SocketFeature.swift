@@ -33,10 +33,10 @@ public struct SocketFeature: ReducerProtocol {
             })
             .concatenate(with:
                 connection
-                    .socketOnline
+                    .socketState
                     .receive(on: RunLoop.main)
-                    .replaceError(with: false)
-                    .map { $0 ? Self.Action.goesOnline : Self.Action.goesOffline }
+                    .replaceError(with: .disconnected)
+                    .map { $0 == .online ? Self.Action.goesOnline : Self.Action.goesOffline }
                     .eraseToEffect()
                     // swiftlint:disable:next identifier_constant
                     .cancellable(id: "SOCKET_ONLINE"))

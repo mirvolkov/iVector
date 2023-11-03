@@ -26,7 +26,7 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     }
 
     func onClick() {
-        switch connection.state.value {
+        switch connection.connectionState.value {
         case .disconnected:
             onConnect()
         case .online:
@@ -37,7 +37,7 @@ class ButtonPowerViewModel: ControlPanelButtonViewModel {
     }
 
     func bind() {
-        connection.state
+        connection.connectionState
             .map {
                 switch $0 {
                 case .connecting:
