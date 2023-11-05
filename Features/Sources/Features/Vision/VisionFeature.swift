@@ -1,8 +1,14 @@
 // swiftlint:disable:next file_header
 import ComposableArchitecture
 import Foundation
+import SwiftBus
 
 public struct VisionFeature: ReducerProtocol {
+    public struct VisionObservation: EventRepresentable {
+        public let label: String
+        public let confidence: Float
+    }
+
     let settings: SettingsModel
     let connection: ConnectionModel
 
@@ -35,44 +41,44 @@ public struct VisionFeature: ReducerProtocol {
         case objectDetectionStop
     }
 
-    public var body: some ReducerProtocolOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .connect:
-                return Effect.run(operation: { send in
-                    if let stream = try connection.camera?.requestCameraFeed() {
-                        let model = VisionModel(with: stream)
-                        await send(Action.goesOnline(model))
-                    } else {
-                        await send(Action.goesOffline)
-                    }
-                })
-
-            case let .goesOnline(model):
-                state = .online(model)
-                return .none
-
-            case .goesOffline:
-                state = State.offline
-                return .none
-
-            case .disconnect:
-                return Effect.run { send in
-                    await send(.goesOffline)
+    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+        switch action {
+        case .connect:
+            return Effect.run(operation: { send in
+                if let stream = try connection.camera?.requestCameraFeed() {
+                    let model = VisionModel(with: connection, stream: stream)
+                    model.bind()
+                    await send(Action.goesOnline(model))
+                    await send(Action.objectDetectionStart)
+                } else {
+                    await send(Action.goesOffline)
                 }
+            })
 
-            case .objectDetectionStart:
-                if case let .online(model) = state {
-                    model.objectDetectionStart()
-                }
-                return .none
+        case let .goesOnline(model):
+            state = .online(model)
+            return .none
 
-            case .objectDetectionStop:
-                if case let .online(model) = state {
-                    model.objectDetectionStop()
-                }
-                return .none
+        case .goesOffline:
+            state = State.offline
+            return .none
+
+        case .disconnect:
+            return Effect.run { send in
+                await send(.goesOffline)
             }
+
+        case .objectDetectionStart:
+            if case let .online(model) = state {
+                model.objectDetectionStart()
+            }
+            return .none
+
+        case .objectDetectionStop:
+            if case let .online(model) = state {
+                model.objectDetectionStop()
+            }
+            return .none
         }
     }
 }

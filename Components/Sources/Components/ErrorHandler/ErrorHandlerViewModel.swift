@@ -12,10 +12,6 @@ class ErrorHandlerViewModel: ObservableObject {
     func handle(error: Error) {
         self.error = ErrorAlert(message: error.localizedDescription)
     }
-
-    func handle(error: Error) async {
-        self.error = ErrorAlert(message: error.localizedDescription)
-    }
     
     func handle(error: ErrorAlert) {
         self.error = error

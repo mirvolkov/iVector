@@ -7,6 +7,7 @@ let resources: [Resource] = [
     .process("Fonts/RobotoMono-Bold.ttf"),
     .process("Fonts/RobotoMono-Regular.ttf"),
     .process("Animation/Noise.metal"),
+    .process("Animation/aim.png"),
 ]
 
 let package = Package(

@@ -6,7 +6,7 @@ import SwiftBus
 
 public struct AudioFeature: ReducerProtocol {
     public struct STTData: EventRepresentable {
-        let text: String
+        public let text: String
     }
 
     private let settings: SettingsModel

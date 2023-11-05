@@ -14,15 +14,31 @@ public final class VisionModel {
 
     private var bag = Set<AnyCancellable>()
     private var cameraTask: Task<Void, Never>?
-    private var stream: AsyncStream<VectorCameraFrame>
+    private let stream: AsyncStream<VectorCameraFrame>
+    private let connection: ConnectionModel
     private var detector = ObjectDetection()
     private var isDetectorOn = false
 
-    public init(with stream: AsyncStream<VectorCameraFrame>) {
+    public init(with connection: ConnectionModel, stream: AsyncStream<VectorCameraFrame>) {
         self.stream = stream
+        self.connection = connection
     }
 
-    public func bind() {}
+    public func bind() {
+        detector
+            .objects
+            .sink { objects in
+                objects.forEach { [weak self] observation in
+                    if let label = observation.labels.max(by: { $0.confidence < $1.confidence }) {
+                        self?.connection.socket.send(event: VisionFeature.VisionObservation(
+                            label: label.identifier,
+                            confidence: label.confidence
+                        ))
+                    }
+                }
+            }
+            .store(in: &bag)
+    }
 
     /// Start video feed
     public func start() {

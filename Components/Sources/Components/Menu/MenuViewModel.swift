@@ -6,7 +6,6 @@ import SwiftUI
 
 final class MenuViewModel: ObservableObject, PickListPopoverCallback {
     @MainActor @Published var memory: Bool = false
-    @MainActor @Published var batt: String?
     @MainActor @Published var prog: String?
     @MainActor @Published var items: [Program] = []
     @MainActor @Published var isProgRunning = false {
@@ -67,8 +66,10 @@ final class MenuViewModel: ObservableObject, PickListPopoverCallback {
             do {
                 try await executor.run(program: item)
             } catch {
-                await execError?.handle(error: error)
-                executor.cancel()
+                await MainActor.run {
+                    execError?.handle(error: error)
+                    executor.cancel()
+                }
             }
         }
     }

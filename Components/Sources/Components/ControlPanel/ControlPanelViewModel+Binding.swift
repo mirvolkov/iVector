@@ -36,6 +36,7 @@ extension ControlPanelViewModel {
 
         save.$saveError
             .compactMap { $0 }
+            .receive(on: RunLoop.main)
             .sink { [weak self] error in
                 self?.saveError?.handle(error: error)
             }

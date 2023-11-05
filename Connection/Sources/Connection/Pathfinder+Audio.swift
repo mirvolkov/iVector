@@ -115,6 +115,6 @@ public extension Data {
     }
 }
 
-public struct AudioEngine {
+public enum AudioEngine {
     public static let shared = AVAudioEngine()
 }

@@ -37,10 +37,6 @@ public final class ExecutorModel: Executor {
 
     public init(with connection: ConnectionModel) {
         self.connection = connection
-
-        connection.socket.listen { (data: AudioFeature.STTData) in
-            print(data)
-        }
     }
 
     public func cancel() {

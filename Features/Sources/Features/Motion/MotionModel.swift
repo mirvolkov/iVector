@@ -3,6 +3,8 @@ import Connection
 import CoreML
 import CoreMotion
 import Foundation
+import OSLog
+import SwiftBus
 
 public protocol MotionModel: Sendable {
     init(connection: ConnectionModel)
@@ -13,6 +15,22 @@ public protocol MotionModel: Sendable {
     func motionLoggingStart()
     func motionLoggingStop()
 }
+
+public struct MotionLabel: EventRepresentable {
+    public let label: String
+}
+
+public struct MotionHeading: EventRepresentable {
+    public let heading: Double
+}
+
+// swiftlint:disable identifier_name
+public struct MotionGyro: EventRepresentable {
+    public let x: Double
+    public let y: Double
+    public let z: Double
+}
+// swiftlint:enable identifier_name
 
 #if os(iOS)
 public final class MotionModelImpl: @unchecked Sendable, MotionModel {
@@ -32,6 +50,7 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private var cancellable: AnyCancellable?
     private var socket: SocketConnection? { connection.socket }
     private var isLogging: Bool = false
+    private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
@@ -47,11 +66,17 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
         }
 
         motionManager.startDeviceMotionUpdates(to: self.queue) { [self] data, error in
-            guard let data = data else { return }
-            if let error {
-                print(error)
+            guard let data = data else {
                 return
             }
+
+            if let error {
+                logger.error("Motion update \(error)")
+                return
+            }
+
+            self.socket?.send(event: MotionHeading(heading: data.heading))
+            self.socket?.send(event: MotionGyro(x: data.gravity.x, y: data.gravity.y, z: data.gravity.z))
 
             rotX[currentIndexInPredictionWindow] = data.rotationRate.x as NSNumber
             rotY[currentIndexInPredictionWindow] = data.rotationRate.y as NSNumber
@@ -121,7 +146,7 @@ extension MotionModelImpl {
                 stateIn: self.currentState
             ) {
                 self.currentState = modelPrediction.stateOut
-                print(modelPrediction.label)
+                self.socket?.send(event: MotionLabel(label: modelPrediction.label))
             }
         }
     }
