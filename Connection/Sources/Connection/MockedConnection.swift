@@ -37,6 +37,7 @@ public final class MockedConnection: Vector {
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     @AppStorage("headAngle")
     private var headAngle: Double = 0.0
+    private var mockedPI = MockedPI(size: 3)
 
     public init() {}
 
@@ -63,7 +64,7 @@ public final class MockedConnection: Vector {
                 eventStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { _ in
                     var state: Anki_Vector_ExternalInterface_RobotState = try! .init(jsonUTF8Data: data)
                     state.headAngleRad = Float(self.headAngle)
-                    print(state.headAngleRad, Angle(radians: self.headAngle).degrees, 0)
+                    state.proxData.distanceMm = UInt32(self.mockedPI.next()?.reduce(0) { $0 * 10 + $1 } ?? 0)
                     self.delegate?.onRobot(state: state)
                 })
             }
