@@ -40,7 +40,6 @@ public actor Commander {
         guard let data = cmd.data(using: .ascii) else {
             throw Commander.CmdError.encodeError
         }
-        print(cmd)
         self.io.write(data: data, charID: txID)
         return try await self.block(cmd: cmd)
     }

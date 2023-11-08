@@ -31,7 +31,7 @@ extension BLE: CBPeripheralDelegate {
         if let value = characteristic.value,
            let message = String(data: value, encoding: .utf8),
            let callback = callbacks.first(where:  { $0.key == characteristic.uuid} ){
-            callback.value(message)
+            callback.value(message.replacingOccurrences(of: "\n", with: ""))
         }
     }
 }
