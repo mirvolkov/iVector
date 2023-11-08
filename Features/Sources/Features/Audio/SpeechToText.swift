@@ -21,8 +21,9 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AudioEngine.shared
+    private let audioEngine = AVAudioEngine()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
+    private lazy var inputNode = audioEngine.inputNode
 
     public func start(currentLocale: Locale = Locale.current, onEdge: Bool = true) {
         guard recognitionRequest == nil else {
@@ -50,7 +51,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
         }
     }
 
-    private func runloop(_ inputNode: AVAudioInputNode) {
+    private func runloop() {
         do {
             let recordingFormat = inputNode.inputFormat(forBus: 0)
             guard recordingFormat.channelCount > 0 else {
@@ -67,9 +68,15 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
                 self.recognitionRequest?.append(buffer)
             }
 
+#if os(iOS)
+            audioEngine.prepare()
+#else
             audioEngine.connect(inputNode, to: audioEngine.mainMixerNode, format: recordingFormat)
+#endif
+            print(audioEngine)
             try audioEngine.start()
         } catch {
+            logger.error("\(error)")
             self.available.send(false)
         }
     }
@@ -82,23 +89,21 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
             recognitionTask?.cancel()
             recognitionTask = nil
         }
-#if os(iOS)
-        let audioSession = AVAudioSession.sharedInstance()
-        do {
-            try audioSession.setCategory(
-                AVAudioSession.Category.record,
-                mode: AVAudioSession.Mode.measurement,
-                options: AVAudioSession.CategoryOptions.allowAirPlay
-            )
-            try audioSession.setMode(AVAudioSession.Mode.measurement)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        } catch {
-            logger.error("\(error)")
-        }
-#endif
+//#if os(iOS)
+//        let audioSession = AVAudioSession.sharedInstance()
+//        do {
+//            try audioSession.setCategory(
+//                AVAudioSession.Category.record,
+//                mode: AVAudioSession.Mode.measurement,
+//                options: AVAudioSession.CategoryOptions.allowAirPlay
+//            )
+//            try audioSession.setMode(AVAudioSession.Mode.measurement)
+//            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+//        } catch {
+//            logger.error("\(error)")
+//        }
+//#endif
         recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        let inputNode = audioEngine.inputNode
-
         guard let recognitionRequest = recognitionRequest else {
             self.available.send(false)
             return
@@ -120,7 +125,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
             }
         )
 
-        runloop(inputNode)
+        runloop()
     }
 
     public func stop() {
