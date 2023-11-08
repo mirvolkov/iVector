@@ -98,7 +98,7 @@ extension PathfinderConnection: PathfinderControl {
 
     private func listenSonar(uuid: String) -> PassthroughSubject<UInt, Never> {
         let listener = PassthroughSubject<UInt, Never>()
-        ble.listen(for: uuidSonar0) { message in
+        ble.listen(for: uuid) { message in
             if let value = UInt(message) {
                 listener.send(value)
             }

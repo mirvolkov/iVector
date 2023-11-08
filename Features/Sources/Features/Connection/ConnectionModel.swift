@@ -59,12 +59,13 @@ public final class ConnectionModel: @unchecked Sendable {
                 return try await vectorDevice.battery
             } else if let pathfinderDevice {
                 return await withCheckedContinuation { continuation in
-                    pathfinderDevice
+                    var cancellable: AnyCancellable?
+                    cancellable = pathfinderDevice
                         .battery
                         .sink { value in
                             continuation.resume(returning: VectorBatteryState.percent(value))
+                            cancellable?.cancel()
                         }
-                        .store(in: &bag)
                 }
             } else {
                 return nil
