@@ -16,10 +16,6 @@ public protocol MotionModel: Sendable {
     func motionLoggingStop()
 }
 
-public struct MotionLabel: EventRepresentable {
-    public let label: String
-}
-
 public struct MotionHeading: EventRepresentable {
     public let heading: Double
 }
@@ -30,27 +26,19 @@ public struct MotionGyro: EventRepresentable {
     public let y: Double
     public let z: Double
 }
+
 // swiftlint:enable identifier_name
 
 #if os(iOS)
 public final class MotionModelImpl: @unchecked Sendable, MotionModel {
-    private static let predictionWindowSize = 100
-    private let model = try? collisionDetector.init(configuration: .init())
     private let motionManager = CMMotionManager()
-    private var currentState = MotionModelImpl.stateInit()
-    private let accX = MotionModelImpl.axelInit()
-    private let accY = MotionModelImpl.axelInit()
-    private let accZ = MotionModelImpl.axelInit()
-    private let rotX = MotionModelImpl.axelInit()
-    private let rotY = MotionModelImpl.axelInit()
-    private let rotZ = MotionModelImpl.axelInit()
+
     private let queue = OperationQueue()
     private let connection: ConnectionModel
-    private var currentIndexInPredictionWindow = 0
-    private var cancellable: AnyCancellable?
     private var socket: SocketConnection? { connection.socket }
     private var isLogging: Bool = false
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
+    private let detector = MotionDetector()
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
@@ -77,41 +65,26 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
 
             self.socket?.send(event: MotionHeading(heading: data.heading))
             self.socket?.send(event: MotionGyro(x: data.gravity.x, y: data.gravity.y, z: data.gravity.z))
+            self.detector.pushAccelerometer(data.userAcceleration)
+            self.detector.pushRotation(data.rotationRate)
+            self.detector.pushHeading(data.heading)
+            self.detector.step()
+            if isLogging { log() }
+        }
 
-            rotX[currentIndexInPredictionWindow] = data.rotationRate.x as NSNumber
-            rotY[currentIndexInPredictionWindow] = data.rotationRate.y as NSNumber
-            rotZ[currentIndexInPredictionWindow] = data.rotationRate.z as NSNumber
-            accX[currentIndexInPredictionWindow] = data.userAcceleration.x as NSNumber
-            accY[currentIndexInPredictionWindow] = data.userAcceleration.y as NSNumber
-            accZ[currentIndexInPredictionWindow] = data.userAcceleration.z as NSNumber
-            currentIndexInPredictionWindow += 1
-            if currentIndexInPredictionWindow == Self.predictionWindowSize - 1 {
-                currentIndexInPredictionWindow = 0
-                if isLogging { log() }
-            }
+        detector.onRecognize = { label in
+            self.socket?.send(event: label)
         }
     }
 
     public func stop() {
-        defer { cancellable?.cancel() }
+        defer { detector.motionRecognitionStop() }
 
         guard online else {
             return
         }
 
         motionManager.stopDeviceMotionUpdates()
-    }
-
-    public func motionRecognitionStart() {
-        cancellable = Timer.publish(every: 0.1, on: .main, in: .common)
-            .autoconnect()
-            .sink(receiveValue: { _ in
-                self.recognize()
-            })
-    }
-
-    public func motionRecognitionStop() {
-        cancellable?.cancel()
     }
 
     public func motionLoggingStart() {
@@ -121,54 +94,31 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     public func motionLoggingStop() {
         isLogging = false
     }
+
+    public func motionRecognitionStart() {
+        detector.motionRecognitionStart()
+    }
+
+    public func motionRecognitionStop() {
+        detector.motionRecognitionStop()
+    }
 }
 
 extension MotionModelImpl {
     func log() {
         Task {
             try await socket?.send(
-                messages: (0..<99).map { index in [accX[index], accY[index], accZ[index]] },
+                messages: (0..<99).map { index in [detector.accX[index], detector.accY[index], detector.accZ[index]] },
                 with: "axelerometer"
             )
             try await socket?.send(
-                messages: (0..<99).map { index in [rotX[index], rotY[index], rotZ[index]] },
+                messages: (0..<99).map { index in [detector.rotX[index], detector.rotY[index], detector.rotZ[index]] },
                 with: "gyroscope"
             )
         }
     }
-
-    func recognize() {
-        autoreleasepool {
-            if let modelPrediction = try? self.model?.prediction(
-                x: self.accX,
-                y: self.accY,
-                z: self.accZ,
-                stateIn: self.currentState
-            ) {
-                self.currentState = modelPrediction.stateOut
-                self.socket?.send(event: MotionLabel(label: modelPrediction.label))
-            }
-        }
-    }
 }
 
-extension MotionModelImpl {
-    static func stateInit() -> MLMultiArray {
-        // swiftlint:disable:next force_try
-        try! MLMultiArray(
-            shape: [400 as NSNumber],
-            dataType: MLMultiArrayDataType.double
-        )
-    }
-
-    static func axelInit() -> MLMultiArray {
-        // swiftlint:disable:next force_try
-        try! MLMultiArray(
-            shape: [MotionModelImpl.predictionWindowSize] as [NSNumber],
-            dataType: MLMultiArrayDataType.double
-        )
-    }
-}
 #else
 public final class MotionModelImpl: MotionModel {
     public init(connection: ConnectionModel) {}

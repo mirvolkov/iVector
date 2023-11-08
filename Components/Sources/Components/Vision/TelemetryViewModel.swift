@@ -25,7 +25,7 @@ import Observation
             self.stt = data.text
         }
 
-        connection.socket.listen { (data: MotionLabel) in
+        connection.socket.listen { (data: MotionDetector.MotionLabel) in
             self.motionLabel = data.label
         }
 

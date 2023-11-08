@@ -28,7 +28,7 @@ public struct MotionFeature: ReducerProtocol {
         case motionLoggingStart
         case motionLoggingStop
     }
-    
+
     public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
         switch action {
         case .connect:
