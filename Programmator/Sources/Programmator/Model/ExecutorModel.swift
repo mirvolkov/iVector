@@ -5,19 +5,8 @@ import Foundation
 import SwiftBus
 
 public final class ExecutorModel: Executor {
-    enum ExecutorError: Error {
+    public enum ExecutorError: Error {
         case notSupported
-    }
-
-    struct ExecutorCondition {
-        let value: Extension.ConditionValue
-        let program: Extension.ProgramID
-
-        init?(_ value: Extension.ConditionValue?, _ program: Extension.ProgramID) {
-            guard let value else { return nil }
-            self.value = value
-            self.program = program
-        }
     }
 
     @Published public var running: Program?
@@ -32,16 +21,12 @@ public final class ExecutorModel: Executor {
     /// Buffer of text input
     private var buffer = Deque<String>()
 
-    /// Condition (CMP) operation list
-    private var conditions: [ExecutorCondition] = []
-
     public init(with connection: ConnectionModel) {
         self.connection = connection
     }
 
     public func cancel() {
         task?.cancel()
-        conditions.removeAll()
         running = nil
         pc = nil
     }
@@ -55,16 +40,6 @@ public final class ExecutorModel: Executor {
         task = Task.detached(operation: {
             var pc = 1
             let instructions = try await program.instructions
-            self.conditions = instructions
-                .map { instruction in
-                    switch instruction {
-                    case .cmp(let condition, let programID):
-                        return ExecutorCondition(condition.value, programID)
-                    default:
-                        return nil
-                    }
-                }.compactMap { $0 }
-
             var stack = instructions.makeIterator()
             while let instruction = stack.next() {
                 self.pc = (pc, instructions.count)
@@ -72,8 +47,6 @@ public final class ExecutorModel: Executor {
                 try await self.run(instruction: instruction)
                 pc += 1
             }
-
-            self.conditions.removeAll()
             self.running = nil
             self.pc = nil
         })
@@ -82,12 +55,23 @@ public final class ExecutorModel: Executor {
     }
 
     private func run(instruction: Instruction) async throws {
+        connection.socket.send(event: MotionDetector.ExecutorEvent(
+            instruction: instruction.description,
+            condition: .started
+        ))
+
         if let behavior = connection.vector {
             try await run(instruction: instruction, with: behavior)
         }
+
         if let pathfinder = connection.pathfinder {
             try await run(instruction: instruction, with: pathfinder)
         }
+
+        connection.socket.send(event: MotionDetector.ExecutorEvent(
+            instruction: instruction.description,
+            condition: .finished
+        ))
     }
 }
 
@@ -114,29 +98,29 @@ private extension ExecutorModel {
             }
         case .forward(let ext):
             if let value = ext.value {
-                await driver.move(Float(value), speed: 100, direction: true)
+                try await driver.move(Float(value), speed: .max, direction: true)
             }
         case .right(let ext):
             if let value = ext.value {
-                await driver.turn(90, speed: 100)
-                await driver.move(Float(value), speed: 100, direction: true)
+                try await driver.turn(90, speed: .max)
+                try await driver.move(Float(value), speed: .max, direction: true)
             }
         case .left(let ext):
             if let value = ext.value {
-                await driver.turn(-90, speed: 100)
-                await driver.move(Float(value), speed: 100, direction: true)
+                try await driver.turn(-90, speed: .max)
+                try await driver.move(Float(value), speed: .max, direction: true)
             }
         case .backward(let ext):
             if let value = ext.value {
-                await driver.move(Float(value), speed: 100, direction: false)
+                try await driver.move(Float(value), speed: .max, direction: false)
             }
         case .rotate(let ext):
             if let value = ext.value {
-                await driver.turn(-Float(value), speed: 100)
+                try await driver.turn(-Float(value), speed: .max)
             }
         case .pause(let ext):
             if let value = ext.value {
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * value))
+                try await Task.sleep(for: .milliseconds(UInt64(1_000 * value)))
             }
         case .cmp:
             break
@@ -195,7 +179,7 @@ private extension ExecutorModel {
             }
         case .pause(let ext):
             if let value = ext.value {
-                try await Task.sleep(nanoseconds: UInt64(1_000_000_000 * value))
+                try await Task.sleep(for: .milliseconds(UInt64(1_000 * value)))
             }
         case .cmp:
             break
@@ -207,9 +191,9 @@ private extension ExecutorModel {
             {
                 try await run(program: prog)
             }
-        case .light(_):
+        case .light:
             throw ExecutorError.notSupported
-        case .laser(_):
+        case .laser:
             throw ExecutorError.notSupported
         }
     }

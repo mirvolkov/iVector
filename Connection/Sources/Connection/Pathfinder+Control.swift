@@ -10,14 +10,14 @@ public protocol PathfinderControl {
 
     /// Move
     /// - Parameter distance - distance in mm
-    /// - Parameter speed (mm per sec) - default is 1.0 until PWM implemented
+    /// - Parameter speed (0...255)
     /// - Parameter direction(bool) 1 - forward, 0 - backward
-    func move(_ distance: Float, speed: Float, direction: Bool) async
+    func move(_ distance: Float, speed: UInt8, direction: Bool) async throws
 
     /// Turn in place
     /// - Parameter angle (rad)
-    /// - Parameter speed (mm per sec) - default is 1.0 until PWM implemented
-    func turn(_ angle: Float, speed: Float) async
+    /// - Parameter speed (0...255)
+    func turn(_ angle: Float, speed: UInt8) async throws
 
     /// Turn on/off the light
     /// - Parameter isOn (boolean)
@@ -54,25 +54,25 @@ extension PathfinderConnection: PathfinderControl {
         }
     }
 
-    public func move(_ distance: Float, speed: Float = 1.0, direction: Bool = true) async {
-        await write(direction ? 255 : 0, uuid: uuidEngineLF)
-        await write(direction ? 255 : 0, uuid: uuidEngineRF)
-        await write(direction ? 0 : 255, uuid: uuidEngineLB)
-        await write(direction ? 0 : 255, uuid: uuidEngineRB)
-        try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(distance) / 100.0))
+    public func move(_ distance: Float, speed: UInt8 = 255, direction: Bool = true) async throws {
+        await write(direction ? speed : 0, uuid: uuidEngineLF)
+        await write(direction ? speed : 0, uuid: uuidEngineRF)
+        await write(direction ? 0 : speed, uuid: uuidEngineLB)
+        await write(direction ? 0 : speed, uuid: uuidEngineRB)
+        try await Task.sleep(for: .milliseconds(UInt64(1_000 * abs(distance) / 100.0)))
         await write(0, uuid: uuidEngineLF)
         await write(0, uuid: uuidEngineRF)
         await write(0, uuid: uuidEngineLB)
         await write(0, uuid: uuidEngineRB)
     }
 
-    public func turn(_ angle: Float, speed: Float = 1.0) async {
+    public func turn(_ angle: Float, speed: UInt8 = 255) async throws {
         let direction = angle > 0
-        await write(direction ? 255 : 0, uuid: uuidEngineLF)
-        await write(direction ? 255 : 0, uuid: uuidEngineRB)
-        await write(direction ? 0 : 255, uuid: uuidEngineLB)
-        await write(direction ? 0 : 255, uuid: uuidEngineRF)
-        try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(angle * 180 / Float.pi) / 100.0))
+        await write(direction ? speed : 0, uuid: uuidEngineLF)
+        await write(direction ? speed : 0, uuid: uuidEngineRB)
+        await write(direction ? 0 : speed, uuid: uuidEngineLB)
+        await write(direction ? 0 : speed, uuid: uuidEngineRF)
+        try await Task.sleep(for: .milliseconds(UInt64(1_000 * abs(angle) / 100.0)))
         await write(0, uuid: uuidEngineLF)
         await write(0, uuid: uuidEngineRF)
         await write(0, uuid: uuidEngineLB)
