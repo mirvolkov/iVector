@@ -63,7 +63,14 @@ public final class ConnectionModel: @unchecked Sendable {
                     cancellable = pathfinderDevice
                         .battery
                         .sink { value in
-                            continuation.resume(returning: VectorBatteryState.percent(value))
+                            switch value {
+                            case 2430...3000:
+                                continuation.resume(returning: .charging)
+                            case 1000...2430:
+                                continuation.resume(returning: VectorBatteryState.percent(100 * value / 2430))
+                            default:
+                                continuation.resume(returning: .unknown)
+                            }
                             cancellable?.cancel()
                         }
                 }

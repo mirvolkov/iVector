@@ -73,7 +73,6 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 #else
             audioEngine.connect(inputNode, to: audioEngine.mainMixerNode, format: recordingFormat)
 #endif
-            print(audioEngine)
             try audioEngine.start()
         } catch {
             logger.error("\(error)")

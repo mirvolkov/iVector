@@ -29,7 +29,7 @@ import Observation
             self.motionLabel = data.label
         }
 
-        connection.socket.listen { (data: MotionHeading) in
+        connection.socket.listen { (data: Motion.MotionHeading) in
             self.heading = data.heading
         }
 

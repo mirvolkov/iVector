@@ -51,6 +51,7 @@ let uuidSonar2 = "6E400003-B5A3-F393-E0A9-E50E24DCCA06" // sonar 3
 let uuidSonar3 = "6E400003-B5A3-F393-E0A9-E50E24DCCA07" // sonar 4
 let uuidBattery = "6E400003-B5A3-F393-E0A9-E50E24DCCA08" // battery
 let uuidHeadAngle = "6E400003-B5A3-F393-E0A9-E50E24DCCA0E" // battery
+let uuidProximity = "6E400003-B5A3-F393-E0A9-E50E24DCCA0D" // proximity sensor
 
 
 public final class PathfinderConnection: NSObject, Pathfinder {

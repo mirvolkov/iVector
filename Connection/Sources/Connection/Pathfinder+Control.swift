@@ -34,11 +34,6 @@ public protocol PathfinderControl {
 }
 
 extension PathfinderConnection: PathfinderControl {
-    // swiftlint:disable:next force_unwrapping
-    private static let zero: Data = "0".data(using: .ascii)!
-    // swiftlint:disable:next force_unwrapping
-    private static let one: Data = "1".data(using: .ascii)!
-
     internal func listenSensors() {
         listenSonar(uuid: uuidSonar0)
             .zip(listenSonar(uuid: uuidSonar1), listenSonar(uuid: uuidSonar2), listenSonar(uuid: uuidSonar3))
@@ -60,36 +55,36 @@ extension PathfinderConnection: PathfinderControl {
     }
 
     public func move(_ distance: Float, speed: Float = 1.0, direction: Bool = true) async {
-        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineLF)
-        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineRF)
-        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineLB)
-        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineRB)
+        await write(direction ? 255 : 0, uuid: uuidEngineLF)
+        await write(direction ? 255 : 0, uuid: uuidEngineRF)
+        await write(direction ? 0 : 255, uuid: uuidEngineLB)
+        await write(direction ? 0 : 255, uuid: uuidEngineRB)
         try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(distance) / 100.0))
-        ble.write(data: Self.zero, charID: uuidEngineLF)
-        ble.write(data: Self.zero, charID: uuidEngineRF)
-        ble.write(data: Self.zero, charID: uuidEngineLB)
-        ble.write(data: Self.zero, charID: uuidEngineRB)
+        await write(0, uuid: uuidEngineLF)
+        await write(0, uuid: uuidEngineRF)
+        await write(0, uuid: uuidEngineLB)
+        await write(0, uuid: uuidEngineRB)
     }
 
     public func turn(_ angle: Float, speed: Float = 1.0) async {
         let direction = angle > 0
-        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineLF)
-        ble.write(data: direction ? Self.one : Self.zero, charID: uuidEngineRB)
-        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineLB)
-        ble.write(data: direction ? Self.zero : Self.one, charID: uuidEngineRF)
+        await write(direction ? 255 : 0, uuid: uuidEngineLF)
+        await write(direction ? 255 : 0, uuid: uuidEngineRB)
+        await write(direction ? 0 : 255, uuid: uuidEngineLB)
+        await write(direction ? 0 : 255, uuid: uuidEngineRF)
         try? await Task.sleep(nanoseconds: UInt64(1_000_000_000 * abs(angle * 180 / Float.pi) / 100.0))
-        ble.write(data: Self.zero, charID: uuidEngineLF)
-        ble.write(data: Self.zero, charID: uuidEngineRF)
-        ble.write(data: Self.zero, charID: uuidEngineLB)
-        ble.write(data: Self.zero, charID: uuidEngineRB)
+        await write(0, uuid: uuidEngineLF)
+        await write(0, uuid: uuidEngineRF)
+        await write(0, uuid: uuidEngineLB)
+        await write(0, uuid: uuidEngineRB)
     }
 
     public func laser(_ isOn: Bool) async {
-        ble.write(data: isOn ? Self.one : Self.zero, charID: uuidLaser)
+        await write(isOn ? 1 : 0, uuid: uuidLaser)
     }
 
     public func light(_ isOn: Bool) async {
-        ble.write(data: isOn ? Self.one : Self.zero, charID: uuidLight)
+        await write(isOn ? 1 : 0, uuid: uuidLight)
     }
 
     public func setHeadAngle(_ angle: Float) async {
