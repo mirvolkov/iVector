@@ -1,6 +1,7 @@
 import Components
 import ComposableArchitecture
 import SwiftUI
+import TipKit
 #if os(iOS)
 import UIKit
 
@@ -37,6 +38,12 @@ struct HomeTablet: View {
                         .navigationBarTitleDisplayMode(.inline)
                         .toolbar {
                             toolbar
+                        }
+                        .task {
+                            try? Tips.configure([
+                                .displayFrequency(.daily),
+                                .datastoreLocation(.applicationDefault)
+                            ])
                         }
                 }
             }

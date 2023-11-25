@@ -1,4 +1,23 @@
 import SwiftUI
+import TipKit
+
+fileprivate struct MicTip: Tip {
+    var title: Text {
+        Text("Microphone device on/off")
+    }
+}
+
+fileprivate struct CameraTip: Tip {
+    var title: Text {
+        Text("Camera device on/off")
+    }
+}
+
+fileprivate struct SocketTip: Tip {
+    var title: Text {
+        Text("Socket connection on/off")
+    }
+}
 
 public extension View {
     typealias OnClick = () -> ()
@@ -9,7 +28,7 @@ public extension View {
         } label: {
             Image(systemName: "antenna.radiowaves.left.and.right.circle")
                 .foregroundColor(online == true ? .green : .black)
-        }.buttonStyle(.plain).disabled(onClick == nil)
+        }.buttonStyle(.plain).disabled(onClick == nil).popoverTip(SocketTip())
     }
 
     func settingsButton(onClick: OnClick? = nil) -> some View {
@@ -44,15 +63,15 @@ public extension View {
         } label: {
             Image(systemName: "camera.circle")
                 .foregroundColor(online == true ? .green : .black)
-        }.buttonStyle(.plain).disabled(onClick == nil)
+        }.buttonStyle(.plain).disabled(onClick == nil).popoverTip(CameraTip())
     }
 
     func micButton(online: Bool? = nil, onClick: OnClick? = nil) -> some View {
-        Button {
+        return Button {
             onClick?()
         } label: {
             Image(systemName: "mic.circle")
                 .foregroundColor(online == true ? .green : .black)
-        }.buttonStyle(.plain).disabled(onClick == nil)
+        }.buttonStyle(.plain).disabled(onClick == nil).popoverTip(MicTip())
     }
 }

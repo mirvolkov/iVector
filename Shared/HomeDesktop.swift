@@ -3,6 +3,7 @@ import ComposableArchitecture
 import Features
 import Programmator
 import SwiftUI
+import TipKit
 
 #if os(macOS)
 struct HomeDesktop: View {
@@ -34,6 +35,12 @@ struct HomeDesktop: View {
         }
         .sheet(isPresented: $preferences) {
             SettingsView(model: .init(), isPresented: $preferences)
+        }
+        .task {
+            try? Tips.configure([
+                .displayFrequency(.daily),
+                .datastoreLocation(.applicationDefault)
+            ])
         }
         .frame(width: 940, height: 610)
     }
