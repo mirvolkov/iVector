@@ -17,12 +17,18 @@ public final class SocketConnection: @unchecked Sendable {
         case invalidURL
     }
 
+    public enum CachePolicy {
+        case immediate
+        case window(UInt)
+    }
+
     public let online: CurrentValueSubject<Bool, SocketError> = .init(false)
 
     private var manager: SocketManager?
     private var socket: SocketIOClient?
     private var subscriptions: Set<AnyCancellable> = []
     private let eventBus: EventTransmittable = EventBus()
+    private var cache: [String: [SocketData]] = [:]
 
     public init() {}
 
@@ -70,12 +76,35 @@ public extension SocketConnection {
         }
     }
 
+    func send<Message: SocketData>(message: Message, with tag: String, cachePolicy: CachePolicy = .immediate) {
+        switch cachePolicy {
+        case .immediate:
+            socket?.emit(tag, with: [message])
+
+        case .window(let limit):
+            if cache[tag] == nil {
+                cache[tag] = []
+            }
+
+            cache[tag]?.append(message)
+
+            if let buffer = cache[tag] as? [Message], buffer.count >= limit {
+                send(messages: buffer, with: tag)
+                cache[tag]?.removeAll()
+            }
+        }
+    }
+
     func send<Message: SocketData>(messages: [Message], with tag: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
             socket?.emit(tag, with: messages) {
                 continuation.resume()
             }
         }
+    }
+
+    func send<Message: SocketData>(messages: [Message], with tag: String) {
+        socket?.emit(tag, with: messages)
     }
 
     func listen<Message: SocketData>(_ tag: String, onRecieve: @escaping (Message) -> Void) {

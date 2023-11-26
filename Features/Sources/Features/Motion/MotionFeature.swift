@@ -36,6 +36,8 @@ public struct MotionFeature: ReducerProtocol {
                 motionModel.start()
             })
             .concatenate(with: Effect.run(operation: { send in
+                await send(.motionRecognitionStart)
+                await send(.motionLoggingStart)
                 await send(.goesOnline)
             }))
 

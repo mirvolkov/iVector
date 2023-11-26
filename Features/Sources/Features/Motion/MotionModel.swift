@@ -4,6 +4,7 @@ import CoreML
 import CoreMotion
 import Foundation
 import OSLog
+import SocketIO
 import SwiftBus
 
 public protocol MotionModel: Sendable {
@@ -16,15 +17,17 @@ public protocol MotionModel: Sendable {
     func motionLoggingStop()
 }
 
-public struct MotionHeading: EventRepresentable {
-    public let heading: Double
-}
+public enum Motion {
+    public struct MotionHeading: EventRepresentable {
+        public let heading: Double
+    }
 
-// swiftlint:disable identifier_name
-public struct MotionGyro: EventRepresentable {
-    public let x: Double
-    public let y: Double
-    public let z: Double
+    // swiftlint:disable identifier_name
+    public struct MotionGyro: EventRepresentable {
+        public let x: Double
+        public let y: Double
+        public let z: Double
+    }
 }
 
 // swiftlint:enable identifier_name
@@ -32,28 +35,27 @@ public struct MotionGyro: EventRepresentable {
 #if os(iOS)
 public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private let motionManager = CMMotionManager()
-
     private let queue = OperationQueue()
-    private let connection: ConnectionModel
-    private var socket: SocketConnection? { connection.socket }
+    private let socket: SocketConnection
     private var isLogging: Bool = false
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
-    private let detector = MotionDetector()
+    private let detector: MotionDetector
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
     public init(connection: ConnectionModel) {
-        self.connection = connection
+        self.socket = connection.socket
+        self.detector = MotionDetector(with: connection.socket)
     }
 
     public func start() {
         queue.maxConcurrentOperationCount = 1
 
-        guard !online, EnvironmentDevice.isSimulator else {
+        guard !online else {
             return
         }
 
-        motionManager.startDeviceMotionUpdates(to: self.queue) { [self] data, error in
+        motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: self.queue) { [self] data, error in
             guard let data = data else {
                 return
             }
@@ -63,17 +65,29 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
                 return
             }
 
-            self.socket?.send(event: MotionHeading(heading: data.heading))
-            self.socket?.send(event: MotionGyro(x: data.gravity.x, y: data.gravity.y, z: data.gravity.z))
-            self.detector.pushAccelerometer(data.userAcceleration)
-            self.detector.pushRotation(data.rotationRate)
-            self.detector.pushHeading(data.heading)
-            self.detector.step()
-            if isLogging { log() }
-        }
+            socket.send(event: Motion.MotionHeading(heading: data.heading))
+            socket.send(event: Motion.MotionGyro(x: data.gravity.x, y: data.gravity.y, z: data.gravity.z))
+            detector.pushAccelerometer(data.userAcceleration)
+            detector.pushRotation(data.rotationRate)
+            detector.pushHeading(data.heading)
+            detector.step()
 
-        detector.onRecognize = { label in
-            self.socket?.send(event: label)
+            socket.send(message: [
+                "x": data.gravity.x,
+                "y": data.gravity.y,
+                "z": data.gravity.z,
+                "datetime": Date().timeIntervalSince1970
+            ], with: "axelerometer", cachePolicy: .window(100))
+            socket.send(message: [
+                "x": data.rotationRate.x,
+                "y": data.rotationRate.y,
+                "z": data.rotationRate.z,
+                "datetime": Date().timeIntervalSince1970
+            ], with: "gyroscope", cachePolicy: .window(100))
+            socket.send(message: [
+                "heading": data.heading,
+                "datetime": Date().timeIntervalSince1970
+            ], with: "heading", cachePolicy: .window(100))
         }
     }
 
@@ -101,21 +115,6 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
 
     public func motionRecognitionStop() {
         detector.motionRecognitionStop()
-    }
-}
-
-extension MotionModelImpl {
-    func log() {
-        Task {
-            try await socket?.send(
-                messages: (0..<99).map { index in [detector.accX[index], detector.accY[index], detector.accZ[index]] },
-                with: "axelerometer"
-            )
-            try await socket?.send(
-                messages: (0..<99).map { index in [detector.rotX[index], detector.rotY[index], detector.rotZ[index]] },
-                with: "gyroscope"
-            )
-        }
     }
 }
 

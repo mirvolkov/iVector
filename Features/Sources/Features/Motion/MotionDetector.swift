@@ -1,6 +1,9 @@
 import Combine
+import Connection
 import CoreML
 import CoreMotion
+import NaturalLanguage
+import SocketIO
 import SwiftBus
 
 public final class MotionDetector {
@@ -8,20 +11,55 @@ public final class MotionDetector {
         public let label: String
     }
 
-    static let windowSize = 100
-    var currentIndexInPredictionWindow = 0
-    var currentState = MotionDetector.stateInit()
-    let accX = MotionDetector.axelInit()
-    let accY = MotionDetector.axelInit()
-    let accZ = MotionDetector.axelInit()
-    let rotX = MotionDetector.axelInit()
-    let rotY = MotionDetector.axelInit()
-    let rotZ = MotionDetector.axelInit()
-    let heading = MotionDetector.axelInit()
-    var onRecognize: (MotionLabel) -> () = { _ in }
+    public struct ExecutorEvent: EventRepresentable, SocketData, CustomStringConvertible {
+        public enum Condition: EventRepresentable, CustomStringConvertible {
+            case started
+            case finished
+
+            public var description: String {
+                switch self {
+                case .started:
+                    "started"
+                case .finished:
+                    "finished"
+                }
+            }
+        }
+
+        public let instruction: String
+        public let condition: Condition
+        public let date: Date
+
+        public init(instruction: String, condition: Condition, date: Date = Date()) {
+            self.instruction = instruction
+            self.condition = condition
+            self.date = date
+        }
+
+        public var description: String {
+            "\(condition.description):\(instruction):\(date.timeIntervalSince1970)"
+        }
+    }
+
+    private static let windowSize = 100
+    private var currentIndexInPredictionWindow = 0
+    private var currentState = MotionDetector.stateInit()
+    private let accX = MotionDetector.axelInit()
+    private let accY = MotionDetector.axelInit()
+    private let accZ = MotionDetector.axelInit()
+    private let rotX = MotionDetector.axelInit()
+    private let rotY = MotionDetector.axelInit()
+    private let rotZ = MotionDetector.axelInit()
+    private let instructions = MotionDetector.axelInit()
+    private let heading = MotionDetector.axelInit()
+    private let socket: SocketConnection
 
     private var cancellable: AnyCancellable?
     private let model = try? collisionDetector.init(configuration: .init())
+
+    public init(with socket: SocketConnection) {
+        self.socket = socket
+    }
 
     public func pushAccelerometer(_ data: CMAcceleration) {
         accX[currentIndexInPredictionWindow] = data.x as NSNumber
@@ -47,6 +85,13 @@ public final class MotionDetector {
     }
 
     public func motionRecognitionStart() {
+        socket.listen { [self] (event: ExecutorEvent) in
+            print(event.description)
+            Task {
+                try? await socket.send(message: event.description, with: "exec")
+            }
+        }
+
         cancellable = Timer.publish(every: 0.1, on: .main, in: .common)
             .autoconnect()
             .sink(receiveValue: { _ in
@@ -67,7 +112,7 @@ public final class MotionDetector {
                 stateIn: self.currentState
             ) {
                 self.currentState = modelPrediction.stateOut
-                self.onRecognize(MotionLabel(label: modelPrediction.label))
+                self.socket.send(event: MotionLabel(label: modelPrediction.label))
             }
         }
     }
