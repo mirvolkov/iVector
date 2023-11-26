@@ -71,9 +71,11 @@ struct AppFeature: ReducerProtocol {
             state: \.connection,
             action: /AppFeature.Action.connect
         ) {
-            ConnectionFeature(settings: env.settings,
-                              env: env.config.device,
-                              connection: env.connection)
+            ConnectionFeature(
+                settings: env.settings,
+                env: env.config.device,
+                connection: env.connection
+            )
         }
 
         Scope<AppFeature.State, AppFeature.Action, MotionFeature>(
@@ -100,8 +102,10 @@ struct AppFeature: ReducerProtocol {
             state: \.camera,
             action: /AppFeature.Action.camera
         ) {
-            VisionFeature(settings: env.settings,
-                          connection: env.connection)
+            VisionFeature(
+                settings: env.settings,
+                connection: env.connection
+            )
         }
 
         Scope<AppFeature.State, AppFeature.Action, AudioFeature>(

@@ -44,8 +44,9 @@ public struct VisionFeature: ReducerProtocol {
     public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
         switch action {
         case .connect:
+            state = .connecting
             return Effect.run(operation: { send in
-                if let stream = try connection.camera?.requestCameraFeed() {
+                if let stream = try await connection.camera?.requestCameraFeed() {
                     let model = VisionModel(with: connection, stream: stream)
                     model.bind()
                     await send(Action.goesOnline(model))
@@ -60,7 +61,7 @@ public struct VisionFeature: ReducerProtocol {
             return .none
 
         case .goesOffline:
-            state = State.offline
+            state = .offline
             return .none
 
         case .disconnect:
