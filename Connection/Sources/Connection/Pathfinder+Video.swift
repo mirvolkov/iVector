@@ -2,14 +2,13 @@ import AVFoundation
 import CoreImage
 
 extension PathfinderConnection: Camera {
-    public func requestCameraFeed() throws -> AsyncStream<VectorCameraFrame> {
-        addObservers()
-        setUpSession()
-        setUpCamera()
-        startSession()
-
-        return .init { continuation in
-            self.cameraFeedContinuation = continuation
+    public func requestCameraFeed() async throws -> AsyncStream<VectorCameraFrame> {
+        await withUnsafeContinuation { continuation in
+            cameraInitContinuation = continuation
+            addObservers()
+            setUpSession()
+            setUpCamera()
+            startSession()
         }
     }
 
@@ -92,6 +91,11 @@ extension PathfinderConnection: Camera {
 
         captureSession.commitConfiguration()
         logger.info("camera did start!")
+
+        cameraInitContinuation?.resume(with: .success(.init { continuation in
+            self.cameraFeedContinuation = continuation
+        }))
+        cameraInitContinuation = nil
     }
 
     private func stopSession() {
@@ -111,7 +115,7 @@ extension PathfinderConnection: Camera {
         AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
     }
 
-    public override func observeValue(
+    override public func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
         change: [NSKeyValueChangeKey: Any]?,
@@ -119,7 +123,8 @@ extension PathfinderConnection: Camera {
     ) {
         if keyPath == "systemPreferredCamera" {
             if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice,
-               systemPreferredCamera.deviceType == .external {
+               systemPreferredCamera.deviceType == .external
+            {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
                 setUpSession()
                 startCamera(systemPreferredCamera)

@@ -61,6 +61,7 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     let ble: BLE
     var bag = Set<AnyCancellable>()
     var onlineContinuation: UnsafeContinuation<Void, Error>?
+    var cameraInitContinuation: UnsafeContinuation<AsyncStream<VectorCameraFrame>, Never>?
     var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
 
     public var online: CurrentValueSubject<Bool, Never> = .init(false)

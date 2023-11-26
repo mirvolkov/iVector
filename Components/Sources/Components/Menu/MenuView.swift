@@ -1,12 +1,17 @@
+import Features
+import Programmator
 import SwiftUI
 
-struct MenuView: View {
-    @ObservedObject var viewModel: MenuViewModel
-
+public struct MenuView: View {
+    @ObservedObject private var viewModel: ViewModel
     @EnvironmentObject private var errorHandling: ErrorHandlerViewModel
     @State private var loadProgramPopover = false
 
-    var body: some View {
+    public init(with connection: ConnectionModel, executor: ExecutorModel) {
+        self._viewModel = .init(initialValue: .init(with: connection, executor: executor))
+    }
+
+    public var body: some View {
         HStack {
             Text("AI")
                 .font(vectorBold(22))
