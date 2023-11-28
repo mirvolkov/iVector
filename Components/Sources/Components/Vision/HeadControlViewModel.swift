@@ -28,7 +28,6 @@ public extension HeadControlView {
 
         private let connection: ConnectionModel
         private var bag = Set<AnyCancellable>()
-        private var cameraTask: Task<Void, Never>?
 
         public init(with connection: ConnectionModel) {
             self.connection = connection
@@ -56,7 +55,7 @@ public extension HeadControlView {
                     .map { Angle(radians: Double($0)) }
                     .map { self.degreeToNorm($0.degrees) }
                     .receive(on: RunLoop.main)
-                    .weakAssign(to: \.headAngle, on: self)
+                    .assign(to: \.headAngle, on: self)
                     .store(in: &self.bag)
             }
 
@@ -79,7 +78,7 @@ public extension HeadControlView {
                     .map { Angle(radians: Double($0)) }
                     .map { self.degreeToNorm($0.degrees) }
                     .receive(on: RunLoop.main)
-                    .weakAssign(to: \.headAngle, on: self)
+                    .assign(to: \.headAngle, on: self)
                     .store(in: &self.bag)
             }
         }

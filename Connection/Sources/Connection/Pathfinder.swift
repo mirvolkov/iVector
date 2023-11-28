@@ -39,22 +39,24 @@ public protocol Pathfinder {
     func disconnect()
 }
 
-let uuidLaser = "6E400003-B5A3-F393-E0A9-E50E24DCCA03" // Laser
-let uuidLight = "6E400003-B5A3-F393-E0A9-E50E24DCCA02" // Light
-let uuidEngineLF = "6E400003-B5A3-F393-E0A9-E50E24DCCA09" // engine left forward
-let uuidEngineRF = "6E400003-B5A3-F393-E0A9-E50E24DCCA0A" // engine right forward
-let uuidEngineLB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0B" // engine left backward
-let uuidEngineRB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0C" // engine right backward
-let uuidSonar0 = "6E400003-B5A3-F393-E0A9-E50E24DCCA04" // sonar 1
-let uuidSonar1 = "6E400003-B5A3-F393-E0A9-E50E24DCCA05" // sonar 2
-let uuidSonar2 = "6E400003-B5A3-F393-E0A9-E50E24DCCA06" // sonar 3
-let uuidSonar3 = "6E400003-B5A3-F393-E0A9-E50E24DCCA07" // sonar 4
-let uuidBattery = "6E400003-B5A3-F393-E0A9-E50E24DCCA08" // battery
-let uuidHeadAngle = "6E400003-B5A3-F393-E0A9-E50E24DCCA0E" // battery
-let uuidProximity = "6E400003-B5A3-F393-E0A9-E50E24DCCA0D" // proximity sensor
-
-
 public final class PathfinderConnection: NSObject, Pathfinder {
+    enum Const {
+        static let uuidLaser = "6E400003-B5A3-F393-E0A9-E50E24DCCA03" // Laser
+        static let uuidLight = "6E400003-B5A3-F393-E0A9-E50E24DCCA02" // Light
+        static let uuidEngineLF = "6E400003-B5A3-F393-E0A9-E50E24DCCA09" // engine left forward
+        static let uuidEngineRF = "6E400003-B5A3-F393-E0A9-E50E24DCCA0A" // engine right forward
+        static let uuidEngineLB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0B" // engine left backward
+        static let uuidEngineRB = "6E400003-B5A3-F393-E0A9-E50E24DCCA0C" // engine right backward
+        static let uuidSonar0 = "6E400003-B5A3-F393-E0A9-E50E24DCCA04" // sonar 1
+        static let uuidSonar1 = "6E400003-B5A3-F393-E0A9-E50E24DCCA05" // sonar 2
+        static let uuidSonar2 = "6E400003-B5A3-F393-E0A9-E50E24DCCA06" // sonar 3
+        static let uuidSonar3 = "6E400003-B5A3-F393-E0A9-E50E24DCCA07" // sonar 4
+        static let uuidBattery = "6E400003-B5A3-F393-E0A9-E50E24DCCA08" // battery
+        static let uuidHeadAngle = "6E400003-B5A3-F393-E0A9-E50E24DCCA0E" // battery
+        static let uuidPower = "6E400003-B5A3-F393-E0A9-E50E24DCCA0F" // power relay
+        static let uuidProximity = "6E400003-B5A3-F393-E0A9-E50E24DCCA0D" // proximity sensor
+    }
+
     let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "pathfinder")
     lazy var captureSession = AVCaptureSession()
     let queue = DispatchQueue(label: "pathfinder.camera")
@@ -68,6 +70,8 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     public var sonar: PassthroughSubject<PFSonar, Never> = .init()
     public var battery: PassthroughSubject<UInt, Never> = .init()
     public var headAngle: PassthroughSubject<Float, Never> = .init()
+    public var power: PassthroughSubject<Bool, Never> = .init()
+    public var proximity: PassthroughSubject<UInt, Never> = .init()
 
     public init(with bleID: String) {
         ble = BLE([bleID])

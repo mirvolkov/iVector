@@ -7,6 +7,8 @@ public protocol PathfinderControl {
     var sonar: PassthroughSubject<PFSonar, Never> { get }
     var battery: PassthroughSubject<UInt, Never> { get }
     var headAngle: PassthroughSubject<Float, Never> { get }
+    var power: PassthroughSubject<Bool, Never> { get }
+    var proximity: PassthroughSubject<UInt, Never> { get }
 
     /// Move
     /// - Parameter distance - distance in mm
@@ -35,60 +37,83 @@ public protocol PathfinderControl {
 
 extension PathfinderConnection: PathfinderControl {
     internal func listenSensors() {
-        listenSonar(uuid: uuidSonar0)
-            .zip(listenSonar(uuid: uuidSonar1), listenSonar(uuid: uuidSonar2), listenSonar(uuid: uuidSonar3))
+        listenSonar(uuid: Const.uuidSonar0)
+            .zip(
+                listenSonar(uuid: Const.uuidSonar1),
+                listenSonar(uuid: Const.uuidSonar2),
+                listenSonar(uuid: Const.uuidSonar3)
+            )
             .map { PFSonar($0) }
             .sink(receiveValue: { self.sonar.send($0) })
             .store(in: &bag)
 
-        ble.listen(for: uuidBattery) { [self] message in
+        ble.listen(for: Const.uuidBattery) { [self] message in
             if let value = UInt(message) {
                 battery.send(value)
             }
         }
 
-        ble.listen(for: uuidHeadAngle) { [self] message in
+        ble.listen(for: Const.uuidHeadAngle) { [self] message in
             if let value = Float(message) {
                 headAngle.send(value)
+            }
+        }
+
+        ble.listen(for: Const.uuidPower) { [self] message in
+            if let value = UInt(message) {
+                power.send(value > 0)
+            }
+        }
+
+        ble.listen(for: Const.uuidProximity) { [self] message in
+            if let value = UInt(message) {
+                proximity.send(value)
             }
         }
     }
 
     public func move(_ distance: Float, speed: UInt8 = 255, direction: Bool = true) async throws {
-        await write(direction ? speed : 0, uuid: uuidEngineLF)
-        await write(direction ? speed : 0, uuid: uuidEngineRF)
-        await write(direction ? 0 : speed, uuid: uuidEngineLB)
-        await write(direction ? 0 : speed, uuid: uuidEngineRB)
-        try await Task.sleep(for: .milliseconds(UInt64(1_000 * abs(distance) / 100.0)))
-        await write(0, uuid: uuidEngineLF)
-        await write(0, uuid: uuidEngineRF)
-        await write(0, uuid: uuidEngineLB)
-        await write(0, uuid: uuidEngineRB)
+        write(direction ? speed : 0, uuid: Const.uuidEngineLF)
+        write(direction ? speed : 0, uuid: Const.uuidEngineRF)
+        write(direction ? 0 : speed, uuid: Const.uuidEngineLB)
+        write(direction ? 0 : speed, uuid: Const.uuidEngineRB)
+        write(1, uuid: Const.uuidPower)
+        try await Task.sleep(for: .microseconds(UInt64(1_000_000 * abs(distance) / 100.0)))
+        write(0, uuid: Const.uuidPower)
+        write(0, uuid: Const.uuidEngineLF)
+        write(0, uuid: Const.uuidEngineRF)
+        write(0, uuid: Const.uuidEngineLB)
+        write(0, uuid: Const.uuidEngineRB)
+        try await Task.sleep(for: .milliseconds(10))
     }
 
     public func turn(_ angle: Float, speed: UInt8 = 255) async throws {
         let direction = angle > 0
-        await write(direction ? speed : 0, uuid: uuidEngineLF)
-        await write(direction ? speed : 0, uuid: uuidEngineRB)
-        await write(direction ? 0 : speed, uuid: uuidEngineLB)
-        await write(direction ? 0 : speed, uuid: uuidEngineRF)
+        write(direction ? speed : 0, uuid: Const.uuidEngineLF)
+        write(direction ? speed : 0, uuid: Const.uuidEngineRB)
+        write(direction ? 0 : speed, uuid: Const.uuidEngineLB)
+        write(direction ? 0 : speed, uuid: Const.uuidEngineRF)
+        write(1, uuid: Const.uuidPower)
         try await Task.sleep(for: .milliseconds(UInt64(1_000 * abs(angle) / 100.0)))
-        await write(0, uuid: uuidEngineLF)
-        await write(0, uuid: uuidEngineRF)
-        await write(0, uuid: uuidEngineLB)
-        await write(0, uuid: uuidEngineRB)
+        write(0, uuid: Const.uuidPower)
+        write(0, uuid: Const.uuidEngineLF)
+        write(0, uuid: Const.uuidEngineRF)
+        write(0, uuid: Const.uuidEngineLB)
+        write(0, uuid: Const.uuidEngineRB)
+        try await Task.sleep(for: .milliseconds(10))
     }
 
     public func laser(_ isOn: Bool) async {
-        await write(isOn ? 1 : 0, uuid: uuidLaser)
+        write(isOn ? 1 : 0, uuid: Const.uuidLaser)
     }
 
     public func light(_ isOn: Bool) async {
-        await write(isOn ? 1 : 0, uuid: uuidLight)
+        write(isOn ? 1 : 0, uuid: Const.uuidLight)
     }
 
     public func setHeadAngle(_ angle: Float) async {
-        await write(angle, uuid: uuidHeadAngle)
+        write(angle, uuid: Const.uuidHeadAngle)
+        try? await Task.sleep(for: .milliseconds(300))
     }
 
     private func listenSonar(uuid: String) -> PassthroughSubject<UInt, Never> {
@@ -101,7 +126,7 @@ extension PathfinderConnection: PathfinderControl {
         return listener
     }
 
-    private func write<T: CustomStringConvertible>(_ value: T, uuid: String) async {
+    private func write<T: CustomStringConvertible>(_ value: T, uuid: String) {
         if let data = value.description.data(using: .ascii) {
             ble.write(data: data, charID: uuid)
         }

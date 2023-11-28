@@ -33,6 +33,7 @@ struct iVectorApp: App {
                     .onAppear {
                         viewStore.send(.audio(.speechToTextStart))
                         viewStore.send(.connect(.connect))
+                        viewStore.send(.socket(.connect))
                     }
             }
         }

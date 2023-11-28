@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import AVFoundation
 import CoreImage
 
@@ -115,6 +116,8 @@ extension PathfinderConnection: Camera {
         AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
     }
 
+    // swiftlint:disable:next block_based_kvo
+    // swiftlint:disable:next override_in_extension
     override public func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -123,8 +126,7 @@ extension PathfinderConnection: Camera {
     ) {
         if keyPath == "systemPreferredCamera" {
             if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice,
-               systemPreferredCamera.deviceType == .external
-            {
+               systemPreferredCamera.deviceType == .external {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
                 setUpSession()
                 startCamera(systemPreferredCamera)

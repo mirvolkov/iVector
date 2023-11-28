@@ -48,6 +48,10 @@ public extension TelemetryView {
             connection.pathfinder?.sonar.sink(receiveValue: { state in
                 self.sonars = [state.sonar0, state.sonar1, state.sonar2, state.sonar3]
             }).store(in: &bag)
+
+            connection.pathfinder?.proximity.sink(receiveValue: { state in
+                self.sonars?.append(state)
+            }).store(in: &bag)
         }
     }
 }

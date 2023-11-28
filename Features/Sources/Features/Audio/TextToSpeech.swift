@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import AVFoundation
 import Connection
 import OSLog

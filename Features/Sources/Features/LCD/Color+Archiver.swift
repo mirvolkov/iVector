@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import SwiftUI
 
 /// Color extension to let color be archived and used with AppStorage wrapper

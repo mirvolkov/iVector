@@ -42,10 +42,12 @@ public extension Color {
             alpha: &alpha
         )
 
-        return .init(hue: UInt(lroundf(Float(hue) * Float(HSV.hMax))),
-                     saturation: UInt(lroundf(Float(saturation) * Float(HSV.svMax))),
-                     brightness: UInt(lroundf(Float(brightness) * Float(HSV.svMax))),
-                     alpha: UInt(lroundf(Float(alpha) * Float(HSV.alphaMax))))
+        return .init(
+            hue: UInt(lroundf(Float(hue) * Float(HSV.hMax))),
+            saturation: UInt(lroundf(Float(saturation) * Float(HSV.svMax))),
+            brightness: UInt(lroundf(Float(brightness) * Float(HSV.svMax))),
+            alpha: UInt(lroundf(Float(alpha) * Float(HSV.alphaMax)))
+        )
     }
     #endif
 

@@ -26,6 +26,7 @@ public struct VisionFeature: ReducerProtocol {
             switch self {
             case .online:
                 return true
+
             default:
                 return false
             }

@@ -1,6 +1,7 @@
-import AVFAudio
+// swiftlint:disable:next file_header
 // swiftlint:disable force_try
 // swiftlint:disable force_unwrapping
+import AVFAudio
 import Foundation
 import GRPC
 import OSLog

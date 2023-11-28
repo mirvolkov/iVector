@@ -94,6 +94,14 @@ public struct AudioFeature: ReducerProtocol {
 
         case .speech(let text):
             socket?.send(event: STTData(text: text))
+            socket?.send(
+                message: [
+                    "text": text,
+                    "timestamp": Date().timeIntervalSince1970
+                ],
+                with: "stt",
+                cachePolicy: .immediate
+            )
             return .none
         }
     }

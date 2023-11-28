@@ -1,3 +1,4 @@
+// swiftlint:disable:next file_header
 import AVKit
 
 public extension AVAudioPCMBuffer {

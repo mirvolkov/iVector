@@ -64,10 +64,12 @@ public final class ConnectionModel: @unchecked Sendable {
                         .battery
                         .sink { value in
                             switch value {
-                            case 2430...3000:
+                            case 2_430...3_000:
                                 continuation.resume(returning: .charging)
-                            case 1000...2430:
-                                continuation.resume(returning: VectorBatteryState.percent(100 * value / 2430))
+
+                            case 1_000...2_430:
+                                continuation.resume(returning: VectorBatteryState.percent(100 * value / 2_430))
+
                             default:
                                 continuation.resume(returning: .unknown)
                             }

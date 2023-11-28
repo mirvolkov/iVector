@@ -22,10 +22,6 @@ public struct VisionView: View {
         .onDisappear {
             camViewModel.stop()
         }
-//        .overlay {
-//            facet
-//        }
-//        .clipped()
     }
 
     @ViewBuilder
@@ -117,7 +113,7 @@ public struct TelemetryView: View {
                 .font(vectorBold(12))
                 .foregroundColor(.white.opacity(0.75))
                 .frame(width: 100, alignment: .leading)
-            Text(viewModel.heading?.description ?? "---")
+            Text(viewModel.heading?.formatted() ?? "---")
                 .font(vectorBold(12))
                 .foregroundColor(.white.opacity(0.75))
                 .frame(width: 100, alignment: .leading)

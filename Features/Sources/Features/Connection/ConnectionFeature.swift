@@ -1,4 +1,7 @@
+// swiftlint:disable:next file_header
+import Combine
 import ComposableArchitecture
+import Foundation
 
 public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
     let settings: SettingsModel
@@ -38,6 +41,15 @@ public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
             .concatenate(with: Effect.run { _ in
                 try await connect()
             })
+            .concatenate(with:
+                connection
+                    .connectionState
+                    .receive(on: RunLoop.main)
+                    .replaceError(with: .disconnected)
+                    .map { $0 == .online ? Self.Action.connected : Self.Action.goesOffline }
+                    .eraseToEffect()
+                    // swiftlint:disable:next identifier_constant
+                    .cancellable(id: "CONNECTION_ONLINE"))
             .concatenate(with: Effect.run(operation: { send in
                 await send(.connected)
             }))

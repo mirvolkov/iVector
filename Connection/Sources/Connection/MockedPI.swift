@@ -1,3 +1,5 @@
+// swiftlint:disable:next file_header
+
 /**
  This is pseudo-random generator based on PI number sequence.
  The goal of using it is to get some sort of random but still chunk-recognized output

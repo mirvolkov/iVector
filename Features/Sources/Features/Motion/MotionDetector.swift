@@ -86,7 +86,6 @@ public final class MotionDetector {
 
     public func motionRecognitionStart() {
         socket.listen { [self] (event: ExecutorEvent) in
-            print(event.description)
             Task {
                 try? await socket.send(message: event.description, with: "exec")
             }
