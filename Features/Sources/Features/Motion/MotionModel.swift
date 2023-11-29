@@ -18,15 +18,44 @@ public protocol MotionModel: Sendable {
 }
 
 public enum Motion {
-    public struct MotionHeading: EventRepresentable {
+    public struct MotionHeading: SocketConnection.SocketMessage {
         public let heading: Double
+        public let date: Date = .init()
+
+        fileprivate init(_ heading: Double) {
+            self.heading = heading
+        }
+
+        public func socketRepresentation() throws -> SocketData {
+            ["heading": heading, "timestamp": date.timeIntervalSince1970]
+        }
     }
 
     // swiftlint:disable identifier_name
-    public struct MotionGyro: EventRepresentable {
+    public struct MotionGyro: SocketConnection.SocketMessage {
         public let x: Double
         public let y: Double
         public let z: Double
+        public let date: Date = .init()
+
+        public func socketRepresentation() throws -> SocketData {
+            ["x": x, "y": y, "z": z, "timestamp": date.timeIntervalSince1970]
+        }
+
+        fileprivate init(_ value: CMAcceleration) {
+            x = value.x
+            y = value.y
+            z = value.z
+        }
+    }
+
+    public struct MotionLabel: SocketConnection.SocketMessage {
+        public let label: String
+        public let date: Date = .init()
+
+        public func socketRepresentation() throws -> SocketData {
+            ["label": label, "timestamp": date.timeIntervalSince1970]
+        }
     }
 }
 
@@ -39,13 +68,12 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private let socket: SocketConnection
     private var isLogging: Bool = false
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
-    private let detector: MotionDetector
+    private let detector = MotionDetector()
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
     public init(connection: ConnectionModel) {
         self.socket = connection.socket
-        self.detector = MotionDetector(with: connection.socket)
     }
 
     public func start() {
@@ -55,8 +83,8 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
             return
         }
 
-        motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: self.queue) { [self] data, error in
-            guard let data = data else {
+        motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: self.queue) { [weak self] data, error in
+            guard let data = data, let self else {
                 return
             }
 
@@ -65,29 +93,17 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
                 return
             }
 
-            socket.send(event: Motion.MotionHeading(heading: data.heading))
-            socket.send(event: Motion.MotionGyro(x: data.gravity.x, y: data.gravity.y, z: data.gravity.z))
+            socket.send(Motion.MotionHeading(data.heading), with: "heading")
             detector.pushAccelerometer(data.userAcceleration)
-            detector.pushRotation(data.rotationRate)
             detector.pushHeading(data.heading)
             detector.step()
 
-            socket.send(message: [
-                "x": data.gravity.x,
-                "y": data.gravity.y,
-                "z": data.gravity.z,
-                "datetime": Date().timeIntervalSince1970
-            ], with: "axelerometer", cachePolicy: .window(100))
-            socket.send(message: [
-                "x": data.rotationRate.x,
-                "y": data.rotationRate.y,
-                "z": data.rotationRate.z,
-                "datetime": Date().timeIntervalSince1970
-            ], with: "gyroscope", cachePolicy: .window(100))
-            socket.send(message: [
-                "heading": data.heading,
-                "datetime": Date().timeIntervalSince1970
-            ], with: "heading", cachePolicy: .window(100))
+            socket.send(Motion.MotionGyro(data.userAcceleration), with: "axelerometer", cachePolicy: .window(100))
+            socket.send(Motion.MotionHeading(data.heading), with: "heading", cachePolicy: .window(100))
+        }
+
+        detector.callback = { [weak self] label in
+            self?.socket.send(label, with: "motionPattern")
         }
     }
 

@@ -30,10 +30,13 @@ public final class VisionModel {
             .sink { objects in
                 objects.forEach { [weak self] observation in
                     if let label = observation.labels.max(by: { $0.confidence < $1.confidence }) {
-                        self?.connection.socket.send(event: VisionFeature.VisionObservation(
-                            label: label.identifier,
-                            confidence: label.confidence
-                        ))
+                        self?.connection.socket.send(
+                            VisionFeature.VisionObservation(
+                                label: label.identifier,
+                                confidence: label.confidence
+                            ),
+                            with: "vision"
+                        )
                     }
                 }
             }

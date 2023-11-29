@@ -6,12 +6,14 @@ import Features
 import Programmator
 import SwiftUI
 
-final class AppEnvironment: ObservableObject, Sendable {
+final class AppEnvironment: ObservableObject, @unchecked Sendable {
     let connection: ConnectionModel = .init()
     let config: Config = .init()
     let settings = SettingsModel()
     let assembler = AssemblerModel()
     let stt = SpeechToText()
+    lazy var hub = AppHub(connection: connection)
+    lazy var motion = MotionModelImpl(connection: connection)
 }
 
 struct AppFeature: ReducerProtocol {
@@ -84,7 +86,8 @@ struct AppFeature: ReducerProtocol {
         ) {
             MotionFeature(
                 settings: env.settings,
-                connection: env.connection
+                connection: env.connection,
+                motionModel: env.motion
             )
         }
 

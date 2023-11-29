@@ -3,10 +3,16 @@ import ComposableArchitecture
 import Connection
 import Foundation
 import SwiftBus
+import SocketIO
 
 public struct AudioFeature: ReducerProtocol {
-    public struct STTData: EventRepresentable {
+    public struct STTData: SocketConnection.SocketMessage {
         public let text: String
+        public let data: Date = .init()
+
+        public func socketRepresentation() throws -> SocketData {
+            ["text": text, "timestamp": data.timeIntervalSince1970]
+        }
     }
 
     private let settings: SettingsModel
@@ -93,15 +99,7 @@ public struct AudioFeature: ReducerProtocol {
             return .none
 
         case .speech(let text):
-            socket?.send(event: STTData(text: text))
-            socket?.send(
-                message: [
-                    "text": text,
-                    "timestamp": Date().timeIntervalSince1970
-                ],
-                with: "stt",
-                cachePolicy: .immediate
-            )
+            socket?.send(STTData(text: text), with: "stt")
             return .none
         }
     }

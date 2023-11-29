@@ -3,10 +3,44 @@ import Connection
 import Features
 import Foundation
 import SwiftBus
+import SocketIO
 
 public final class ExecutorModel: Executor {
     public enum ExecutorError: Error {
         case notSupported
+    }
+
+    public struct ExecutorEvent: SocketConnection.SocketMessage {
+        public enum Condition: EventRepresentable, CustomStringConvertible {
+            case started
+            case finished
+
+            public var description: String {
+                switch self {
+                case .started:
+                    "started"
+                case .finished:
+                    "finished"
+                }
+            }
+        }
+
+        public let instruction: Instruction
+        public let condition: Condition
+        public let date: Date = .init()
+
+        public init(instruction: Instruction, condition: Condition) {
+            self.instruction = instruction
+            self.condition = condition
+        }
+
+        public func socketRepresentation() throws -> SocketData {
+            [
+                "condition": condition.description,
+                "instruction": instruction.description,
+                "timestamp": date.timeIntervalSince1970
+            ]
+        }
     }
 
     @Published public var running: Program?
@@ -55,10 +89,7 @@ public final class ExecutorModel: Executor {
     }
 
     private func run(instruction: Instruction) async throws {
-        connection.socket.send(event: MotionDetector.ExecutorEvent(
-            instruction: instruction.description,
-            condition: .started
-        ))
+        connection.socket.send(ExecutorEvent(instruction: instruction, condition: .started), with: "exec")
 
         if let behavior = connection.vector {
             try await run(instruction: instruction, with: behavior)
@@ -68,10 +99,7 @@ public final class ExecutorModel: Executor {
             try await run(instruction: instruction, with: pathfinder)
         }
 
-        connection.socket.send(event: MotionDetector.ExecutorEvent(
-            instruction: instruction.description,
-            condition: .finished
-        ))
+        connection.socket.send(ExecutorEvent(instruction: instruction, condition: .finished), with: "exec")
     }
 }
 

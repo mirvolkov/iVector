@@ -31,6 +31,8 @@
 		E697105928E9AD9300A0B2D0 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E697105728E9AD9300A0B2D0 /* Config.swift */; };
 		E697106228EAC0DC00A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106128EAC0DC00A0B2D0 /* Programmator */; };
 		E697106428EAC20400A0B2D0 /* Programmator in Frameworks */ = {isa = PBXBuildFile; productRef = E697106328EAC20400A0B2D0 /* Programmator */; };
+		E6B919B52B17C50100688004 /* AppHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B919B42B17C50100688004 /* AppHub.swift */; };
+		E6B919B62B17C50100688004 /* AppHub.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B919B42B17C50100688004 /* AppHub.swift */; };
 		E6C35C1E28BD0D090098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C1D28BD0D090098F78A /* Connection */; };
 		E6C35C7428BF5E140098F78A /* Connection in Frameworks */ = {isa = PBXBuildFile; productRef = E6C35C7328BF5E140098F78A /* Connection */; };
 /* End PBXBuildFile section */
@@ -54,6 +56,7 @@
 		E697105228E9ACFB00A0B2D0 /* Mock.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Mock.xcconfig; sourceTree = "<group>"; };
 		E697105728E9AD9300A0B2D0 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		E697105E28E9AFBA00A0B2D0 /* iVector--iOS--Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "iVector--iOS--Info.plist"; sourceTree = "<group>"; };
+		E6B919B42B17C50100688004 /* AppHub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHub.swift; sourceTree = "<group>"; };
 		E6C35C7A28BFDE220098F78A /* Features */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Features; sourceTree = "<group>"; };
 		E6C65BD62AA0872E0019B4F8 /* Vector.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Vector.xcconfig; sourceTree = "<group>"; };
 		E6C65BD72AA0872E0019B4F8 /* Pathfinder.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Pathfinder.xcconfig; sourceTree = "<group>"; };
@@ -106,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				E63933A428C1F729007C1F79 /* AppFeature.swift */,
+				E6B919B42B17C50100688004 /* AppHub.swift */,
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
 				E6914AB92A5C418100FD64AB /* iVectorAppDelegate.swift */,
 				E64D7D0328D0A5BD00D99FA5 /* DetailPanel.swift */,
@@ -348,6 +352,7 @@
 				E68461A428DE25A700A83CB0 /* HomePhone.swift in Sources */,
 				E67160DB28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 				E697105828E9AD9300A0B2D0 /* Config.swift in Sources */,
+				E6B919B52B17C50100688004 /* AppHub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -362,6 +367,7 @@
 				E65921A228D0E216007518C8 /* HomeDesktop.swift in Sources */,
 				E67160DC28BCFE8200F79DA2 /* iVectorApp.swift in Sources */,
 				E697105928E9AD9300A0B2D0 /* Config.swift in Sources */,
+				E6B919B62B17C50100688004 /* AppHub.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

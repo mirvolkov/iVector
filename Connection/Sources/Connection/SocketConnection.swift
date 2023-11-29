@@ -5,6 +5,8 @@ import SocketIO
 import SwiftBus
 
 public final class SocketConnection: @unchecked Sendable {
+    public typealias SocketMessage = SocketData & EventRepresentable
+
     public enum EventIDs: String {
         case say
         case play
@@ -66,20 +68,13 @@ public final class SocketConnection: @unchecked Sendable {
     }
 }
 
-// socket API
 public extension SocketConnection {
-    func send<Message: SocketData>(message: Message, with tag: String) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            socket?.emit(tag, with: [message]) {
-                continuation.resume()
-            }
-        }
-    }
+    func send<Message: SocketMessage>(_ message: Message, with tag: String, cachePolicy: CachePolicy = .immediate) {
+        eventBus.send(message)
 
-    func send<Message: SocketData>(message: Message, with tag: String, cachePolicy: CachePolicy = .immediate) {
         switch cachePolicy {
         case .immediate:
-            socket?.emit(tag, with: [message])
+            socket?.emit(tag, with: [try? message.socketRepresentation()].compactMap { $0 })
 
         case .window(let limit):
             if cache[tag] == nil {
@@ -89,42 +84,21 @@ public extension SocketConnection {
             cache[tag]?.append(message)
 
             if let buffer = cache[tag] as? [Message], buffer.count >= limit {
-                send(messages: buffer, with: tag)
+                socket?.emit(tag, with: buffer.compactMap { try? $0.socketRepresentation() })
                 cache[tag]?.removeAll()
             }
         }
     }
 
-    func send<Message: SocketData>(messages: [Message], with tag: String) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            socket?.emit(tag, with: messages) {
-                continuation.resume()
-            }
-        }
-    }
-
-    func send<Message: SocketData>(messages: [Message], with tag: String) {
-        socket?.emit(tag, with: messages)
-    }
-
-    func listen<Message: SocketData>(_ tag: String, onRecieve: @escaping (Message) -> Void) {
+    func listen<Message: SocketMessage>(_ tag: String, onRecieve: @escaping (Message) -> Void) {
         socket?.on(tag) { data, _ in
             if let message = data.first as? Message {
                 onRecieve(message)
             }
         }
-    }
-}
 
-// event bus API
-public extension SocketConnection {
-    func send<Event: EventRepresentable>(event: Event) {
-        eventBus.send(event)
-    }
-
-    func listen<Event: EventRepresentable>(onRecieve: @escaping (Event) -> Void) {
         eventBus
-            .onReceive(Event.self, perform: { event in
+            .onReceive(Message.self, perform: { event in
                 onRecieve(event)
             })
             .store(in: &subscriptions)

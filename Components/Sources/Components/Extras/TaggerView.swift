@@ -1,9 +1,16 @@
 import Connection
 import Features
 import SwiftUI
+import Connection
+import SocketIO
 
 public struct TaggerView: View {
     public class ViewModel: ObservableObject {
+        public struct Tag: SocketConnection.SocketMessage {
+            let tag: String
+            let date: Date = .init()
+        }
+
         let socket: SocketConnection
         
         init(socket: SocketConnection) {
@@ -11,9 +18,7 @@ public struct TaggerView: View {
         }
         
         func insert(tag: String) throws {
-            Task {
-                try await socket.send(message: tag, with: "tag")
-            }
+            socket.send(Tag(tag: tag), with: "tag")
         }
     }
 

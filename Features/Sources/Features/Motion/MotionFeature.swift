@@ -6,10 +6,10 @@ public struct MotionFeature: ReducerProtocol {
     let connection: ConnectionModel
     let motionModel: MotionModel
 
-    public init(settings: SettingsModel, connection: ConnectionModel) {
+    public init(settings: SettingsModel, connection: ConnectionModel, motionModel: MotionModel) {
         self.settings = settings
         self.connection = connection
-        self.motionModel = MotionModelImpl(connection: connection)
+        self.motionModel = motionModel
     }
 
     public enum State: Equatable {

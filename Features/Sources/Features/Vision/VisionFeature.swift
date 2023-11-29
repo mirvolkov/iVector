@@ -1,12 +1,19 @@
 // swiftlint:disable:next file_header
 import ComposableArchitecture
+import Connection
 import Foundation
+import SocketIO
 import SwiftBus
 
 public struct VisionFeature: ReducerProtocol {
-    public struct VisionObservation: EventRepresentable {
+    public struct VisionObservation: SocketConnection.SocketMessage {
         public let label: String
         public let confidence: Float
+        public let date: Date = .init()
+        
+        public func socketRepresentation() throws -> SocketData {
+            ["label": label, "confidence": confidence, "timestamp": date.timeIntervalSince1970]
+        }
     }
 
     let settings: SettingsModel
