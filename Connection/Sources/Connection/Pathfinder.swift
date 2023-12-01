@@ -9,6 +9,7 @@ public struct PFSonar {
     public var sonar1: UInt
     public var sonar2: UInt
     public var sonar3: UInt
+    public let date = Date()
 
     public static var zero: Self { .init((0, 0, 0, 0)) }
 
@@ -78,6 +79,10 @@ public final class PathfinderConnection: NSObject, Pathfinder {
         super.init()
     }
 
+    deinit {
+        print("PF deinit")
+    }
+
     public func connect() async throws {
         guard !online.value else {
             return
@@ -100,6 +105,8 @@ public final class PathfinderConnection: NSObject, Pathfinder {
 
     public func disconnect() {
         online.value = false
+        bag.removeAll()
+        ble.disconnect()
         captureSession.stopRunning()
     }
 }

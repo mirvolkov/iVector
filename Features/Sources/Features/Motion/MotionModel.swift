@@ -83,7 +83,10 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
             return
         }
 
-        motionManager.startDeviceMotionUpdates(using: .xMagneticNorthZVertical, to: self.queue) { [weak self] data, error in
+        motionManager.startDeviceMotionUpdates(
+            using: .xMagneticNorthZVertical,
+            to: self.queue
+        ) { [weak self] data, error in
             guard let data = data, let self else {
                 return
             }

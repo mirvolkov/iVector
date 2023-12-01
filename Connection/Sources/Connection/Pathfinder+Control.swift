@@ -30,15 +30,15 @@ public protocol PathfinderControl {
     func laser(_ isOn: Bool) async
 
     /// Set head angle
-    /// - Parameter angle 22..45 range
+    /// - Parameter angle -22..45 range
     /// - Throws set angle error failed
-    func setHeadAngle(_ angle: Float) async
+    func setHeadAngle(_ angle: Int) async
 }
 
 extension PathfinderConnection: PathfinderControl {
     internal func listenSensors() {
-        listenSonar(uuid: Const.uuidSonar0)
-            .zip(
+            Publishers.CombineLatest4(
+                listenSonar(uuid: Const.uuidSonar0),
                 listenSonar(uuid: Const.uuidSonar1),
                 listenSonar(uuid: Const.uuidSonar2),
                 listenSonar(uuid: Const.uuidSonar3)
@@ -47,27 +47,27 @@ extension PathfinderConnection: PathfinderControl {
             .sink(receiveValue: { self.sonar.send($0) })
             .store(in: &bag)
 
-        ble.listen(for: Const.uuidBattery) { [self] message in
+        ble.listen(for: Const.uuidBattery) { [weak self] message in
             if let value = UInt(message) {
-                battery.send(value)
+                self?.battery.send(value)
             }
         }
 
-        ble.listen(for: Const.uuidHeadAngle) { [self] message in
+        ble.listen(for: Const.uuidHeadAngle) { [weak self] message in
             if let value = Float(message) {
-                headAngle.send(value)
+                self?.headAngle.send(value)
             }
         }
 
-        ble.listen(for: Const.uuidPower) { [self] message in
+        ble.listen(for: Const.uuidPower) { [weak self] message in
             if let value = UInt(message) {
-                power.send(value > 0)
+                self?.power.send(value > 0)
             }
         }
 
-        ble.listen(for: Const.uuidProximity) { [self] message in
+        ble.listen(for: Const.uuidProximity) { [weak self] message in
             if let value = UInt(message) {
-                proximity.send(value)
+                self?.proximity.send(value)
             }
         }
     }
@@ -111,7 +111,7 @@ extension PathfinderConnection: PathfinderControl {
         write(isOn ? 1 : 0, uuid: Const.uuidLight)
     }
 
-    public func setHeadAngle(_ angle: Float) async {
+    public func setHeadAngle(_ angle: Int) async {
         write(angle, uuid: Const.uuidHeadAngle)
         try? await Task.sleep(for: .milliseconds(300))
     }

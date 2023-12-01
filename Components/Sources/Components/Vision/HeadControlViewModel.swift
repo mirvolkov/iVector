@@ -67,7 +67,7 @@ public extension HeadControlView {
                     .sink { [weak self] value in
                         Task {
                             if let angle = self?.normToDegree(value) {
-                                await pathfinder.setHeadAngle(angle)
+                                await pathfinder.setHeadAngle(Int(angle))
                             }
                         }
                     }
@@ -75,6 +75,7 @@ public extension HeadControlView {
 
                 pathfinder
                     .headAngle
+                    .first()
                     .map { Angle(radians: Double($0)) }
                     .map { self.degreeToNorm($0.degrees) }
                     .receive(on: RunLoop.main)

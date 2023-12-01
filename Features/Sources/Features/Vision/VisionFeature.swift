@@ -10,7 +10,7 @@ public struct VisionFeature: ReducerProtocol {
         public let label: String
         public let confidence: Float
         public let date: Date = .init()
-        
+
         public func socketRepresentation() throws -> SocketData {
             ["label": label, "confidence": confidence, "timestamp": date.timeIntervalSince1970]
         }

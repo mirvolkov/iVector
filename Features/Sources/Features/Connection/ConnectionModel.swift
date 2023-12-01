@@ -142,6 +142,9 @@ public final class ConnectionModel: @unchecked Sendable {
         connectionState.value = .connecting
         try await pathfinderDevice?.connect()
         connectionState.value = .online
+        pathfinder?.sonar.sink(receiveValue: { [weak self] sonar in
+            self?.socket.send(sonar, with: "sonar")
+        }).store(in: &bag)
         pathfinderDevice?.online
             .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
             .sink(receiveValue: { self.connectionState.value = $0 })
@@ -179,6 +182,7 @@ public final class ConnectionModel: @unchecked Sendable {
             pathfinderDevice?.disconnect()
             socket.disconnect()
             vectorDevice = nil
+            pathfinderDevice = nil
         } catch {
             self.logger.error("\(error.localizedDescription)")
             connectionState.send(.disconnected)

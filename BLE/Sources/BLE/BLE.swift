@@ -24,7 +24,18 @@ public final class BLE: NSObject, ObservableObject {
         self.chips = chips
     }
 
+    deinit {
+        print("BLE deinit")
+    }
+
     public func scan() {
         os_log("manager status %{public}@", log: logger, type: .debug, manager)
+    }
+
+    public func disconnect() {
+        if let active {
+            manager.cancelPeripheralConnection(active)
+            self.active = nil
+        }
     }
 }
