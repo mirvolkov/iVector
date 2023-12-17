@@ -4,6 +4,11 @@ import Foundation
 import SocketIO
 import SwiftBus
 
+private struct NamedMessage<Message: SocketConnection.SocketMessage>: EventRepresentable {
+    let name: String
+    let message: Message
+}
+
 public final class SocketConnection: @unchecked Sendable {
     public typealias SocketMessage = SocketData & EventRepresentable
 
@@ -70,7 +75,7 @@ public final class SocketConnection: @unchecked Sendable {
 
 public extension SocketConnection {
     func send<Message: SocketMessage>(_ message: Message, with tag: String, cachePolicy: CachePolicy = .immediate) {
-        eventBus.send(message)
+        eventBus.send(NamedMessage(name: tag, message: message))
 
         switch cachePolicy {
         case .immediate:
@@ -98,8 +103,10 @@ public extension SocketConnection {
         }
 
         eventBus
-            .onReceive(Message.self, perform: { event in
-                onRecieve(event)
+            .onReceive(NamedMessage<Message>.self, perform: { message in
+                if tag == message.name {
+                    onRecieve(message.message)
+                }
             })
             .store(in: &subscriptions)
     }

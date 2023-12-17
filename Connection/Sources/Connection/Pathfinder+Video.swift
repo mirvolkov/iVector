@@ -6,134 +6,119 @@ extension PathfinderConnection: Camera {
     public func requestCameraFeed() async throws -> AsyncStream<VectorCameraFrame> {
         await withUnsafeContinuation { continuation in
             cameraInitContinuation = continuation
-            addObservers()
-            setUpSession()
-            setUpCamera()
-            startSession()
+            queue.async { [weak self] in
+                guard let self else { return }
+                addObservers()
+                setUpSession()
+                setUpCamera()
+                startSession()
+            }
         }
     }
 
     func setUpSession() {
-        queue.async { [weak self] in
-            guard let self else { return }
-            logger.info("setting up session...")
-            stopSession()
+        logger.info("setting up session...")
+        stopSession()
 
-            captureSession.inputs.forEach { input in
-                self.captureSession.removeInput(input)
-            }
+        captureSession.inputs.forEach { input in
+            captureSession.removeInput(input)
+        }
 
-            captureSession.outputs.forEach { output in
-                self.captureSession.removeOutput(output)
-            }
+        captureSession.outputs.forEach { output in
+            captureSession.removeOutput(output)
         }
     }
 
     private func startSession() {
-        queue.async { [weak self] in
-            if self?.captureSession.isRunning == false {
-                self?.captureSession.startRunning()
-                self?.logger.info("session did start")
-            }
+        if !captureSession.isRunning {
+            captureSession.startRunning()
+            logger.info("session did start")
         }
     }
 
     private func setUpCamera() {
-        queue.async { [weak self] in
-            guard let self else { return }
-
-            var types: [AVCaptureDevice.DeviceType] = []
-            if #available(iOS 17.0, macOS 14.0, *) {
-                types.append(.external)
-            } else {
-                types.append(.builtInWideAngleCamera)
-            }
-
-            let discoverySession = AVCaptureDevice.DiscoverySession(
-                deviceTypes: types,
-                mediaType: .video,
-                position: .unspecified
-            )
-
-            logger.info("cameras: \(discoverySession.devices)")
-            
-            guard let camera = discoverySession.devices.first else {
-                return
-            }
-
-            startCamera(camera)
+        var types: [AVCaptureDevice.DeviceType] = []
+        if #available(iOS 17.0, macOS 14.0, *) {
+            types.append(.external)
+        } else {
+            types.append(.builtInWideAngleCamera)
         }
+
+        let discoverySession = AVCaptureDevice.DiscoverySession(
+            deviceTypes: types,
+            mediaType: .video,
+            position: .unspecified
+        )
+
+        logger.info("cameras: \(discoverySession.devices)")
+
+        guard let camera = discoverySession.devices.first else {
+            return
+        }
+
+        startCamera(camera)
     }
 
     private func startCamera(_ externalCameraDevice: AVCaptureDevice) {
-        queue.async { [weak self] in
-            guard let self else { return }
-            logger.info("starting camera...")
-            captureSession.beginConfiguration()
+        logger.info("starting camera...")
+        captureSession.beginConfiguration()
 
-            guard let videoInput = try? AVCaptureDeviceInput(device: externalCameraDevice) else {
-                return
-            }
-
-            if captureSession.canAddInput(videoInput) {
-                captureSession.addInput(videoInput)
-            }
-
-            let settings: [String: Any] = [
-                kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA)
-            ]
-
-            let videoOutput = AVCaptureVideoDataOutput()
-            videoOutput.videoSettings = settings
-            videoOutput.alwaysDiscardsLateVideoFrames = true
-#if os(iOS)
-            videoOutput.automaticallyConfiguresOutputBufferDimensions = true
-#endif
-            videoOutput.setSampleBufferDelegate(self, queue: queue)
-
-            if captureSession.canAddOutput(videoOutput) {
-                captureSession.addOutput(videoOutput)
-            }
-
-            if #available(iOS 17.0, macOS 14.0, *) {
-#if os(iOS)
-                videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 90
-#else
-                videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 0
-#endif
-            }
-
-            captureSession.commitConfiguration()
-            logger.info("camera did start!")
-
-            cameraInitContinuation?.resume(with: .success(.init { continuation in
-                self.cameraFeedContinuation = continuation
-            }))
-            cameraInitContinuation = nil
+        guard let videoInput = try? AVCaptureDeviceInput(device: externalCameraDevice) else {
+            return
         }
+
+        if captureSession.canAddInput(videoInput) {
+            captureSession.addInput(videoInput)
+        }
+
+        let settings: [String: Any] = [
+            kCVPixelBufferPixelFormatTypeKey as String: NSNumber(value: kCVPixelFormatType_32BGRA)
+        ]
+
+        let videoOutput = AVCaptureVideoDataOutput()
+        videoOutput.videoSettings = settings
+        videoOutput.alwaysDiscardsLateVideoFrames = true
+#if os(iOS)
+        videoOutput.automaticallyConfiguresOutputBufferDimensions = true
+#endif
+        videoOutput.setSampleBufferDelegate(self, queue: queue)
+
+        if captureSession.canAddOutput(videoOutput) {
+            captureSession.addOutput(videoOutput)
+        }
+
+        if #available(iOS 17.0, macOS 14.0, *) {
+#if os(iOS)
+            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 90
+#else
+            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 0
+#endif
+        }
+
+        captureSession.commitConfiguration()
+        logger.info("camera did start!")
+
+        cameraInitContinuation?.resume(with: .success(.init { continuation in
+            self.cameraFeedContinuation = continuation
+        }))
+        cameraInitContinuation = nil
     }
 
     private func stopSession() {
-        queue.async { [weak self] in
-            guard let self else { return }
-            if captureSession.isRunning {
-                captureSession.stopRunning()
-            }
+        if captureSession.isRunning {
+            captureSession.stopRunning()
         }
     }
 
     private func addObservers() {
-        queue.async { [weak self] in
-            guard let self else { return }
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(sessionRuntimeError),
-                name: .AVCaptureSessionRuntimeError,
-                object: captureSession
-            )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(sessionRuntimeError),
+            name: .AVCaptureSessionRuntimeError,
+            object: captureSession
+        )
 
-            AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
-        }
+        AVCaptureDevice.self.addObserver(self, forKeyPath: "systemPreferredCamera", options: [.new], context: nil)
     }
 
     // swiftlint:disable block_based_kvo
@@ -148,12 +133,18 @@ extension PathfinderConnection: Camera {
             if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice,
                systemPreferredCamera.deviceType == .external {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
-                setUpSession()
-                startCamera(systemPreferredCamera)
-                startSession()
+                queue.async { [weak self] in
+                    guard let self else { return }
+                    setUpSession()
+                    startCamera(systemPreferredCamera)
+                    startSession()
+                }
             } else {
-                logger.info("external systemPreferredCamera dropped")
-                stopSession()
+                queue.async { [weak self] in
+                    guard let self else { return }
+                    logger.info("external systemPreferredCamera dropped")
+                    stopSession()
+                }
             }
         }
     }

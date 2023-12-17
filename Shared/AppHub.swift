@@ -20,7 +20,7 @@ final class AppHub {
             print(stt)
         }
 
-        connection.socket.listen("acceleratin") { (acceleration: Motion.MotionLabel) in
+        connection.socket.listen("acceleration") { (acceleration: Motion.MotionLabel) in
             print(acceleration)
         }
 
@@ -33,7 +33,11 @@ final class AppHub {
         }
 
         connection.socket.listen("sonar") { (sonar: PFSonar) in
-            print(sonar)
+            print("sonar \(sonar)")
+        }
+
+        connection.socket.listen("proximity") { (sonar: PFSonar) in
+            print("proximity \(sonar)")
         }
     }
 }

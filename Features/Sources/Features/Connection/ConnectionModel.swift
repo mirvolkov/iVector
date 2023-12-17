@@ -145,6 +145,9 @@ public final class ConnectionModel: @unchecked Sendable {
         pathfinder?.sonar.sink(receiveValue: { [weak self] sonar in
             self?.socket.send(sonar, with: "sonar")
         }).store(in: &bag)
+        pathfinder?.proximity.sink(receiveValue: { [weak self] proximity in
+            self?.socket.send(PFSonar((proximity, 0, 0, 0)), with: "proximity")
+        }).store(in: &bag)
         pathfinderDevice?.online
             .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
             .sink(receiveValue: { self.connectionState.value = $0 })

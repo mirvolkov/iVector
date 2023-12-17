@@ -2,8 +2,8 @@
 import ComposableArchitecture
 import Connection
 import Foundation
-import SwiftBus
 import SocketIO
+import SwiftBus
 
 public struct AudioFeature: ReducerProtocol {
     public struct STTData: SocketConnection.SocketMessage {
@@ -76,10 +76,10 @@ public struct AudioFeature: ReducerProtocol {
                 .removeDuplicates()
                 .replaceError(with: false)
                 .receive(on: RunLoop.main)
-                .map({ $0 ? Self.Action.speechToTextGoesOnline : Self.Action.speechToTextGoesOffline })
+                .map { $0 ? Self.Action.speechToTextGoesOnline : Self.Action.speechToTextGoesOffline }
                 .eraseToEffect()
                 // swiftlint:disable:next identifier_constant
-                .cancellable(id: "SOCKET_ONLINE")
+                .cancellable(id: "STT_ONLINE")
 
         case .speechToTextStop:
             return .none
@@ -89,7 +89,7 @@ public struct AudioFeature: ReducerProtocol {
             return stt
                 .text
                 .receive(on: RunLoop.main)
-                .map({ Self.Action.speech($0) })
+                .map { Self.Action.speech($0) }
                 .eraseToEffect()
                 // swiftlint:disable:next identifier_constant
                 .cancellable(id: "STT_CANCELLABLE")

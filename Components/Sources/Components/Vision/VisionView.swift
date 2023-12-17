@@ -29,12 +29,16 @@ public struct VisionView: View {
 #if os(macOS)
         if let data = camViewModel.frame?.image, camViewModel.isStreaming {
             display(with: Image(nsImage: NSImage(ciImage: data)))
+        } else {
+            Color.black
         }
 #elseif os(iOS)
         if let data = camViewModel.frame?.image, camViewModel.isStreaming,
            let cgimg = context.createCGImage(data, from: data.extent)
         {
             display(with: Image(uiImage: UIImage(cgImage: cgimg)))
+        } else {
+            Color.black
         }
 #endif
     }
