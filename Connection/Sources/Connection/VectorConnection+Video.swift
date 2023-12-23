@@ -5,7 +5,9 @@ import NIO
 import SwiftProtobuf
 
 extension VectorConnection: Camera {
-    public func requestCameraFeed() async throws -> AsyncStream<VectorCameraFrame> {
+    public func requestCameraFeed(
+        with settings: VectorCameraSettings = .default
+    ) async throws -> AsyncStream<VectorCameraFrame> {
         .init { continuation in
             typealias CameraFeed = ServerStreamingCall<Anki_Vector_ExternalInterface_CameraFeedRequest,
                 Anki_Vector_ExternalInterface_CameraFeedResponse>

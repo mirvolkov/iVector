@@ -86,7 +86,9 @@ extension MockedConnection: Audio {
 }
 
 extension MockedConnection: Camera {
-    public func requestCameraFeed() async throws -> AsyncStream<VectorCameraFrame> {
+    public func requestCameraFeed(
+        with settings: VectorCameraSettings = .default
+    ) async throws -> AsyncStream<VectorCameraFrame> {
         .init { continuation in
             let url = Bundle.module.url(forResource: "mock_vision", withExtension: "jpeg")!
             Task {

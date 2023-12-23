@@ -34,6 +34,8 @@ public enum L10n {
   public static let controlPanel = L10n.tr("Localizable", "Control Panel", fallback: "Control Panel")
   /// Delete
   public static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
+  /// Device
+  public static let device = L10n.tr("Localizable", "device", fallback: "Device")
   /// Error
   public static let error = L10n.tr("Localizable", "error", fallback: "Error")
   /// Eye color
@@ -64,6 +66,8 @@ public enum L10n {
   public static let programAlreadyExists = L10n.tr("Localizable", "Program already exists", fallback: "Program already exists")
   /// Programs
   public static let programs = L10n.tr("Localizable", "programs", fallback: "Programs")
+  /// Rotation
+  public static let rotation = L10n.tr("Localizable", "rotation", fallback: "Rotation")
   /// Save
   public static let save = L10n.tr("Localizable", "Save", fallback: "Save")
   /// Say

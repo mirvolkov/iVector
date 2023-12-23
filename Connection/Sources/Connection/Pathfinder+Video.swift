@@ -3,8 +3,11 @@ import AVFoundation
 import CoreImage
 
 extension PathfinderConnection: Camera {
-    public func requestCameraFeed() async throws -> AsyncStream<VectorCameraFrame> {
-        await withUnsafeContinuation { continuation in
+    public func requestCameraFeed(
+        with settings: VectorCameraSettings = .default
+    ) async throws -> AsyncStream<VectorCameraFrame> {
+        cameraSettings = settings
+        return await withUnsafeContinuation { continuation in
             cameraInitContinuation = continuation
             queue.async { [weak self] in
                 guard let self else { return }
@@ -52,7 +55,7 @@ extension PathfinderConnection: Camera {
 
         logger.info("cameras: \(discoverySession.devices)")
 
-        guard let camera = discoverySession.devices.first else {
+        guard let camera = discoverySession.devices.first(where: { $0.uniqueID == cameraSettings?.deviceID }) else {
             return
         }
 
@@ -89,9 +92,9 @@ extension PathfinderConnection: Camera {
 
         if #available(iOS 17.0, macOS 14.0, *) {
 #if os(iOS)
-            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 90
+            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = .init(cameraSettings?.rotation ?? 0)
 #else
-            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = 0
+            videoOutput.connection(with: AVMediaType.video)?.videoRotationAngle = .init(cameraSettings?.rotation ?? 0)
 #endif
         }
 
@@ -131,7 +134,7 @@ extension PathfinderConnection: Camera {
     ) {
         if keyPath == "systemPreferredCamera" {
             if let systemPreferredCamera = change?[.newKey] as? AVCaptureDevice,
-               systemPreferredCamera.deviceType == .external {
+               systemPreferredCamera.uniqueID == cameraSettings?.deviceID {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
                 queue.async { [weak self] in
                     guard let self else { return }

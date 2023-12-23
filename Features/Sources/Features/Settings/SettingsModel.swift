@@ -19,6 +19,12 @@ public final class SettingsModel: @unchecked Sendable {
     /// Vector's IP address
     @AppStorage("websocketIP")
     public var websocketIP: String = "192.168.0.1"
+    /// Camera UUID
+    @AppStorage("cameraID")
+    public var cameraID: String?
+    /// Camera rotation angle
+    @AppStorage("cameraROT")
+    public var cameraROT: Int = 0
 
     public init() {}
 }

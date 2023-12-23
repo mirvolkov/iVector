@@ -39,3 +39,5 @@
 "delete" = "Delete";
 "warning" = "Delete program?";
 "programs" = "Programs";
+"rotation" = "Rotation";
+"device" = "Device";

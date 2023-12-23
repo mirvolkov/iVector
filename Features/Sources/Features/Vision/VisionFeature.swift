@@ -54,7 +54,9 @@ public struct VisionFeature: ReducerProtocol {
         case .connect:
             state = .connecting
             return Effect.run(operation: { send in
-                if let stream = try await connection.camera?.requestCameraFeed() {
+                if let stream = try await connection.camera?.requestCameraFeed(
+                    with: .init(rotation: settings.cameraROT, deviceID: settings.cameraID)
+                ) {
                     let model = VisionModel(with: connection, stream: stream)
                     model.bind()
                     await send(Action.goesOnline(model))

@@ -66,7 +66,8 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     var onlineContinuation: UnsafeContinuation<Void, Error>?
     var cameraInitContinuation: UnsafeContinuation<AsyncStream<VectorCameraFrame>, Never>?
     var cameraFeedContinuation: AsyncStream<VectorCameraFrame>.Continuation?
-
+    var cameraSettings: VectorCameraSettings?
+    
     public var online: CurrentValueSubject<Bool, Never> = .init(false)
     public var sonar: PassthroughSubject<PFSonar, Never> = .init()
     public var battery: PassthroughSubject<UInt, Never> = .init()

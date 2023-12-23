@@ -3,10 +3,6 @@ import SwiftUI
 
 public struct SettingsView: View {
     @StateObject private var viewModel: ViewModel
-
-    private let invalidCharacters = CharacterSet(charactersIn: ".0123456789").inverted
-    @State private var vectorIP: String = ""
-    @State private var websocketIP: String = ""
     @State private var certPath: String = ".cert"
     @State private var guid: String = ""
     @Binding private var isPresented: Bool
@@ -29,36 +25,54 @@ public struct SettingsView: View {
                     .tabItem {
                         Text(L10n.websocketConnection)
                     }
+
+                cameraTab
+                    .tabItem {
+                        Text(L10n.camera)
+                    }
+            }.onAppear {
+                viewModel.validate()
             }
 #if os(iOS)
-        .navigationBarTitle(L10n.settings)
-        .toolbar {
-            Button {
-                viewModel.save()
-                isPresented = false
-            } label: {
-                Image(systemName: "checkmark")
-                    .foregroundColor(.green)
+            .navigationBarTitle(L10n.settings)
+            .toolbar {
+                Button {
+                    viewModel.save()
+                    isPresented = false
+                } label: {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                }
+                .buttonStyle(.plain)
+                .disabled(!viewModel.isValid)
             }
-            .buttonStyle(.plain)
-            .disabled(!viewModel.isValid)
-        }
-        .sheet(isPresented: $showCertPicker) {
-            DocumentPicker(filePath: $viewModel.certPath)
-        }
+            .sheet(isPresented: $showCertPicker) {
+                DocumentPicker(filePath: $viewModel.certPath)
+            }
 #elseif os(macOS)
-        .frame(maxWidth: .infinity)
-        .onChange(of: showCertPicker) { show in
-            if show {
-                openDocPicker { url in
-                    viewModel.certPath = url
+            .toolbar {
+                Button {
+                    viewModel.save()
+                    isPresented = false
+                } label: {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.green)
+                }
+                .buttonStyle(.plain)
+                .disabled(!viewModel.isValid)
+            }
+            .frame(maxWidth: .infinity)
+            .onChange(of: showCertPicker) { _, newShow in
+                if newShow {
+                    openDocPicker { url in
+                        viewModel.certPath = url
+                    }
+                }
+                do {
+                    showCertPicker = false
                 }
             }
-            do {
-                showCertPicker = false
-            }
-        }
-        .padding(10)
+            .padding(10)
 #endif
         }
 #if os(macOS)
@@ -71,19 +85,10 @@ public struct SettingsView: View {
     private var vectorTab: some View {
         Form {
             Section(L10n.vectorConnection) {
-                TextField(L10n.ipAddress, text: $vectorIP)
-                    .onChange(of: vectorIP) { newValue in
-                        vectorIP = trimInvalidCharacters(newValue)
-                        viewModel.vectorIP = vectorIP
-                        viewModel.validate()
-                    }
-                    .onSubmit {
-                        viewModel.vectorIP = vectorIP
-                    }
-                    .onAppear {
-                        vectorIP = viewModel.vectorIP
-                    }
-                    .disableAutocorrection(true)
+                TextField(L10n.ipAddress, text: $viewModel.vectorIP) {
+                    viewModel.validate()
+                }
+                .disableAutocorrection(true)
 
                 Button {
                     showCertPicker = true
@@ -106,44 +111,13 @@ public struct SettingsView: View {
 
                 Picker(L10n.locale, selection: $viewModel.locale) {
                     ForEach(Locale.preferredLanguages, id: \.self) {
-                        let locale = Locale(identifier: $0)
-                        Text(locale.identifier)
+                        Text($0).tag($0)
                     }
                 }
+                .id(UUID())
             }
-
-#if os(macOS)
-            Section {
-                HStack {
-                    Spacer()
-
-                    Button {
-                        viewModel.save()
-                        isPresented = false
-                    } label: {
-                        Image(systemName: "checkmark.circle")
-                            .resizable()
-                            .frame(width: 44, height: 44)
-                            .foregroundColor(.green)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!viewModel.isValid)
-
-                    Button {
-                        isPresented = false
-                    } label: {
-                        Image(systemName: "xmark.circle")
-                            .resizable()
-                            .frame(width: 44, height: 44)
-                            .foregroundColor(.red)
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(!viewModel.isValid)
-                }
-            }
-#endif
         }
-        .onChange(of: viewModel.certPath) { newValue in
+        .onChange(of: viewModel.certPath) { _, newValue in
             self.certPath = newValue?.lastPathComponent ?? ".cert"
         }
     }
@@ -152,27 +126,41 @@ public struct SettingsView: View {
     private var websocketTab: some View {
         Form {
             Section(L10n.websocketConnection) {
-                TextField(L10n.ipAddress, text: $websocketIP)
-                    .onChange(of: websocketIP) { newValue in
-                        websocketIP = trimInvalidCharacters(newValue)
-                        viewModel.websocketIP = websocketIP
-                        viewModel.validate()
-                    }
-                    .onSubmit {
-                        viewModel.websocketIP = websocketIP
-                    }
-                    .onAppear {
-                        websocketIP = viewModel.websocketIP
-                    }
-                    .disableAutocorrection(true)
+                TextField(L10n.ipAddress, text: $viewModel.vectorIP) {
+                    viewModel.validate()
+                }
+                .disableAutocorrection(true)
             }
         }
     }
 
-    private func trimInvalidCharacters(_ source: String) -> String {
-        source
-            .components(separatedBy: invalidCharacters)
-            .joined()
+    @ViewBuilder
+    private var cameraTab: some View {
+        Form {
+            Section(L10n.camera) {
+                Picker(L10n.device, selection: $viewModel.cameraID) {
+                    ForEach(viewModel.cameras, id: \.self) {
+                        Text($0.name).tag($0.id)
+                    }
+                }
+                .disabled(false)
+                .id(UUID())
+                .pickerStyle(.radioGroup)
+
+                Spacer()
+                    .frame(height: 20)
+
+                Picker(L10n.rotation, selection: $viewModel.rotID) {
+                    Text("0").tag(0)
+                    Text("90").tag(90)
+                    Text("180").tag(180)
+                    Text("270").tag(270)
+                }
+                .disabled(false)
+                .id(UUID())
+                .pickerStyle(.menu)
+            }
+        }
     }
 }
 
