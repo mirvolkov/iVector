@@ -23,10 +23,6 @@ public struct MotionFeature: ReducerProtocol {
         case goesOnline
         case goesOffline
         case disconnect
-        case motionRecognitionStart
-        case motionRecognitionStop
-        case motionLoggingStart
-        case motionLoggingStop
     }
 
     public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
@@ -36,8 +32,6 @@ public struct MotionFeature: ReducerProtocol {
                 motionModel.start()
             })
             .concatenate(with: Effect.run(operation: { send in
-                await send(.motionRecognitionStart)
-                await send(.motionLoggingStart)
                 await send(.goesOnline)
             }))
 
@@ -55,22 +49,6 @@ public struct MotionFeature: ReducerProtocol {
             }).concatenate(with: Effect.run(operation: { send in
                 await send(.goesOffline)
             }))
-
-        case .motionRecognitionStart:
-            motionModel.motionRecognitionStart()
-            return .none
-
-        case .motionRecognitionStop:
-            motionModel.motionRecognitionStop()
-            return .none
-
-        case .motionLoggingStart:
-            motionModel.motionLoggingStart()
-            return .none
-
-        case .motionLoggingStop:
-            motionModel.motionLoggingStop()
-            return .none
         }
     }
 }

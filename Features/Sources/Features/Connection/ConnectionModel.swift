@@ -67,8 +67,10 @@ public final class ConnectionModel: @unchecked Sendable {
                             case 2_430...3_000:
                                 continuation.resume(returning: .charging)
 
-                            case 1_000...2_430:
-                                continuation.resume(returning: VectorBatteryState.percent(100 * value / 2_430))
+                            case 1_600...2_430:
+                                continuation.resume(
+                                    returning: VectorBatteryState.percent(100 * (value - 1_600) / (2_430 - 1_600))
+                                )
 
                             default:
                                 continuation.resume(returning: .unknown)

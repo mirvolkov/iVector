@@ -145,10 +145,7 @@ public struct SettingsView: View {
                 }
                 .disabled(false)
                 .id(UUID())
-                .pickerStyle(.radioGroup)
-
-                Spacer()
-                    .frame(height: 20)
+                .pickerStyle(.automatic)
 
                 Picker(L10n.rotation, selection: $viewModel.rotID) {
                     Text("0").tag(0)

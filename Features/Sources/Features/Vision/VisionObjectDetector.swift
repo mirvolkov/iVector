@@ -6,7 +6,7 @@ import os.log
 import Vision
 
 /// Object detector with MobileNetV2 background
-public final class ObjectDetection {
+public final class VisionObjectDetector {
     /// Reactive subject with detected objects stream
     @Published public var objects: PassthroughSubject<[VNRecognizedObjectObservation], Never> = .init()
 

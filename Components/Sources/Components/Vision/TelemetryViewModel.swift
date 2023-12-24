@@ -31,7 +31,7 @@ public extension TelemetryView {
             }
 
             connection.socket.listen("heading") { (data: Motion.MotionHeading) in
-                self.heading = data.heading
+                self.heading = data.value
             }
 
             connection.socket.listen("vision") { (data: VisionFeature.VisionObservation) in

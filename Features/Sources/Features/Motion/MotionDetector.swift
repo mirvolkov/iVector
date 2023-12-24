@@ -12,7 +12,8 @@ public final class MotionDetector {
         static let currentStateSize = 400
     }
 
-    public var callback: (Motion.MotionLabel) -> () = { print($0) }
+    public var callback: (Motion.MotionLabel) -> () = { _ in }
+
     private var window = 0
     private var currentState = MotionDetector.stateInit()
     private let accX = MotionDetector.axelInit()
@@ -22,6 +23,8 @@ public final class MotionDetector {
     private let heading = MotionDetector.axelInit()
     private var cancellable: AnyCancellable?
     private let model = try? col.init(configuration: .init())
+
+    public init() {}
 
     public func pushAccelerometer(_ data: CMAcceleration) {
         accX[window] = data.x as NSNumber

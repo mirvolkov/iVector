@@ -2,8 +2,8 @@ import Collections
 import Connection
 import Features
 import Foundation
-import SwiftBus
 import SocketIO
+import SwiftBus
 
 public final class ExecutorModel: Executor {
     public enum ExecutorError: Error {
@@ -45,6 +45,7 @@ public final class ExecutorModel: Executor {
 
     @Published public var running: Program?
     @Published public var pc: (Int, Int)?
+    @Published private var heading: Double?
 
     /// Connection instance
     public let connection: ConnectionModel
@@ -57,6 +58,7 @@ public final class ExecutorModel: Executor {
 
     public init(with connection: ConnectionModel) {
         self.connection = connection
+        self.bind()
     }
 
     public func cancel() {
@@ -101,6 +103,12 @@ public final class ExecutorModel: Executor {
 
         connection.socket.send(ExecutorEvent(instruction: instruction, condition: .finished), with: "exec")
     }
+
+    private func bind() {
+        connection.socket.listen("heading") { (heading: Motion.MotionHeading) in
+            self.heading = heading.value
+        }
+    }
 }
 
 extension ExecutorModel: Equatable {
@@ -128,23 +136,23 @@ private extension ExecutorModel {
             if let value = ext.value {
                 try await driver.move(Float(value), speed: .max, direction: true)
             }
-        case .right(let ext):
-            if let value = ext.value {
-                try await driver.turn(90, speed: .max)
-                try await driver.move(Float(value), speed: .max, direction: true)
-            }
-        case .left(let ext):
-            if let value = ext.value {
-                try await driver.turn(-90, speed: .max)
-                try await driver.move(Float(value), speed: .max, direction: true)
-            }
+        case .right:
+            throw ExecutorError.notSupported
+        case .left:
+            throw ExecutorError.notSupported
         case .backward(let ext):
             if let value = ext.value {
                 try await driver.move(Float(value), speed: .max, direction: false)
             }
         case .rotate(let ext):
-            if let value = ext.value {
-                try await driver.turn(-Float(value), speed: .max)
+            if let value = ext.value, value <= 90 {
+                try await driver.move(
+                    callback: { await callback(for: Double(value)) },
+                    speed: 0,
+                    direction: true
+                )
+            } else {
+                throw ExecutorError.notSupported
             }
         case .pause(let ext):
             if let value = ext.value {
@@ -164,6 +172,27 @@ private extension ExecutorModel {
             await driver.light(isOn)
         case .laser(let isOn):
             await driver.laser(isOn)
+        }
+    }
+
+    private func callback(for value: Double) async {
+        guard let heading else {
+            try? await Task.sleep(for: .milliseconds(value))
+            return
+        }
+
+        var headingIter = $heading.values.makeAsyncIterator()
+        let lastReadHeading: Double = heading
+
+        while let nextHeading = await headingIter.next(), let nextHeading {
+            var diff = abs(lastReadHeading - nextHeading)
+            if diff > 180 {
+                diff = abs(diff - 2 * 180)
+            }
+            print(lastReadHeading, heading, diff)
+            if diff >= value {
+                return
+            }
         }
     }
 }

@@ -16,32 +16,12 @@ public final class VisionModel {
     private var cameraTask: Task<Void, Never>?
     private let stream: AsyncStream<VectorCameraFrame>
     private let connection: ConnectionModel
-    private var detector = ObjectDetection()
-    private var isDetectorOn = false
 
     public init(with connection: ConnectionModel, stream: AsyncStream<VectorCameraFrame>) {
         self.stream = stream
         self.connection = connection
     }
 
-    public func bind() {
-        detector
-            .objects
-            .sink { objects in
-                objects.forEach { [weak self] observation in
-                    if let label = observation.labels.max(by: { $0.confidence < $1.confidence }) {
-                        self?.connection.socket.send(
-                            VisionFeature.VisionObservation(
-                                label: label.identifier,
-                                confidence: label.confidence
-                            ),
-                            with: "vision"
-                        )
-                    }
-                }
-            }
-            .store(in: &bag)
-    }
 
     /// Start video feed
     public func start() {
@@ -51,10 +31,6 @@ public final class VisionModel {
             for await frame in stream {
                 if !isStreaming {
                     break
-                }
-
-                if isDetectorOn {
-                    detector.process(frame.image)
                 }
 
                 await MainActor.run {
@@ -70,14 +46,6 @@ public final class VisionModel {
     public func stop() {
         cameraTask?.cancel()
         isStreaming = false
-    }
-
-    public func objectDetectionStart() {
-        isDetectorOn = true
-    }
-
-    public func objectDetectionStop() {
-        isDetectorOn = false
     }
 }
 

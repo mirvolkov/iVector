@@ -11,23 +11,19 @@ public protocol MotionModel: Sendable {
     init(connection: ConnectionModel)
     func start()
     func stop()
-    func motionRecognitionStart()
-    func motionRecognitionStop()
-    func motionLoggingStart()
-    func motionLoggingStop()
 }
 
 public enum Motion {
     public struct MotionHeading: SocketConnection.SocketMessage {
-        public let heading: Double
+        public let value: Double
         public let date: Date = .init()
 
         fileprivate init(_ heading: Double) {
-            self.heading = heading
+            self.value = heading
         }
 
         public func socketRepresentation() throws -> SocketData {
-            ["heading": heading, "timestamp": date.timeIntervalSince1970]
+            ["heading": value, "timestamp": date.timeIntervalSince1970]
         }
     }
 
@@ -66,9 +62,7 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private let motionManager = CMMotionManager()
     private let queue = OperationQueue()
     private let socket: SocketConnection
-    private var isLogging: Bool = false
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
-    private let detector = MotionDetector()
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
@@ -96,44 +90,17 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
                 return
             }
 
-            socket.send(Motion.MotionHeading(data.heading), with: "heading")
-            detector.pushAccelerometer(data.userAcceleration)
-            detector.pushHeading(data.heading)
-            detector.step()
-
-            socket.send(Motion.MotionGyro(data.userAcceleration), with: "axelerometer", cachePolicy: .window(100))
+            socket.send(Motion.MotionGyro(data.userAcceleration), with: "acceleration", cachePolicy: .window(100))
             socket.send(Motion.MotionHeading(data.heading), with: "heading", cachePolicy: .window(100))
-        }
-
-        detector.callback = { [weak self] label in
-            self?.socket.send(label, with: "motionPattern")
         }
     }
 
     public func stop() {
-        defer { detector.motionRecognitionStop() }
-
         guard online else {
             return
         }
 
         motionManager.stopDeviceMotionUpdates()
-    }
-
-    public func motionLoggingStart() {
-        isLogging = true
-    }
-
-    public func motionLoggingStop() {
-        isLogging = false
-    }
-
-    public func motionRecognitionStart() {
-        detector.motionRecognitionStart()
-    }
-
-    public func motionRecognitionStop() {
-        detector.motionRecognitionStop()
     }
 }
 

@@ -4,7 +4,7 @@ import Features
 import CoreML
 
 final class ObjectDetectionTests: XCTestCase {
-    let od = ObjectDetection()
+    let od = VisionObjectDetector()
     
     func testModel() throws {
         let bundle = Bundle.module

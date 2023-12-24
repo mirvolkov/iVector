@@ -27,6 +27,7 @@ public final class SocketConnection: @unchecked Sendable {
     public enum CachePolicy {
         case immediate
         case window(UInt)
+        case never
     }
 
     public let online: CurrentValueSubject<Bool, SocketError> = .init(false)
@@ -92,6 +93,9 @@ public extension SocketConnection {
                 socket?.emit(tag, with: buffer.compactMap { try? $0.socketRepresentation() })
                 cache[tag]?.removeAll()
             }
+
+        case .never:
+            break
         }
     }
 

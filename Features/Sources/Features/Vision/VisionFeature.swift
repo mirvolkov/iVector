@@ -11,6 +11,11 @@ public struct VisionFeature: ReducerProtocol {
         public let confidence: Float
         public let date: Date = .init()
 
+        public init(label: String, confidence: Float) {
+            self.label = label
+            self.confidence = confidence
+        }
+
         public func socketRepresentation() throws -> SocketData {
             ["label": label, "confidence": confidence, "timestamp": date.timeIntervalSince1970]
         }
@@ -45,8 +50,6 @@ public struct VisionFeature: ReducerProtocol {
         case goesOnline(VisionModel)
         case goesOffline
         case disconnect
-        case objectDetectionStart
-        case objectDetectionStop
     }
 
     public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
@@ -58,9 +61,7 @@ public struct VisionFeature: ReducerProtocol {
                     with: .init(rotation: settings.cameraROT, deviceID: settings.cameraID)
                 ) {
                     let model = VisionModel(with: connection, stream: stream)
-                    model.bind()
                     await send(Action.goesOnline(model))
-                    await send(Action.objectDetectionStart)
                 } else {
                     await send(Action.goesOffline)
                 }
@@ -78,18 +79,6 @@ public struct VisionFeature: ReducerProtocol {
             return Effect.run { send in
                 await send(.goesOffline)
             }
-
-        case .objectDetectionStart:
-            if case let .online(model) = state {
-                model.objectDetectionStart()
-            }
-            return .none
-
-        case .objectDetectionStop:
-            if case let .online(model) = state {
-                model.objectDetectionStop()
-            }
-            return .none
         }
     }
 }
