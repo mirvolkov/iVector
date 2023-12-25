@@ -69,7 +69,7 @@ public struct AudioFeature: ReducerProtocol {
                 return .none
             }
 
-            stt.start()
+            stt.start(currentLocale: .init(identifier: settings.locale))
             state = .connecting
             return stt
                 .available

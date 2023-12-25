@@ -43,6 +43,7 @@ extension PathfinderConnection: Camera {
         var types: [AVCaptureDevice.DeviceType] = []
         if #available(iOS 17.0, macOS 14.0, *) {
             types.append(.external)
+            types.append(.builtInWideAngleCamera)
         } else {
             types.append(.builtInWideAngleCamera)
         }

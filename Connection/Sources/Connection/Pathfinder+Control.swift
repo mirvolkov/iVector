@@ -18,13 +18,13 @@ public protocol PathfinderControl {
     /// - Parameter direction(bool) 1 - forward, 0 - backward
     func move(_ distance: Float, speed: UInt8, direction: Bool) async throws
 
-    /// Move with callback as heading measure parameter
+    /// Turn in place with callback as heading measure parameter
     /// - Parameter speed (0...255)
     /// - Parameter callback PathfinderMovementClosure
     /// - Parameter direction(bool) 1 - forward, 0 - backward
-    func move(callback: PathfinderMovementClosure, speed: UInt8, direction: Bool) async throws
+    func turn(callback: PathfinderMovementClosure, speed: UInt8, direction: Bool) async throws
 
-    /// Turn in place
+    /// Turn in place with fixed-time delay
     /// - Parameter angle (rad)
     /// - Parameter speed (0...255)
     func turn(_ angle: Float, speed: UInt8) async throws
@@ -95,11 +95,11 @@ extension PathfinderConnection: PathfinderControl {
         try await Task.sleep(for: .milliseconds(10))
     }
 
-    public func move(callback: PathfinderMovementClosure, speed: UInt8, direction: Bool) async throws {
+    public func turn(callback: PathfinderMovementClosure, speed: UInt8, direction: Bool) async throws {
         write(direction ? speed : 0, uuid: Const.uuidEngineLF)
-        write(direction ? speed : 0, uuid: Const.uuidEngineRF)
+        write(direction ? speed : 0, uuid: Const.uuidEngineRB)
         write(direction ? 0 : speed, uuid: Const.uuidEngineLB)
-        write(direction ? 0 : speed, uuid: Const.uuidEngineRB)
+        write(direction ? 0 : speed, uuid: Const.uuidEngineRF)
         write(1, uuid: Const.uuidPower)
         await callback()
         write(0, uuid: Const.uuidPower)

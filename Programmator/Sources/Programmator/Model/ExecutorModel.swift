@@ -146,9 +146,9 @@ private extension ExecutorModel {
             }
         case .rotate(let ext):
             if let value = ext.value, value <= 90 {
-                try await driver.move(
+                try await driver.turn(
                     callback: { await callback(for: Double(value)) },
-                    speed: 0,
+                    speed: .max,
                     direction: true
                 )
             } else {
