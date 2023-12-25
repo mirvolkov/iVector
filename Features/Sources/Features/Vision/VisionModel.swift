@@ -4,6 +4,8 @@ import Connection
 import Foundation
 import SwiftUI
 
+extension VectorCameraFrame: SocketConnection.SocketMessage {}
+
 public final class VisionModel {
     /// is vector streaming video feed
     @Published public var isStreaming = false
@@ -22,7 +24,6 @@ public final class VisionModel {
         self.connection = connection
     }
 
-
     /// Start video feed
     public func start() {
         cameraTask = Task.detached { [self] in
@@ -32,6 +33,8 @@ public final class VisionModel {
                 if !isStreaming {
                     break
                 }
+
+                connection.socket.send(frame, with: "camera")
 
                 await MainActor.run {
                     self.frame = frame

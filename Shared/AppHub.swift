@@ -22,6 +22,10 @@ final class AppHub {
             print(stt)
         }
 
+        connection.socket.listen("camera") { [weak self] (frame: VectorCameraFrame) in
+            self?.visionObjectDetector.process(frame.image)
+        }
+
         motionPatternDetector.callback = { [self] label in
             connection.socket.send(label, with: "motionPattern")
             print(label)
@@ -40,6 +44,15 @@ final class AppHub {
                             with: "vision"
                         )
                     }
+                }
+            }
+            .store(in: &bag)
+
+        visionObjectDetector
+            .barcodes
+            .sink { [self] objects in
+                objects.forEach { [self] observation in
+                    print(observation.payloadStringValue)
                 }
             }
             .store(in: &bag)

@@ -10,9 +10,12 @@ public final class VisionObjectDetector {
     /// Reactive subject with detected objects stream
     @Published public var objects: PassthroughSubject<[VNRecognizedObjectObservation], Never> = .init()
 
+    /// Reactive subject with detected QRs stream
+    @Published public var barcodes: PassthroughSubject<[VNBarcodeObservation], Never> = .init()
+
     private lazy var logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var requestOptions: [VNImageOption: Any] = [:]
-    private lazy var requests: [VNRequest] = [visionRequest]
+    private lazy var requests: [VNRequest] = [visionRequest, barcodeNativeScanner]
     private lazy var movileNetV2: VNCoreMLModel = {
         do {
             let model = try MobileNetV2(configuration: .init()).model
@@ -20,6 +23,15 @@ public final class VisionObjectDetector {
         } catch {
             fatalError("Failed to create VNCoreMLModel: \(error)")
         }
+    }()
+
+    private lazy var barcodeNativeScanner: VNDetectBarcodesRequest = {
+        let barcodeRequest = VNDetectBarcodesRequest { [weak self] request, _ in
+            if let results = request.results as? [VNBarcodeObservation], !results.isEmpty {
+                self?.barcodes.send(results)
+            }
+        }
+        return barcodeRequest
     }()
 
     private lazy var visionRequest: VNCoreMLRequest = {
