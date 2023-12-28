@@ -31,7 +31,7 @@ struct iVectorApp: App {
                     .environmentObject(vectorStore)
                     .withErrorHandler()
                     .onAppear {
-                        env.hub.bind()
+                        env.connection.hub.bind()
                         viewStore.send(.audio(.speechToTextStart))
                         viewStore.send(.connect(.connect))
                         viewStore.send(.socket(.connect))

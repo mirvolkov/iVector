@@ -12,7 +12,6 @@ final class AppEnvironment: ObservableObject, @unchecked Sendable {
     let settings = SettingsModel()
     let assembler = AssemblerModel()
     let stt = SpeechToText()
-    lazy var hub = AppHub(connection: connection)
     lazy var motion = MotionModelImpl(connection: connection)
 }
 

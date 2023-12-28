@@ -53,15 +53,16 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 
     private func runloop() {
         do {
-            let recordingFormat = inputNode.inputFormat(forBus: 0)
+            let bus = 1
+            let recordingFormat = inputNode.inputFormat(forBus: bus)
             guard recordingFormat.channelCount > 0 else {
                 self.available.send(false)
                 return
             }
 
-            inputNode.removeTap(onBus: 0)
+            inputNode.removeTap(onBus: bus)
             inputNode.installTap(
-                onBus: 0,
+                onBus: bus,
                 bufferSize: 1_024,
                 format: recordingFormat
             ) { buffer, _ in

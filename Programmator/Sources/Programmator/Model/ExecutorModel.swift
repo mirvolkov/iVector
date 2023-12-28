@@ -10,7 +10,7 @@ public final class ExecutorModel: Executor {
         case notSupported
     }
 
-    public struct ExecutorEvent: SocketConnection.SocketMessage {
+    public struct ExecutorEvent: AppHub.SocketMessage {
         public enum Condition: EventRepresentable, CustomStringConvertible {
             case started
             case finished
@@ -91,7 +91,7 @@ public final class ExecutorModel: Executor {
     }
 
     private func run(instruction: Instruction) async throws {
-        connection.socket.send(ExecutorEvent(instruction: instruction, condition: .started), with: "exec")
+        connection.hub.send(ExecutorEvent(instruction: instruction, condition: .started), with: "exec")
 
         if let behavior = connection.vector {
             try await run(instruction: instruction, with: behavior)
@@ -101,11 +101,11 @@ public final class ExecutorModel: Executor {
             try await run(instruction: instruction, with: pathfinder)
         }
 
-        connection.socket.send(ExecutorEvent(instruction: instruction, condition: .finished), with: "exec")
+        connection.hub.send(ExecutorEvent(instruction: instruction, condition: .finished), with: "exec")
     }
 
     private func bind() {
-        connection.socket.listen("heading") { (heading: Motion.MotionHeading) in
+        connection.hub.listen("heading") { (heading: Motion.MotionHeading) in
             self.heading = heading.value
         }
     }

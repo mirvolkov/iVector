@@ -87,7 +87,7 @@ public final class ConnectionModel: @unchecked Sendable {
     /// Socket connection
     /// - Description return socket connection if there is any
     /// - Returns optinal socket connection instance
-    public var socket: SocketConnection {
+    public var hub: AppHub {
         socketConnection
     }
 
@@ -102,7 +102,7 @@ public final class ConnectionModel: @unchecked Sendable {
 
     private var vectorDevice: VectorDevice?
     private var pathfinderDevice: PathfinderDevice?
-    private var socketConnection = SocketConnection()
+    private var socketConnection = AppHub()
     private var bag = Set<AnyCancellable>()
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var tts = TextToSpeech()
@@ -145,10 +145,10 @@ public final class ConnectionModel: @unchecked Sendable {
         try await pathfinderDevice?.connect()
         connectionState.value = .online
         pathfinder?.sonar.sink(receiveValue: { [weak self] sonar in
-            self?.socket.send(sonar, with: "sonar")
+            self?.hub.send(sonar, with: "sonar")
         }).store(in: &bag)
         pathfinder?.proximity.sink(receiveValue: { [weak self] proximity in
-            self?.socket.send(PFSonar((proximity, 0, 0, 0)), with: "proximity")
+            self?.hub.send(PFSonar((proximity, 0, 0, 0)), with: "proximity")
         }).store(in: &bag)
         pathfinderDevice?.online
             .map { $0 ? ConnectionModelState.online : ConnectionModelState.disconnected }
@@ -185,7 +185,7 @@ public final class ConnectionModel: @unchecked Sendable {
         do {
             try vectorDevice?.release()
             pathfinderDevice?.disconnect()
-            socket.disconnect()
+            hub.disconnect()
             vectorDevice = nil
             pathfinderDevice = nil
         } catch {

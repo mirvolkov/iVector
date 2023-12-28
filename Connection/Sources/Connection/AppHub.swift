@@ -4,12 +4,12 @@ import Foundation
 import SocketIO
 import SwiftBus
 
-private struct NamedMessage<Message: SocketConnection.SocketMessage>: EventRepresentable {
+private struct NamedMessage<Message: AppHub.SocketMessage>: EventRepresentable {
     let name: String
     let message: Message
 }
 
-public final class SocketConnection: @unchecked Sendable {
+public final class AppHub: @unchecked Sendable {
     public typealias SocketMessage = SocketData & EventRepresentable
 
     public enum EventIDs: String {
@@ -31,10 +31,10 @@ public final class SocketConnection: @unchecked Sendable {
     }
 
     public let online: CurrentValueSubject<Bool, SocketError> = .init(false)
+    public var bag: Set<AnyCancellable> = []
 
     private var manager: SocketManager?
     private var socket: SocketIOClient?
-    private var subscriptions: Set<AnyCancellable> = []
     private let eventBus: EventTransmittable = EventBus()
     private var cache: [String: [SocketData]] = [:]
 
@@ -74,7 +74,7 @@ public final class SocketConnection: @unchecked Sendable {
     }
 }
 
-public extension SocketConnection {
+public extension AppHub {
     func send<Message: SocketMessage>(_ message: Message, with tag: String, cachePolicy: CachePolicy = .immediate) {
         eventBus.send(NamedMessage(name: tag, message: message))
 
@@ -112,6 +112,6 @@ public extension SocketConnection {
                     onRecieve(message.message)
                 }
             })
-            .store(in: &subscriptions)
+            .store(in: &bag)
     }
 }

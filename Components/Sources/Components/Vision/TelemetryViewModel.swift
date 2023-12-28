@@ -22,19 +22,19 @@ public extension TelemetryView {
                 }
             }
 
-            connection.socket.listen("stt") { (data: AudioFeature.STTData) in
+            connection.hub.listen("stt") { (data: AudioFeature.STTData) in
                 self.stt = data.text
             }
 
-            connection.socket.listen("acceleratin") { (data: Motion.MotionLabel) in
+            connection.hub.listen("acceleratin") { (data: Motion.MotionLabel) in
                 self.motionLabel = data.label
             }
 
-            connection.socket.listen("heading") { (data: Motion.MotionHeading) in
+            connection.hub.listen("heading") { (data: Motion.MotionHeading) in
                 self.heading = data.value
             }
 
-            connection.socket.listen("vision") { (data: VisionFeature.VisionObservation) in
+            connection.hub.listen("vision") { (data: VisionFeature.VisionObservation) in
                 self.observations.append(data.label)
                 if self.observations.count > 2 {
                     self.observations.removeFirst()

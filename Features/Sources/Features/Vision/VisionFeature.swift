@@ -6,7 +6,7 @@ import SocketIO
 import SwiftBus
 
 public struct VisionFeature: ReducerProtocol {
-    public struct VisionObservation: SocketConnection.SocketMessage {
+    public struct VisionObservation: AppHub.SocketMessage {
         public let label: String
         public let confidence: Float
         public let date: Date = .init()

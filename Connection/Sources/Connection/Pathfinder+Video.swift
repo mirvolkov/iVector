@@ -10,8 +10,11 @@ extension PathfinderConnection: Camera {
         return await withUnsafeContinuation { continuation in
             cameraInitContinuation = continuation
             queue.async { [weak self] in
-                guard let self else { return }
+                guard let self else {
+                    return
+                }
                 addObservers()
+                stopSession()
                 setUpSession()
                 setUpCamera()
                 startSession()
@@ -21,7 +24,6 @@ extension PathfinderConnection: Camera {
 
     func setUpSession() {
         logger.info("setting up session...")
-        stopSession()
 
         captureSession.inputs.forEach { input in
             captureSession.removeInput(input)
@@ -127,7 +129,7 @@ extension PathfinderConnection: Camera {
 
     // swiftlint:disable block_based_kvo
     // swiftlint:disable override_in_extension
-    override public func observeValue(
+    public override func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
         change: [NSKeyValueChangeKey: Any]?,
@@ -138,16 +140,13 @@ extension PathfinderConnection: Camera {
                systemPreferredCamera.uniqueID == cameraSettings?.deviceID {
                 logger.info("external systemPreferredCamera set to \(systemPreferredCamera)")
                 queue.async { [weak self] in
-                    guard let self else { return }
+                    guard let self else { 
+                        return
+                    }
+                    stopSession()
                     setUpSession()
                     startCamera(systemPreferredCamera)
                     startSession()
-                }
-            } else {
-                queue.async { [weak self] in
-                    guard let self else { return }
-                    logger.info("external systemPreferredCamera dropped")
-                    stopSession()
                 }
             }
         }

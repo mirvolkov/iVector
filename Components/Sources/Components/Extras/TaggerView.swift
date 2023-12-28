@@ -6,14 +6,14 @@ import SocketIO
 
 public struct TaggerView: View {
     public class ViewModel: ObservableObject {
-        public struct Tag: SocketConnection.SocketMessage {
+        public struct Tag: AppHub.SocketMessage {
             let tag: String
             let date: Date = .init()
         }
 
-        let socket: SocketConnection
+        let socket: AppHub
         
-        init(socket: SocketConnection) {
+        init(socket: AppHub) {
             self.socket = socket
         }
         
@@ -25,7 +25,7 @@ public struct TaggerView: View {
     private let viewModel: ViewModel
     
     public init(connection: ConnectionModel) {
-        self.viewModel = .init(socket: connection.socket)
+        self.viewModel = .init(socket: connection.hub)
     }
     
     public var body: some View {

@@ -67,18 +67,24 @@ extension SettingsView.ViewModel {
     /// Returns all cameras on the device.
     fileprivate func getListOfCameras() -> [AVCaptureDevice] {
         #if os(iOS)
+            var types: [AVCaptureDevice.DeviceType] = []
+            if #available(iOS 17.0, macOS 14.0, *) {
+                types.append(.external)
+                types.append(.builtInWideAngleCamera)
+                types.append(.builtInTelephotoCamera)
+            } else {
+                types.append(.builtInWideAngleCamera)
+            }
             let session = AVCaptureDevice.DiscoverySession(
-                deviceTypes: [
-                    .builtInWideAngleCamera,
-                    .builtInTelephotoCamera
-                ],
+                deviceTypes: types,
                 mediaType: .video,
                 position: .unspecified)
             return session.devices
         #elseif os(macOS)
             let session = AVCaptureDevice.DiscoverySession(
                 deviceTypes: [
-                    .external
+                    .external,
+                    .builtInWideAngleCamera
                 ],
                 mediaType: .video,
                 position: .unspecified)

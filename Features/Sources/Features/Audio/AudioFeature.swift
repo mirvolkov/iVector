@@ -6,7 +6,7 @@ import SocketIO
 import SwiftBus
 
 public struct AudioFeature: ReducerProtocol {
-    public struct STTData: SocketConnection.SocketMessage {
+    public struct STTData: AppHub.SocketMessage {
         public let text: String
         public let data: Date = .init()
 
@@ -18,7 +18,7 @@ public struct AudioFeature: ReducerProtocol {
     private let settings: SettingsModel
     private let connection: ConnectionModel
     private let stt: SpeechToText
-    private var socket: SocketConnection? { connection.socket }
+    private var socket: AppHub? { connection.hub }
 
     public init(settings: SettingsModel, connection: ConnectionModel, stt: SpeechToText) {
         self.settings = settings

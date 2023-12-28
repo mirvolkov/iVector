@@ -4,7 +4,7 @@ import Connection
 import Foundation
 import SwiftUI
 
-extension VectorCameraFrame: SocketConnection.SocketMessage {}
+extension VectorCameraFrame: AppHub.SocketMessage {}
 
 public final class VisionModel {
     /// is vector streaming video feed
@@ -34,7 +34,7 @@ public final class VisionModel {
                     break
                 }
 
-                connection.socket.send(frame, with: "camera")
+                connection.hub.send(frame, with: "camera")
 
                 await MainActor.run {
                     self.frame = frame

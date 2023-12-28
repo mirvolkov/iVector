@@ -4,30 +4,26 @@ import Features
 import SocketIO
 import SwiftBus
 
-/**
- Idea of this class is to gather all the data from entire app and perform it postprocessing in ONE place
- */
-final class AppHub {
-    private let connection: ConnectionModel
-    private let motionPatternDetector = MotionDetector()
-    private let visionObjectDetector = VisionObjectDetector()
-    private var bag: Set<AnyCancellable> = .init()
-
-    init(connection: ConnectionModel) {
-        self.connection = connection
-    }
-
+extension AppHub {
     func bind() {
-        connection.socket.listen("stt") { (stt: AudioFeature.STTData) in
+        let motionPatternDetector = MotionDetector()
+        let visionObjectDetector = VisionObjectDetector()
+        var counter = 0
+
+        listen("stt") { (stt: AudioFeature.STTData) in
             print(stt)
         }
 
-        connection.socket.listen("camera") { [weak self] (frame: VectorCameraFrame) in
-            self?.visionObjectDetector.process(frame.image)
+        listen("camera") { (frame: VectorCameraFrame) in
+            if counter % 10 == 0 {
+                visionObjectDetector.process(frame.image)
+                counter = 0
+            }
+            counter += 1
         }
 
         motionPatternDetector.callback = { [self] label in
-            connection.socket.send(label, with: "motionPattern")
+            send(label, with: "motionPattern")
             print(label)
         }
 
@@ -36,7 +32,7 @@ final class AppHub {
             .sink { [self] objects in
                 objects.forEach { [self] observation in
                     if let label = observation.labels.max(by: { $0.confidence < $1.confidence }) {
-                        self.connection.socket.send(
+                        send(
                             VisionFeature.VisionObservation(
                                 label: label.identifier,
                                 confidence: label.confidence
@@ -57,13 +53,13 @@ final class AppHub {
             }
             .store(in: &bag)
 
-        connection.socket.listen("acceleration") { [self] (acceleration: Motion.MotionGyro) in
+        listen("acceleration") { [self] (acceleration: Motion.MotionGyro) in
 //            motionPatternDetector.pushAccelerometer(.init(x: acceleration.x, y: acceleration.y, z: acceleration.z))
 //            motionPatternDetector.step()
 //            print(acceleration)
         }
 
-        connection.socket.listen("heading") { (heading: Motion.MotionHeading) in
+        listen("heading") { (heading: Motion.MotionHeading) in
 //            print(heading)
         }
 

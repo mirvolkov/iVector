@@ -14,7 +14,7 @@ public protocol MotionModel: Sendable {
 }
 
 public enum Motion {
-    public struct MotionHeading: SocketConnection.SocketMessage {
+    public struct MotionHeading: AppHub.SocketMessage {
         public let value: Double
         public let date: Date = .init()
 
@@ -28,7 +28,7 @@ public enum Motion {
     }
 
     // swiftlint:disable identifier_name
-    public struct MotionGyro: SocketConnection.SocketMessage {
+    public struct MotionGyro: AppHub.SocketMessage {
         public let x: Double
         public let y: Double
         public let z: Double
@@ -45,7 +45,7 @@ public enum Motion {
         }
     }
 
-    public struct MotionLabel: SocketConnection.SocketMessage {
+    public struct MotionLabel: AppHub.SocketMessage {
         public let label: String
         public let date: Date = .init()
 
@@ -61,13 +61,13 @@ public enum Motion {
 public final class MotionModelImpl: @unchecked Sendable, MotionModel {
     private let motionManager = CMMotionManager()
     private let queue = OperationQueue()
-    private let socket: SocketConnection
+    private let hub: AppHub
     private let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
 
     public var online: Bool { motionManager.isDeviceMotionActive }
 
     public init(connection: ConnectionModel) {
-        self.socket = connection.socket
+        self.hub = connection.hub
     }
 
     public func start() {
@@ -90,8 +90,8 @@ public final class MotionModelImpl: @unchecked Sendable, MotionModel {
                 return
             }
 
-            socket.send(Motion.MotionGyro(data.userAcceleration), with: "acceleration", cachePolicy: .window(100))
-            socket.send(Motion.MotionHeading(data.heading), with: "heading", cachePolicy: .window(100))
+            hub.send(Motion.MotionGyro(data.userAcceleration), with: "acceleration", cachePolicy: .window(100))
+            hub.send(Motion.MotionHeading(data.heading), with: "heading", cachePolicy: .window(100))
         }
     }
 
