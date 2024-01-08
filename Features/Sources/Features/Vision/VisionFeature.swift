@@ -10,14 +10,16 @@ public struct VisionFeature: ReducerProtocol {
         public let label: String
         public let confidence: Float
         public let date: Date = .init()
+        public let rect: CGRect
 
-        public init(label: String, confidence: Float) {
+        public init(label: String, confidence: Float, rect: CGRect) {
             self.label = label
             self.confidence = confidence
+            self.rect = rect
         }
 
         public func socketRepresentation() throws -> SocketData {
-            ["label": label, "confidence": confidence, "timestamp": date.timeIntervalSince1970]
+            ["label": label, "confidence": confidence, "timestamp": date.timeIntervalSince1970, "rect": rect]
         }
     }
 

@@ -2,13 +2,21 @@ import Features
 import Observation
 import Programmator
 import SwiftUI
+import Vision
+
+extension VisionFeature.VisionObservation {
+    var inverted: CGRect {
+        let bottomToTopTransform = CGAffineTransform(scaleX: 1, y: -1).translatedBy(x: 0, y: -1)
+        return rect.applying(bottomToTopTransform)
+    }
+}
 
 public struct VisionView: View {
-    @StateObject private var camViewModel: ViewModel
+    @StateObject private var viewModel: ViewModel
     private let context = CIContext()
 
     public init(vision: VisionModel) {
-        self._camViewModel = .init(wrappedValue: ViewModel(with: vision))
+        self._viewModel = .init(wrappedValue: ViewModel(with: vision))
     }
 
     public var body: some View {
@@ -16,24 +24,24 @@ public struct VisionView: View {
             viewport()
         }
         .onAppear {
-            camViewModel.bind()
-            camViewModel.start()
+            viewModel.bind()
+            viewModel.start()
         }
         .onDisappear {
-            camViewModel.stop()
+            viewModel.stop()
         }
     }
 
     @ViewBuilder
     private func viewport() -> some View {
 #if os(macOS)
-        if let data = camViewModel.frame?.image, camViewModel.isStreaming {
+        if let data = viewModel.frame?.image, viewModel.isStreaming {
             display(with: Image(nsImage: NSImage(ciImage: data)))
         } else {
             Color.black
         }
 #elseif os(iOS)
-        if let data = camViewModel.frame?.image, camViewModel.isStreaming,
+        if let data = viewModel.frame?.image, viewModel.isStreaming,
            let cgimg = context.createCGImage(data, from: data.extent)
         {
             display(with: Image(uiImage: UIImage(cgImage: cgimg)))
@@ -48,6 +56,33 @@ public struct VisionView: View {
             image
                 .resizable()
         }
+        .overlay {
+            GeometryReader { geometry in
+                ForEach(viewModel.objects) { object in
+                    bbox(for: object, geometry: geometry)
+                }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func bbox(for object: VisionFeature.VisionObservation, geometry: GeometryProxy) -> some View {
+        Rectangle()
+            .stroke(Color.green.opacity(0.5), lineWidth: 2)
+            .frame(width: object.inverted.width * geometry.size.width, height: object.inverted.height * geometry.size.height)
+            .position(x: object.inverted.midX * geometry.size.width, y: object.inverted.midY * geometry.size.height)
+
+        HStack {
+            Text(object.label)
+                .foregroundStyle(Color.white)
+            Spacer()
+            Text("\(object.confidence)")
+                .foregroundStyle(Color.white)
+        }
+        .frame(width: object.rect.width * geometry.size.width, height: 24)
+        .background(Color.green.opacity(0.5))
+        .padding(.leading, object.inverted.minX * geometry.size.width)
+        .padding(.top, object.inverted.minY * geometry.size.height)
     }
 }
 
@@ -129,8 +164,6 @@ public struct TelemetryView: View {
                 .font(vectorBold(12))
                 .foregroundColor(.white.opacity(0.75))
                 .frame(width: 100, alignment: .leading)
-        }.onAppear {
-//            viewModel.bind()
         }
     }
 }

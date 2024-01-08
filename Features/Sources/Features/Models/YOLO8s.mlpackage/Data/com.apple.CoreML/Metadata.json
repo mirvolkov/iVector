@@ -1,0 +1,10 @@
+{
+  "MLModelVersionStringKey" : "Ultralytics YOLOv8.0.3",
+  "MLModelDescriptionKey" : "Ultralytics YOLOv8s CoreML model",
+  "MLModelCreatorDefinedKey" : {
+    "IoU threshold" : "0.45",
+    "Confidence threshold" : "0.25"
+  },
+  "MLModelAuthorKey" : "Ultralytics (https:\/\/ultralytics.com)",
+  "MLModelLicenseKey" : "GPL-3.0 license (https:\/\/ultralytics.com\/license)"
+}

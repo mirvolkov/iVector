@@ -13,11 +13,18 @@ public final class VisionModel {
     @Published public var isVectorOnline = false
     /// last taken video frame
     @Published public var frame: VectorCameraFrame?
+    /// objects on frame
+    @Published public var objects: [VisionFeature.VisionObservation] = []
 
     private var bag = Set<AnyCancellable>()
     private var cameraTask: Task<Void, Never>?
     private let stream: AsyncStream<VectorCameraFrame>
     private let connection: ConnectionModel
+    private lazy var invalidateTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] _ in
+        objects.removeAll { observation in
+            observation.date.distance(to: .now) > 0.8
+        }
+    }
 
     public init(with connection: ConnectionModel, stream: AsyncStream<VectorCameraFrame>) {
         self.stream = stream
@@ -26,6 +33,12 @@ public final class VisionModel {
 
     /// Start video feed
     public func start() {
+        invalidateTimer.fire()
+
+        connection.hub.listen("vision") { [self] (observation: VisionFeature.VisionObservation) in
+            objects.append(observation)
+        }
+
         cameraTask = Task.detached { [self] in
             await MainActor.run { isStreaming = true }
 

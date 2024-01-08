@@ -4,7 +4,7 @@
 import PackageDescription
 
 let resources: [Resource] = [
-    .copy("Resources/MobileNetV2.mlmodelc"),
+    .copy("Resources/YOLO8s.mlpackage"),
     .copy("Resources/col.mlmodel"),
     .copy("Resources/test_sample.jpeg"),
     .copy("Sounds/alarm.wav"),

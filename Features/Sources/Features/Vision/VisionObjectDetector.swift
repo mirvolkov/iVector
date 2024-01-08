@@ -18,7 +18,8 @@ public final class VisionObjectDetector {
     private lazy var requests: [VNRequest] = [visionRequest, barcodeNativeScanner]
     private lazy var movileNetV2: VNCoreMLModel = {
         do {
-            let model = try MobileNetV2(configuration: .init()).model
+//            let model = try MobileNetV2(configuration: .init()).model
+            let model = try YOLO8s(configuration: .init()).model
             return try VNCoreMLModel(for: model)
         } catch {
             fatalError("Failed to create VNCoreMLModel: \(error)")
