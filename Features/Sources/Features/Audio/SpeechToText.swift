@@ -72,7 +72,7 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 #if os(iOS)
             audioEngine.prepare()
 #else
-            audioEngine.connect(inputNode, to: audioEngine.mainMixerNode, format: recordingFormat)
+//            audioEngine.connect(inputNode, to: audioEngine.mainMixerNode, format: recordingFormat)
 #endif
             try audioEngine.start()
         } catch {
@@ -136,5 +136,48 @@ public final class SpeechToText: NSObject, SFSpeechRecognizerDelegate, SpeechRec
 
     public func speechRecognizer(_ speechRecognizer: SFSpeechRecognizer, availabilityDidChange available: Bool) {
         self.available.send(available)
+    }
+}
+
+extension SpeechToText {
+    // reads STDIN stream, can be useful for vector streaming
+    func readAudioFromStandardInput() {
+        let stdinFileDescriptor = FileHandle.standardInput.fileDescriptor
+        let ioChannel = DispatchIO(
+            type: .stream,
+            fileDescriptor: stdinFileDescriptor,
+            queue: DispatchQueue.main
+        ) { error in
+            if error != 0 {
+                print("Error reading audio from standard input: \(error)")
+            }
+        }
+        ioChannel.setLimit(lowWater: 1)
+        ioChannel.setInterval(interval: .milliseconds(100))
+        ioChannel.read(offset: 0, length: Int.max, queue: DispatchQueue.main) { done, data, _ in
+            if let data = data, !data.isEmpty {
+                let format = AVAudioFormat(
+                    commonFormat: .pcmFormatInt16,
+                    sampleRate: 16_000, channels: 1,
+                    interleaved: false
+                )
+                let audioBuffer = AVAudioPCMBuffer(
+                    pcmFormat: format!,
+                    frameCapacity: AVAudioFrameCount(data.count / 2)
+                )!
+                audioBuffer.frameLength = audioBuffer.frameCapacity
+                let audioBufferPointer = audioBuffer.int16ChannelData![0]
+                data.withUnsafeBytes { bufferPointer in
+                    audioBufferPointer.initialize(from: bufferPointer, count: data.count / 2)
+                }
+                self.recognitionRequest?.append(audioBuffer)
+            }
+
+            if done {
+                // Mark the end of the audio stream.
+                self.recognitionRequest?.endAudio()
+            }
+        }
+        ioChannel.resume()
     }
 }
