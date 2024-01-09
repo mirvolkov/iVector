@@ -19,6 +19,7 @@ extension SettingsView {
         @Published public var guid: String? = nil
         @Published public var cameraID: String = ""
         @Published public var rotID: Int = 0
+        @Published public var decimation: Int = 1
         
         private let model: SettingsModel
         private var bag = Set<AnyCancellable>()
@@ -39,6 +40,7 @@ extension SettingsView {
             self.locale = model.locale
             self.cameraID =  model.cameraID ?? ""
             self.rotID = model.cameraROT
+            self.decimation = model.decimation
         }
 
         @MainActor func save() {
@@ -48,6 +50,7 @@ extension SettingsView {
             model.locale = locale
             model.cameraID = cameraID
             model.cameraROT = rotID
+            model.decimation = decimation
         }
 
         func validate() {

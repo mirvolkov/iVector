@@ -15,6 +15,7 @@ let dependencies: [Target.Dependency] = [
 
 let resources: [Resource] = [
     .copy("Resources/mock_vision.jpeg"),
+    .copy("Resources/mock_rec.mp4"),
     .copy("Resources/mock_robot_state.json"),
     .copy("Cert/Vector-E1B6-003099a9.cert")
 ]

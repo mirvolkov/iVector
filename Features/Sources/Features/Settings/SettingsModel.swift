@@ -25,6 +25,9 @@ public final class SettingsModel: @unchecked Sendable {
     /// Camera rotation angle
     @AppStorage("cameraROT")
     public var cameraROT: Int = 0
+    /// Decimation number
+    @AppStorage("decimation")
+    public var decimation: Int = 1
 
     public init() {}
 }

@@ -22,7 +22,7 @@ public final class VisionModel {
     private let connection: ConnectionModel
     private lazy var invalidateTimer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [self] _ in
         objects.removeAll { observation in
-            observation.date.distance(to: .now) > 0.8
+            observation.date.distance(to: .now) > 0.3
         }
     }
 

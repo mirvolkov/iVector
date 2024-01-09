@@ -32,6 +32,8 @@ public enum L10n {
   public static let control = L10n.tr("Localizable", "Control", fallback: "Control")
   /// Control Panel
   public static let controlPanel = L10n.tr("Localizable", "Control Panel", fallback: "Control Panel")
+  /// Decimation
+  public static let decimation = L10n.tr("Localizable", "decimation", fallback: "Decimation")
   /// Delete
   public static let delete = L10n.tr("Localizable", "delete", fallback: "Delete")
   /// Device

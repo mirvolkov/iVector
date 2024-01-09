@@ -6,7 +6,7 @@ import SocketIO
 import SwiftBus
 
 extension AppHub {
-    func bind() {
+    func bind(_ settings: SettingsModel) {
         let motionPatternDetector = MotionDetector()
         let visionObjectDetector = VisionObjectDetector()
         var counter = 0
@@ -21,7 +21,7 @@ extension AppHub {
         }
 
         listen("camera") { (frame: VectorCameraFrame) in
-            if counter % 10 == 0 {
+            if counter % settings.decimation == 0 {
                 visionObjectDetector.process(frame.image)
                 counter = 0
             }

@@ -2,6 +2,7 @@
 // swiftlint:disable force_try
 // swiftlint:disable force_unwrapping
 import AVFAudio
+import AVFoundation
 import Foundation
 import GRPC
 import OSLog
@@ -89,6 +90,10 @@ extension MockedConnection: Camera {
     public func requestCameraFeed(
         with settings: VectorCameraSettings = .default
     ) async throws -> AsyncStream<VectorCameraFrame> {
+        try await runDynamicVideoStream()
+    }
+
+    private func runStaticVideoStream() async throws -> AsyncStream<VectorCameraFrame> {
         .init { continuation in
             let url = Bundle.module.url(forResource: "mock_vision", withExtension: "jpeg")!
             Task {
@@ -97,6 +102,43 @@ extension MockedConnection: Camera {
                         if let image = CIImage(url: url) {
                             continuation.yield(.init(image: image))
                         }
+                    })
+                }
+            }
+        }
+    }
+
+    private func runDynamicVideoStream() async throws -> AsyncStream<VectorCameraFrame> {
+        class Counter {
+            var value: Double = 0.0
+
+            func inc(by step: Double = 0.1, limit: Double = .infinity) {
+                value = value + step
+                if value >= limit {
+                    value = 0
+                }
+            }
+        }
+
+        let url = Bundle.module.url(forResource: "mock_rec", withExtension: "mp4")!
+        let videoAsset = AVAsset(url: url)
+        let generator = AVAssetImageGenerator(asset: videoAsset)
+        let duration = try? await videoAsset.load(.duration).seconds
+        generator.requestedTimeToleranceBefore = .zero // Optional
+        generator.requestedTimeToleranceAfter = .zero // Optional
+        return .init { continuation in
+            Task {
+                await MainActor.run {
+                    var counter: Counter = .init()
+                    visionStream = .scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { [counter] _ in
+                        let time = CMTime(value: .init(counter.value * 100), timescale: 100)
+                        generator.generateCGImageAsynchronously(for: time) { image, _, _ in
+                            if let image {
+                                continuation.yield(.init(image: CIImage(cgImage: image)))
+                            }
+                        }
+
+                        counter.inc(by: 0.1)
                     })
                 }
             }

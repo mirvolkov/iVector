@@ -156,6 +156,16 @@ public struct SettingsView: View {
                 .disabled(false)
                 .id(UUID())
                 .pickerStyle(.menu)
+
+                Picker(L10n.decimation, selection: $viewModel.decimation) {
+                    Text("1").tag(1)
+                    Text("2").tag(2)
+                    Text("5").tag(5)
+                    Text("10").tag(10)
+                }
+                .disabled(false)
+                .id(UUID())
+                .pickerStyle(.menu)
             }
         }
     }
