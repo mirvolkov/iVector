@@ -113,7 +113,7 @@ extension MockedConnection: Camera {
             var value: Double = 0.0
 
             func inc(by step: Double = 0.1, limit: Double = .infinity) {
-                value = value + step
+                value += step
                 if value >= limit {
                     value = 0
                 }

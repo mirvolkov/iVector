@@ -10,8 +10,13 @@ public final class VisionObjectDetector {
     /// Reactive subject with detected objects stream
     @Published public var objects: PassthroughSubject<[VNRecognizedObjectObservation], Never> = .init()
 
+    /// Reactive subject with detected objects stream
+    @Published public var track: PassthroughSubject<VNDetectedObjectObservation?, Never> = .init()
+
     /// Reactive subject with detected QRs stream
     @Published public var barcodes: PassthroughSubject<[VNBarcodeObservation], Never> = .init()
+
+    public var trackingLevel = VNRequestTrackingLevel.accurate
 
     private lazy var logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
     private lazy var requestOptions: [VNImageOption: Any] = [:]
@@ -45,6 +50,9 @@ public final class VisionObjectDetector {
         return request
     }()
 
+    private lazy var sequenceRequestHandler = VNSequenceRequestHandler()
+    private var lastObservation: VNDetectedObjectObservation?
+
     public init() {}
 
     public func process(_ buffer: CVPixelBuffer) {
@@ -72,5 +80,42 @@ public final class VisionObjectDetector {
         } catch {
             logger.error("OD \(error.localizedDescription)")
         }
+    }
+
+    public func track(_ image: CIImage, for observation: VNDetectedObjectObservation) {
+        guard let lastObservation else {
+            self.lastObservation = observation
+            return
+        }
+
+        autoreleasepool {
+            do {
+                let request = VNTrackObjectRequest(
+                    detectedObjectObservation: lastObservation,
+                    completionHandler: handleVisionRequestUpdate
+                )
+                request.trackingLevel = trackingLevel
+                try sequenceRequestHandler.perform([request], on: image)
+            } catch let error as NSError {
+                NSLog("Failed to perform SequenceRequest: %@", error)
+            }
+        }
+    }
+}
+
+extension VisionObjectDetector {
+    private func handleVisionRequestUpdate(_ request: VNRequest, error: Error?) {
+        guard let trackResult = request.results?
+            .compactMap({ $0 as? VNDetectedObjectObservation })
+            .filter({ $0.confidence > 0.5 })
+            .first
+        else {
+            self.lastObservation = nil
+            self.track.send(nil)
+            return
+        }
+
+        track.send(trackResult)
+        self.lastObservation = trackResult
     }
 }

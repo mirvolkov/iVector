@@ -15,6 +15,7 @@ extension AppHub {
         var timespan_sonar: Date = .now
         var timespan_accel: Date = .now
         var last_sonar: PFSonar?
+        var last_frame: VectorCameraFrame?
 
         listen("stt") { (stt: AudioFeature.STTData) in
             print(stt)
@@ -22,6 +23,7 @@ extension AppHub {
 
         listen("camera") { (frame: VectorCameraFrame) in
             if counter % settings.decimation == 0 {
+                last_frame = frame
                 visionObjectDetector.process(frame.image)
                 counter = 0
             }
@@ -37,6 +39,9 @@ extension AppHub {
             .objects
             .sink { [weak self] objects in
                 objects.forEach { [weak self] observation in
+                    if observation.labels[0].identifier == "person" {
+                        visionObjectDetector.track(last_frame!.image, for: observation)
+                    }
                     self?.send(
                         VisionFeature.VisionObservation(
                             label: observation.labels[0].identifier,
@@ -55,6 +60,13 @@ extension AppHub {
                 objects.forEach { [self] observation in
                     print("BARCODE: \(observation.payloadStringValue)")
                 }
+            }
+            .store(in: &bag)
+
+        visionObjectDetector
+            .track
+            .sink { [self] track in
+                print("TRACK: \(track?.uuid)")
             }
             .store(in: &bag)
 
