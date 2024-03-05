@@ -56,6 +56,8 @@ public final class PathfinderConnection: NSObject, Pathfinder {
         static let uuidHeadAngle = "6E400003-B5A3-F393-E0A9-E50E24DCCA0E" // battery
         static let uuidPower = "6E400003-B5A3-F393-E0A9-E50E24DCCA0F" // power relay
         static let uuidProximity = "6E400003-B5A3-F393-E0A9-E50E24DCCA0D" // proximity sensor
+        static let uuidMagnetometer = "6E400003-B5A3-F393-E0A9-E50E24DCCA10" // device magnetometer
+        static let uuidAxelerometer = "6E400003-B5A3-F393-E0A9-E50E24DCCA11" // device axelerometer
     }
 
     let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "pathfinder")
@@ -74,6 +76,8 @@ public final class PathfinderConnection: NSObject, Pathfinder {
     public var headAngle: PassthroughSubject<Float, Never> = .init()
     public var power: PassthroughSubject<Bool, Never> = .init()
     public var proximity: PassthroughSubject<UInt, Never> = .init()
+    public var magnetometer: PassthroughSubject<(Float, Float, Float), Never> = .init()
+    public var axelerometer: PassthroughSubject<(Float, Float, Float), Never> = .init()
 
     public init(with bleID: String) {
         ble = BLE([bleID])

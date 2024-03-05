@@ -78,6 +78,20 @@ extension PathfinderConnection: PathfinderControl {
                 self?.proximity.send(value)
             }
         }
+
+        ble.listen(for: Const.uuidMagnetometer) { [weak self] message in
+            let data = message.split(separator: ":")
+            if let valueX = Float(data[0]), let valueY = Float(data[1]), let valueZ = Float(data[2]) {
+                self?.magnetometer.send((valueX, valueY, valueZ))
+            }
+        }
+
+        ble.listen(for: Const.uuidAxelerometer) { [weak self] message in
+            let data = message.split(separator: ":")
+            if let valueX = Float(data[0]), let valueY = Float(data[1]), let valueZ = Float(data[2]) {
+                self?.axelerometer.send((valueX, valueY, valueZ))
+            }
+        }
     }
 
     public func move(_ distance: Float, speed: UInt8 = 255, direction: Bool = true) async throws {
