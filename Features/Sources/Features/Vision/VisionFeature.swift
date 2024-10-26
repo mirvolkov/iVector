@@ -5,7 +5,7 @@ import Foundation
 import SocketIO
 import SwiftBus
 
-public struct VisionFeature: ReducerProtocol {
+public struct VisionFeature: Reducer {
     public struct VisionObservation: AppHub.SocketMessage {
         public let label: String
         public let confidence: Float
@@ -54,7 +54,7 @@ public struct VisionFeature: ReducerProtocol {
         case disconnect
     }
 
-    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .connect:
             state = .connecting

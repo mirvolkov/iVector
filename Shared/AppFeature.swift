@@ -15,7 +15,7 @@ final class AppEnvironment: ObservableObject, @unchecked Sendable {
     lazy var motion = MotionModelImpl(connection: connection)
 }
 
-struct AppFeature: ReducerProtocol {
+struct AppFeature: Reducer {
     typealias FeatureStore = Store<State, Action>
     let env: AppEnvironment
 
@@ -42,7 +42,7 @@ struct AppFeature: ReducerProtocol {
         case audio(AudioFeature.Action)
     }
 
-    var body: some ReducerProtocolOf<AppFeature> {
+    var body: some ReducerOf<AppFeature> {
         Reduce { state, action in
             switch action {
             case .connect(let action):

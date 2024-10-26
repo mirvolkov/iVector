@@ -5,7 +5,7 @@ import Foundation
 import SocketIO
 import SwiftBus
 
-public struct AudioFeature: ReducerProtocol {
+public struct AudioFeature: Reducer {
     public struct STTData: AppHub.SocketMessage {
         public let text: String
         public let data: Date = .init()
@@ -52,7 +52,7 @@ public struct AudioFeature: ReducerProtocol {
         case speech(String)
     }
 
-    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .say(let text):
             return Effect.run { _ in
@@ -71,28 +71,30 @@ public struct AudioFeature: ReducerProtocol {
 
             stt.start(currentLocale: .init(identifier: settings.locale))
             state = .connecting
-            return stt
-                .available
-                .removeDuplicates()
-                .replaceError(with: false)
-                .receive(on: RunLoop.main)
-                .map { $0 ? Self.Action.speechToTextGoesOnline : Self.Action.speechToTextGoesOffline }
-                .eraseToEffect()
-                // swiftlint:disable:next identifier_constant
-                .cancellable(id: "STT_ONLINE")
+            return .publisher {
+                stt
+                    .available
+                    .removeDuplicates()
+                    .replaceError(with: false)
+                    .receive(on: RunLoop.main)
+                    .map { $0 ? Self.Action.speechToTextGoesOnline : Self.Action.speechToTextGoesOffline }
+            }
+            // swiftlint:disable:next identifier_constant
+            .cancellable(id: "STT_ONLINE")
 
         case .speechToTextStop:
             return .none
 
         case .speechToTextGoesOnline:
             state = .online
-            return stt
-                .text
-                .receive(on: RunLoop.main)
-                .map { Self.Action.speech($0) }
-                .eraseToEffect()
-                // swiftlint:disable:next identifier_constant
-                .cancellable(id: "STT_CANCELLABLE")
+            return .publisher {
+                stt
+                    .text
+                    .receive(on: RunLoop.main)
+                    .map { Self.Action.speech($0) }
+            }
+            // swiftlint:disable:next identifier_constant
+            .cancellable(id: "STT_CANCELLABLE")
 
         case .speechToTextGoesOffline:
             state = .offline

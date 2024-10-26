@@ -3,7 +3,7 @@ import Combine
 import ComposableArchitecture
 import Foundation
 
-public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
+public struct ConnectionFeature<Executor: Equatable>: Reducer {
     let settings: SettingsModel
     let env: EnvironmentDevice
     let connection: ConnectionModel
@@ -28,7 +28,7 @@ public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
         case disconnect
     }
 
-    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .connect:
             if case .online = state {
@@ -42,14 +42,15 @@ public struct ConnectionFeature<Executor: Equatable>: ReducerProtocol {
                 try await connect()
             })
             .concatenate(with:
-                connection
-                    .connectionState
-                    .receive(on: RunLoop.main)
-                    .replaceError(with: .disconnected)
-                    .map { $0 == .online ? Self.Action.connected : Self.Action.goesOffline }
-                    .eraseToEffect()
-                    // swiftlint:disable:next identifier_constant
-                    .cancellable(id: "CONNECTION_ONLINE"))
+                .publisher {
+                    connection
+                        .connectionState
+                        .receive(on: RunLoop.main)
+                        .replaceError(with: .disconnected)
+                        .map { $0 == .online ? Self.Action.connected : Self.Action.goesOffline }
+                }
+                // swiftlint:disable:next identifier_constant
+                .cancellable(id: "CONNECTION_ONLINE"))
             .concatenate(with: Effect.run(operation: { send in
                 await send(.connected)
             }))

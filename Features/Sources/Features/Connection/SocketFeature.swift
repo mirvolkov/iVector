@@ -3,7 +3,7 @@ import ComposableArchitecture
 import Connection
 import Foundation
 
-public struct SocketFeature: ReducerProtocol {
+public struct SocketFeature: Reducer {
     let settings: SettingsModel
     let connection: ConnectionModel
 
@@ -25,21 +25,23 @@ public struct SocketFeature: ReducerProtocol {
         case disconnect
     }
 
-    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .connect:
             return Effect.run(operation: { _ in
                 try await connection.socket(with: settings.websocketIP, port: settings.websocketPort)
             })
             .concatenate(with:
-                connection
-                    .socketState
-                    .receive(on: RunLoop.main)
-                    .replaceError(with: .disconnected)
-                    .map { $0 == .online ? Self.Action.goesOnline : Self.Action.goesOffline }
-                    .eraseToEffect()
-                    // swiftlint:disable:next identifier_constant
-                    .cancellable(id: "SOCKET_ONLINE"))
+                .publisher {
+                    connection
+                        .socketState
+                        .receive(on: RunLoop.main)
+                        .replaceError(with: .disconnected)
+                        .map { $0 == .online ? Self.Action.goesOnline : Self.Action.goesOffline }
+                }
+                // swiftlint:disable:next identifier_constant
+                .cancellable(id: "SOCKET_ONLINE")
+            )
             .concatenate(with: Effect.run(operation: { send in
                 await send(.goesOnline)
             }))

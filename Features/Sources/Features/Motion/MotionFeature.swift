@@ -1,7 +1,7 @@
 // swiftlint:disable:next file_header
 import ComposableArchitecture
 
-public struct MotionFeature: ReducerProtocol {
+public struct MotionFeature: Reducer {
     let settings: SettingsModel
     let connection: ConnectionModel
     let motionModel: MotionModel
@@ -25,7 +25,7 @@ public struct MotionFeature: ReducerProtocol {
         case disconnect
     }
 
-    public func reduce(into state: inout State, action: Action) -> Effect<Action, Never> {
+    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .connect:
             return Effect.run(operation: { _ in
