@@ -38,7 +38,7 @@ public final class VectorConnection: Vector {
     public weak var delegate: ConnectionDelegate?
 
     let prefixURI = "/Anki.Vector.external_interface.ExternalInterface/"
-    let guid: String = "uOXbJIpdSiGgM6SgSoYFUA=="
+    let guid: String = "G6z2G2vBWSIUXHIHFZOvXA=="
     lazy var callOptions: CallOptions = .init(customMetadata: headers)
     private lazy var headers: HPACKHeaders = ["authorization": "Bearer \(guid)"]
     private static let logger = Logger(subsystem: "com.mirfirstsnow.ivector", category: "main")
@@ -47,7 +47,7 @@ public final class VectorConnection: Vector {
     var eventStream: EventStream?
 
     public init?(with ipAddress: String, port: Int) throws {
-        guard let certificatePath = Bundle.module.path(forResource: "Vector-E1B6-003099a9", ofType: "cert") else {
+        guard let certificatePath = Bundle.module.path(forResource: "vector", ofType: "cert") else {
             throw VectorConnectionError.noCertificate
         }
 

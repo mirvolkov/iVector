@@ -7,6 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		490FFA502D02F72A006AC60D /* Turret_turret_retire_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA452D02F72A006AC60D /* Turret_turret_retire_5.wav */; };
+		490FFA512D02F72A006AC60D /* Turret_turret_tipped_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4A2D02F72A006AC60D /* Turret_turret_tipped_2.wav */; };
+		490FFA522D02F72A006AC60D /* Turret_turret_pickup_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA432D02F72A006AC60D /* Turret_turret_pickup_8.wav */; };
+		490FFA532D02F72A006AC60D /* Turret_turret_retire_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA442D02F72A006AC60D /* Turret_turret_retire_1.wav */; };
+		490FFA542D02F72A006AC60D /* Turret_turret_retire_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA462D02F72A006AC60D /* Turret_turret_retire_6.wav */; };
+		490FFA552D02F72A006AC60D /* Turret_turret_pickup_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA422D02F72A006AC60D /* Turret_turret_pickup_6.wav */; };
+		490FFA562D02F72A006AC60D /* Turret_turret_autosearch_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3E2D02F72A006AC60D /* Turret_turret_autosearch_2.wav */; };
+		490FFA572D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4D2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav */; };
+		490FFA582D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4E2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav */; };
+		490FFA592D02F72A006AC60D /* Turret_turret_search_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA492D02F72A006AC60D /* Turret_turret_search_4.wav */; };
+		490FFA5A2D02F72A006AC60D /* Turret_turret_autosearch_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3D2D02F72A006AC60D /* Turret_turret_autosearch_1.wav */; };
+		490FFA5B2D02F72A006AC60D /* Turret_turretlaunched11.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4C2D02F72A006AC60D /* Turret_turretlaunched11.wav */; };
+		490FFA5C2D02F72A006AC60D /* Turret_turret_search_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA472D02F72A006AC60D /* Turret_turret_search_1.wav */; };
+		490FFA5D2D02F72A006AC60D /* Turret_turret_active_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3C2D02F72A006AC60D /* Turret_turret_active_8.wav */; };
+		490FFA5E2D02F72A006AC60D /* Turret_turret_autosearch_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3F2D02F72A006AC60D /* Turret_turret_autosearch_5.wav */; };
+		490FFA5F2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3B2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav */; };
+		490FFA602D02F72A006AC60D /* Turret_turret_search_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA482D02F72A006AC60D /* Turret_turret_search_2.wav */; };
+		490FFA612D02F72A006AC60D /* Turret_turret_tipped_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4B2D02F72A006AC60D /* Turret_turret_tipped_6.wav */; };
+		490FFA622D02F72A006AC60D /* Turret_turret_deploy_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA402D02F72A006AC60D /* Turret_turret_deploy_5.wav */; };
+		490FFA632D02F72A006AC60D /* Turret_turret_pickup_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA412D02F72A006AC60D /* Turret_turret_pickup_1.wav */; };
+		490FFA642D02F72A006AC60D /* Turret_turret_retire_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA452D02F72A006AC60D /* Turret_turret_retire_5.wav */; };
+		490FFA652D02F72A006AC60D /* Turret_turret_tipped_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4A2D02F72A006AC60D /* Turret_turret_tipped_2.wav */; };
+		490FFA662D02F72A006AC60D /* Turret_turret_pickup_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA432D02F72A006AC60D /* Turret_turret_pickup_8.wav */; };
+		490FFA672D02F72A006AC60D /* Turret_turret_retire_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA442D02F72A006AC60D /* Turret_turret_retire_1.wav */; };
+		490FFA682D02F72A006AC60D /* Turret_turret_retire_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA462D02F72A006AC60D /* Turret_turret_retire_6.wav */; };
+		490FFA692D02F72A006AC60D /* Turret_turret_pickup_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA422D02F72A006AC60D /* Turret_turret_pickup_6.wav */; };
+		490FFA6A2D02F72A006AC60D /* Turret_turret_autosearch_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3E2D02F72A006AC60D /* Turret_turret_autosearch_2.wav */; };
+		490FFA6B2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4D2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav */; };
+		490FFA6C2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4E2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav */; };
+		490FFA6D2D02F72A006AC60D /* Turret_turret_search_4.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA492D02F72A006AC60D /* Turret_turret_search_4.wav */; };
+		490FFA6E2D02F72A006AC60D /* Turret_turret_autosearch_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3D2D02F72A006AC60D /* Turret_turret_autosearch_1.wav */; };
+		490FFA6F2D02F72A006AC60D /* Turret_turretlaunched11.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4C2D02F72A006AC60D /* Turret_turretlaunched11.wav */; };
+		490FFA702D02F72A006AC60D /* Turret_turret_search_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA472D02F72A006AC60D /* Turret_turret_search_1.wav */; };
+		490FFA712D02F72A006AC60D /* Turret_turret_active_8.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3C2D02F72A006AC60D /* Turret_turret_active_8.wav */; };
+		490FFA722D02F72A006AC60D /* Turret_turret_autosearch_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3F2D02F72A006AC60D /* Turret_turret_autosearch_5.wav */; };
+		490FFA732D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA3B2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav */; };
+		490FFA742D02F72A006AC60D /* Turret_turret_search_2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA482D02F72A006AC60D /* Turret_turret_search_2.wav */; };
+		490FFA752D02F72A006AC60D /* Turret_turret_tipped_6.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA4B2D02F72A006AC60D /* Turret_turret_tipped_6.wav */; };
+		490FFA762D02F72A006AC60D /* Turret_turret_deploy_5.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA402D02F72A006AC60D /* Turret_turret_deploy_5.wav */; };
+		490FFA772D02F72A006AC60D /* Turret_turret_pickup_1.wav in Resources */ = {isa = PBXBuildFile; fileRef = 490FFA412D02F72A006AC60D /* Turret_turret_pickup_1.wav */; };
 		E60EBA1C28C89DB300B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1B28C89DB300B865E2 /* Components */; };
 		E60EBA1E28C89DB700B865E2 /* Components in Frameworks */ = {isa = PBXBuildFile; productRef = E60EBA1D28C89DB700B865E2 /* Components */; };
 		E63933A528C1F729007C1F79 /* AppFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63933A428C1F729007C1F79 /* AppFeature.swift */; };
@@ -38,6 +78,26 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		490FFA3B2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_sp_sabotage_factory_template01.wav; sourceTree = "<group>"; };
+		490FFA3C2D02F72A006AC60D /* Turret_turret_active_8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_active_8.wav; sourceTree = "<group>"; };
+		490FFA3D2D02F72A006AC60D /* Turret_turret_autosearch_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_autosearch_1.wav; sourceTree = "<group>"; };
+		490FFA3E2D02F72A006AC60D /* Turret_turret_autosearch_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_autosearch_2.wav; sourceTree = "<group>"; };
+		490FFA3F2D02F72A006AC60D /* Turret_turret_autosearch_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_autosearch_5.wav; sourceTree = "<group>"; };
+		490FFA402D02F72A006AC60D /* Turret_turret_deploy_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_deploy_5.wav; sourceTree = "<group>"; };
+		490FFA412D02F72A006AC60D /* Turret_turret_pickup_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_pickup_1.wav; sourceTree = "<group>"; };
+		490FFA422D02F72A006AC60D /* Turret_turret_pickup_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_pickup_6.wav; sourceTree = "<group>"; };
+		490FFA432D02F72A006AC60D /* Turret_turret_pickup_8.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_pickup_8.wav; sourceTree = "<group>"; };
+		490FFA442D02F72A006AC60D /* Turret_turret_retire_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_retire_1.wav; sourceTree = "<group>"; };
+		490FFA452D02F72A006AC60D /* Turret_turret_retire_5.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_retire_5.wav; sourceTree = "<group>"; };
+		490FFA462D02F72A006AC60D /* Turret_turret_retire_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_retire_6.wav; sourceTree = "<group>"; };
+		490FFA472D02F72A006AC60D /* Turret_turret_search_1.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_search_1.wav; sourceTree = "<group>"; };
+		490FFA482D02F72A006AC60D /* Turret_turret_search_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_search_2.wav; sourceTree = "<group>"; };
+		490FFA492D02F72A006AC60D /* Turret_turret_search_4.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_search_4.wav; sourceTree = "<group>"; };
+		490FFA4A2D02F72A006AC60D /* Turret_turret_tipped_2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_tipped_2.wav; sourceTree = "<group>"; };
+		490FFA4B2D02F72A006AC60D /* Turret_turret_tipped_6.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turret_tipped_6.wav; sourceTree = "<group>"; };
+		490FFA4C2D02F72A006AC60D /* Turret_turretlaunched11.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turretlaunched11.wav; sourceTree = "<group>"; };
+		490FFA4D2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turretlightbridgeblock01.wav; sourceTree = "<group>"; };
+		490FFA4E2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = Turret_turretlightbridgeblock03.wav; sourceTree = "<group>"; };
 		E6092F0228C7168800AEFF55 /* Components */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Components; sourceTree = "<group>"; };
 		E63933A428C1F729007C1F79 /* AppFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFeature.swift; sourceTree = "<group>"; };
 		E64D7CFD28D0A56B00D99FA5 /* HomeTablet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTablet.swift; sourceTree = "<group>"; };
@@ -91,6 +151,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		490FFA4F2D02F72A006AC60D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				490FFA3B2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav */,
+				490FFA3C2D02F72A006AC60D /* Turret_turret_active_8.wav */,
+				490FFA3D2D02F72A006AC60D /* Turret_turret_autosearch_1.wav */,
+				490FFA3E2D02F72A006AC60D /* Turret_turret_autosearch_2.wav */,
+				490FFA3F2D02F72A006AC60D /* Turret_turret_autosearch_5.wav */,
+				490FFA402D02F72A006AC60D /* Turret_turret_deploy_5.wav */,
+				490FFA412D02F72A006AC60D /* Turret_turret_pickup_1.wav */,
+				490FFA422D02F72A006AC60D /* Turret_turret_pickup_6.wav */,
+				490FFA432D02F72A006AC60D /* Turret_turret_pickup_8.wav */,
+				490FFA442D02F72A006AC60D /* Turret_turret_retire_1.wav */,
+				490FFA452D02F72A006AC60D /* Turret_turret_retire_5.wav */,
+				490FFA462D02F72A006AC60D /* Turret_turret_retire_6.wav */,
+				490FFA472D02F72A006AC60D /* Turret_turret_search_1.wav */,
+				490FFA482D02F72A006AC60D /* Turret_turret_search_2.wav */,
+				490FFA492D02F72A006AC60D /* Turret_turret_search_4.wav */,
+				490FFA4A2D02F72A006AC60D /* Turret_turret_tipped_2.wav */,
+				490FFA4B2D02F72A006AC60D /* Turret_turret_tipped_6.wav */,
+				490FFA4C2D02F72A006AC60D /* Turret_turretlaunched11.wav */,
+				490FFA4D2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav */,
+				490FFA4E2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		E67160C528BCFE8000F79DA2 = {
 			isa = PBXGroup;
 			children = (
@@ -108,6 +195,7 @@
 		E67160CA28BCFE8000F79DA2 /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				490FFA4F2D02F72A006AC60D /* Resources */,
 				E63933A428C1F729007C1F79 /* AppFeature.swift */,
 				E6B919B42B17C50100688004 /* AppHub.swift */,
 				E67160CB28BCFE8000F79DA2 /* iVectorApp.swift */,
@@ -272,6 +360,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				E67160DF28BCFE8200F79DA2 /* Assets.xcassets in Resources */,
+				490FFA642D02F72A006AC60D /* Turret_turret_retire_5.wav in Resources */,
+				490FFA652D02F72A006AC60D /* Turret_turret_tipped_2.wav in Resources */,
+				490FFA662D02F72A006AC60D /* Turret_turret_pickup_8.wav in Resources */,
+				490FFA672D02F72A006AC60D /* Turret_turret_retire_1.wav in Resources */,
+				490FFA682D02F72A006AC60D /* Turret_turret_retire_6.wav in Resources */,
+				490FFA692D02F72A006AC60D /* Turret_turret_pickup_6.wav in Resources */,
+				490FFA6A2D02F72A006AC60D /* Turret_turret_autosearch_2.wav in Resources */,
+				490FFA6B2D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav in Resources */,
+				490FFA6C2D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav in Resources */,
+				490FFA6D2D02F72A006AC60D /* Turret_turret_search_4.wav in Resources */,
+				490FFA6E2D02F72A006AC60D /* Turret_turret_autosearch_1.wav in Resources */,
+				490FFA6F2D02F72A006AC60D /* Turret_turretlaunched11.wav in Resources */,
+				490FFA702D02F72A006AC60D /* Turret_turret_search_1.wav in Resources */,
+				490FFA712D02F72A006AC60D /* Turret_turret_active_8.wav in Resources */,
+				490FFA722D02F72A006AC60D /* Turret_turret_autosearch_5.wav in Resources */,
+				490FFA732D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav in Resources */,
+				490FFA742D02F72A006AC60D /* Turret_turret_search_2.wav in Resources */,
+				490FFA752D02F72A006AC60D /* Turret_turret_tipped_6.wav in Resources */,
+				490FFA762D02F72A006AC60D /* Turret_turret_deploy_5.wav in Resources */,
+				490FFA772D02F72A006AC60D /* Turret_turret_pickup_1.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -280,6 +388,26 @@
 			buildActionMask = 2147483647;
 			files = (
 				E67160E028BCFE8200F79DA2 /* Assets.xcassets in Resources */,
+				490FFA502D02F72A006AC60D /* Turret_turret_retire_5.wav in Resources */,
+				490FFA512D02F72A006AC60D /* Turret_turret_tipped_2.wav in Resources */,
+				490FFA522D02F72A006AC60D /* Turret_turret_pickup_8.wav in Resources */,
+				490FFA532D02F72A006AC60D /* Turret_turret_retire_1.wav in Resources */,
+				490FFA542D02F72A006AC60D /* Turret_turret_retire_6.wav in Resources */,
+				490FFA552D02F72A006AC60D /* Turret_turret_pickup_6.wav in Resources */,
+				490FFA562D02F72A006AC60D /* Turret_turret_autosearch_2.wav in Resources */,
+				490FFA572D02F72A006AC60D /* Turret_turretlightbridgeblock01.wav in Resources */,
+				490FFA582D02F72A006AC60D /* Turret_turretlightbridgeblock03.wav in Resources */,
+				490FFA592D02F72A006AC60D /* Turret_turret_search_4.wav in Resources */,
+				490FFA5A2D02F72A006AC60D /* Turret_turret_autosearch_1.wav in Resources */,
+				490FFA5B2D02F72A006AC60D /* Turret_turretlaunched11.wav in Resources */,
+				490FFA5C2D02F72A006AC60D /* Turret_turret_search_1.wav in Resources */,
+				490FFA5D2D02F72A006AC60D /* Turret_turret_active_8.wav in Resources */,
+				490FFA5E2D02F72A006AC60D /* Turret_turret_autosearch_5.wav in Resources */,
+				490FFA5F2D02F72A006AC60D /* Turret_sp_sabotage_factory_template01.wav in Resources */,
+				490FFA602D02F72A006AC60D /* Turret_turret_search_2.wav in Resources */,
+				490FFA612D02F72A006AC60D /* Turret_turret_tipped_6.wav in Resources */,
+				490FFA622D02F72A006AC60D /* Turret_turret_deploy_5.wav in Resources */,
+				490FFA632D02F72A006AC60D /* Turret_turret_pickup_1.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,6 +631,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = PY2RV6KPV9;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -521,10 +650,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Mock;
 		};
@@ -646,6 +776,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = PY2RV6KPV9;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -664,10 +795,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Vector;
 		};
@@ -789,6 +921,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = K8GMF5PASC;
+				"DEVELOPMENT_TEAM[sdk=macosx*]" = PY2RV6KPV9;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -807,10 +940,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.mirfirstsnow.ivector;
 				PRODUCT_NAME = iVector;
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Pathfinder;
 		};

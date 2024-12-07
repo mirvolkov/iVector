@@ -5,31 +5,37 @@ import Foundation
 import SwiftBus
 
 public final class SoundPlayer {
-    public enum SoundType: String {
-        case wav
-        case mp3
+    public struct SoundName: Sendable, Codable {
+        public let url: URL
     }
 
-    public enum SoundName: String, CaseIterable, Codable, Sendable {
-        case alarm
-        case cputer1
-        case cputer2
-        case r2d21
-        case r2d22
-        case ping
-        case scream
-        case pcup
+    public enum SoundType: String {
+        case wav
     }
 
     public init() {}
 
-    public func play(name: SoundName, type: SoundType = .wav) -> AsyncStream<VectorAudioFrame> {
-        .init { continuation in
-            guard let url = Bundle.module.url(forResource: name.rawValue, withExtension: type.rawValue) else {
-                return
-            }
+    public static var all: [SoundName] {
+        modules + main
+    }
 
-            if let buf = readPCMBuffer(url: url) {
+    private static var main: [SoundName] {
+        Bundle.main
+            .urls(forResourcesWithExtension: SoundType.wav.rawValue, subdirectory: nil)?
+            .compactMap { $0 }
+            .map { .init(url: $0) } ?? []
+    }
+    
+    private static var modules: [SoundName] {
+        Bundle.module
+            .urls(forResourcesWithExtension: SoundType.wav.rawValue, subdirectory: nil)?
+            .compactMap { $0 }
+            .map { .init(url: $0) } ?? []
+    }
+    
+    public func play(name: SoundPlayer.SoundName, type: SoundType = .wav) -> AsyncStream<VectorAudioFrame> {
+        .init { continuation in
+            if let buf = readPCMBuffer(url: name.url) {
                 guard let int16ChannelData = buf.int16ChannelData else {
                     return
                 }
@@ -67,3 +73,9 @@ public final class SoundPlayer {
 }
 
 extension SoundPlayer.SoundName: EventRepresentable { }
+
+extension SoundPlayer.SoundName: CustomStringConvertible {
+    public var description: String {
+        url.lastPathComponent
+    }
+}

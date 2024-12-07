@@ -7,13 +7,6 @@ let resources: [Resource] = [
     .copy("Resources/YOLO8s.mlpackage"),
     .copy("Resources/col.mlmodel"),
     .copy("Resources/test_sample.jpeg"),
-    .copy("Sounds/alarm.wav"),
-    .copy("Sounds/cputer1.wav"),
-    .copy("Sounds/cputer2.wav"),
-    .copy("Sounds/r2d21.wav"),
-    .copy("Sounds/r2d22.wav"),
-    .copy("Sounds/ping.wav"),
-    .copy("Sounds/scream.wav"),
     .copy("Sounds/pcup.wav"),
 ]
 
@@ -27,7 +20,7 @@ let package = Package(
             targets: ["Features"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.15.0"),
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.17.0"),
         .package(path: "../Connection")
     ],
     targets: [

@@ -1,4 +1,5 @@
 import Features
+import Foundation
 
 /// Extension box existential wrapper protocol
 /// T is a contained value type

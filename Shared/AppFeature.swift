@@ -25,7 +25,8 @@ struct AppFeature: Reducer {
         var socket: SocketFeature.State
         var camera: VisionFeature.State
         var audio: AudioFeature.State
-        static let initial: Self = .init(
+
+        @MainActor static let initial: Self = .init(
             connection: .offline,
             motion: .offline,
             socket: .offline,
